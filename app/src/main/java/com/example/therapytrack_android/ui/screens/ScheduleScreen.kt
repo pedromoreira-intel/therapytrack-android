@@ -10,14 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.therapytrack_android.data.model.Session
 import com.example.therapytrack_android.ui.viewmodel.TherapyViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ScheduleScreen(viewModel: TherapyViewModel = viewModel()) {
+fun ScheduleScreen(viewModel: TherapyViewModel) {
     
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val daysOfWeek = remember { 

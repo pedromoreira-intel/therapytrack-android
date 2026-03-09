@@ -10,13 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.therapytrack_android.data.model.Patient
 import com.example.therapytrack_android.data.model.Session
 import com.example.therapytrack_android.ui.viewmodel.TherapyViewModel
 
 @Composable
-fun HomeScreen(viewModel: TherapyViewModel = viewModel()) {
+fun HomeScreen(viewModel: TherapyViewModel) {
     
     LaunchedEffect(Unit) {
         if (viewModel.patients.isEmpty()) {

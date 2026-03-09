@@ -11,14 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.therapytrack_android.data.model.IntervisionGroup
 import com.example.therapytrack_android.data.model.SupervisionNetworkMember
 import com.example.therapytrack_android.data.model.SupervisionSession
 import com.example.therapytrack_android.ui.viewmodel.TherapyViewModel
 
 @Composable
-fun SupervisionScreen(viewModel: TherapyViewModel = viewModel()) {
+fun SupervisionScreen(viewModel: TherapyViewModel) {
     
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Sessions", "Network", "Intervision")

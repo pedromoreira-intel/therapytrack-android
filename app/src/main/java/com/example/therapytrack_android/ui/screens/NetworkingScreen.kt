@@ -53,7 +53,6 @@ fun NetworkingScreen(viewModel: TherapyViewModel) {
             }
         }
 
-        // Content based on selected tab
         when (selectedTab) {
             0 -> SupervisionTabContent(viewModel)
             1 -> IntervisionTabContent(viewModel)
@@ -72,26 +71,64 @@ fun SupervisionTabContent(viewModel: TherapyViewModel) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Summary Stats
+        // Summary Pills - matching iOS (4 pills)
         item {
-            val totalHours = viewModel.supervisionSessions.sumOf { it.hours }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                SummaryStatCard(
-                    title = "Hours",
-                    value = String.format("%.1f", totalHours),
-                    icon = Icons.Filled.Schedule,
+                SummaryPill(
+                    value = String.format("%.1f", viewModel.supervisionSessions.sumOf { it.hours }),
+                    label = "supervision hrs",
                     color = MidnightNavy,
                     modifier = Modifier.weight(1f)
                 )
-                SummaryStatCard(
-                    title = "Sessions",
+                SummaryPill(
                     value = "${viewModel.supervisionSessions.size}",
-                    icon = Icons.Filled.People,
+                    label = "sessions",
                     color = Champagne,
                     modifier = Modifier.weight(1f)
+                )
+                SummaryPill(
+                    value = "1.0",
+                    label = "intervision hrs",
+                    color = Warning,
+                    modifier = Modifier.weight(1f)
+                )
+                SummaryPill(
+                    value = "3",
+                    label = "discussions",
+                    color = Success,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+
+        // Browse Supervisors Button - matching iOS
+        item {
+            Button(
+                onClick = { },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MidnightNavy),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(
+                    Icons.Filled.People,
+                    contentDescription = null,
+                    tint = PearlWhite,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Browse Supervisors",
+                    color = PearlWhite,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    Icons.Filled.ChevronRight,
+                    contentDescription = null,
+                    tint = PearlWhite
                 )
             }
         }
@@ -120,8 +157,41 @@ fun SupervisionTabContent(viewModel: TherapyViewModel) {
             SupervisionSessionCard(session)
         }
 
-        // Bottom spacing for tab bar
         item { Spacer(modifier = Modifier.height(80.dp)) }
+    }
+}
+
+@Composable
+fun SummaryPill(
+    value: String,
+    label: String,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.height(70.dp),
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = TextSecondary
+            )
+        }
     }
 }
 
@@ -136,7 +206,6 @@ fun IntervisionTabContent(viewModel: TherapyViewModel) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Intervision Groups Header
         item {
             Text(
                 text = "Your Groups",
@@ -146,12 +215,10 @@ fun IntervisionTabContent(viewModel: TherapyViewModel) {
             )
         }
 
-        // Groups
         items(viewModel.intervisionGroups) { group ->
             IntervisionGroupCard(group)
         }
 
-        // Empty state if no groups
         if (viewModel.intervisionGroups.isEmpty()) {
             item {
                 Card(
@@ -187,43 +254,7 @@ fun IntervisionTabContent(viewModel: TherapyViewModel) {
             }
         }
 
-        // Bottom spacing for tab bar
         item { Spacer(modifier = Modifier.height(80.dp)) }
-    }
-}
-
-@Composable
-fun SummaryStatCard(
-    title: String,
-    value: String,
-    icon: ImageVector,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.height(100.dp),
-        colors = CardDefaults.cardColors(containerColor = CardBackground),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = title, style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = color
-            )
-        }
     }
 }
 

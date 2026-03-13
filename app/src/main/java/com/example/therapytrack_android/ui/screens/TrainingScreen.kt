@@ -1,6 +1,7 @@
 package com.example.therapytrack_android.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,8 +12,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.therapytrack_android.ui.theme.*
 
@@ -26,13 +29,12 @@ fun TrainingScreen() {
             .fillMaxSize()
             .background(SectionBackground)
     ) {
-        // Tab Selector
+        // Tab Selector - matching iOS
         TabRow(
             selectedTabIndex = selectedTab,
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .background(SectionBackground),
-            containerColor = SectionBackground,
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            containerColor = CardBackground,
             contentColor = MidnightNavy
         ) {
             tabs.forEachIndexed { index, title ->
@@ -88,7 +90,6 @@ fun ProfDevTab() {
             }
         }
 
-        // Upcoming Trainings Section
         item {
             Text(
                 text = "Upcoming Trainings",
@@ -106,7 +107,6 @@ fun ProfDevTab() {
             TrainingCard(training)
         }
 
-        // Credentials Section
         item {
             Text(
                 text = "Credentials",
@@ -124,10 +124,7 @@ fun ProfDevTab() {
             CredentialCard(credential)
         }
         
-        // Bottom spacing
-        item {
-            Spacer(modifier = Modifier.height(80.dp))
-        }
+        item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
@@ -150,12 +147,7 @@ fun StatCard(
                 .padding(12.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.size(20.dp)
-            )
+            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = value,
@@ -235,12 +227,7 @@ fun CredentialCard(credential: CredentialItem) {
                     .background(MidnightNavy.copy(alpha = 0.1f), RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    credential.icon,
-                    contentDescription = null,
-                    tint = MidnightNavy,
-                    modifier = Modifier.size(20.dp)
-                )
+                Icon(credential.icon, contentDescription = null, tint = MidnightNavy, modifier = Modifier.size(20.dp))
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -281,6 +268,157 @@ data class CredentialItem(
 
 @Composable
 fun ResourcesTab() {
+    var selectedSubTab by remember { mutableIntStateOf(0) }
+    val subTabs = listOf("Today", "Research", "Conferences", "Resources")
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Sub-tab picker - matching iOS exactly
+        TabRow(
+            selectedTabIndex = selectedSubTab,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            containerColor = CardBackground,
+            contentColor = MidnightNavy
+        ) {
+            subTabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedSubTab == index,
+                    onClick = { selectedSubTab = index },
+                    text = { Text(title, style = MaterialTheme.typography.labelSmall) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        when (selectedSubTab) {
+            0 -> TodayTipSection()
+            1 -> ResearchSection()
+            2 -> ConferencesSection()
+            3 -> ResourcesLibrarySection()
+        }
+    }
+}
+
+@Composable
+fun TodayTipSection() {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Daily Tip Card
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Champagne.copy(alpha = 0.15f)),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Filled.Lightbulb,
+                            contentDescription = null,
+                            tint = Color(0xFFE6B800),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Clinical Tip of the Day",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TextPrimary
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "When working with anxious patients, the 3-3-3 rule can help ground them: Name 3 things you see, 3 sounds you hear, and move 3 parts of your body.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextPrimary
+                    )
+                }
+            }
+        }
+
+        item {
+            Text(
+                text = "Quick Access",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary
+            )
+        }
+
+        items(listOf(
+            QuickAccessItem("Assessment Tools", Icons.Filled.Assessment),
+            QuickAccessItem("Session Notes Templates", Icons.Filled.Description),
+            QuickAccessItem("Crisis Protocols", Icons.Filled.Warning),
+            QuickAccessItem("Insurance Forms", Icons.Filled.Policy)
+        )) { item ->
+            QuickAccessCard(item)
+        }
+
+        item { Spacer(modifier = Modifier.height(80.dp)) }
+    }
+}
+
+@Composable
+fun ResearchSection() {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            Text(
+                text = "Latest Research",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary
+            )
+        }
+
+        items(listOf(
+            ResearchItem("The Therapeutic Alliance in Remote Psychotherapy", "Smith et al.", "Journal of Clinical Psychology"),
+            ResearchItem("EMDR vs CBT for PTSD: A Meta-Analysis", "Johnson & Williams", "Psychology Review"),
+            ResearchItem("Digital Therapeutics in Mental Health", "Garcia et al.", "Nature Digital Medicine")
+        )) { item ->
+            ResearchCard(item)
+        }
+
+        item { Spacer(modifier = Modifier.height(80.dp)) }
+    }
+}
+
+@Composable
+fun ConferencesSection() {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            Text(
+                text = "Upcoming Conferences",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary
+            )
+        }
+
+        items(listOf(
+            ConferenceItem("European Psychology Congress", "Amsterdam", "June 15-18, 2026"),
+            ConferenceItem("EMDR Europe Annual Conference", "Lisbon", "September 10-12, 2026"),
+            ConferenceItem("World Congress of Psychotherapy", "Paris", "November 5-8, 2026")
+        )) { item ->
+            ConferenceCard(item)
+        }
+
+        item { Spacer(modifier = Modifier.height(80.dp)) }
+    }
+}
+
+@Composable
+fun ResourcesLibrarySection() {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -306,12 +444,104 @@ fun ResourcesTab() {
             ResourceCard(resource)
         }
         
-        // Bottom spacing
-        item {
-            Spacer(modifier = Modifier.height(80.dp))
+        item { Spacer(modifier = Modifier.height(80.dp)) }
+    }
+}
+
+// Quick Access Components
+data class QuickAccessItem(val title: String, val icon: ImageVector)
+
+@Composable
+fun QuickAccessCard(item: QuickAccessItem) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(item.icon, contentDescription = null, tint = MidnightNavy, modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium,
+                color = TextPrimary,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(Icons.Filled.ChevronRight, contentDescription = null, tint = TextTertiary)
         }
     }
 }
+
+// Research Components
+data class ResearchItem(val title: String, val authors: String, val journal: String)
+
+@Composable
+fun ResearchCard(item: ResearchItem) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium,
+                color = TextPrimary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "${item.authors} • ${item.journal}",
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary
+            )
+        }
+    }
+}
+
+// Conference Components
+data class ConferenceItem(val name: String, val location: String, val date: String)
+
+@Composable
+fun ConferenceCard(item: ConferenceItem) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPrimary
+                )
+                Text(
+                    text = "${item.location} • ${item.date}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary
+                )
+            }
+            Icon(Icons.Filled.ChevronRight, contentDescription = null, tint = TextTertiary)
+        }
+    }
+}
+
+// Resource Components
+data class ResourceItem(val title: String, val type: String, val icon: ImageVector)
 
 @Composable
 fun ResourceCard(resource: ResourceItem) {
@@ -326,12 +556,7 @@ fun ResourceCard(resource: ResourceItem) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                resource.icon,
-                contentDescription = null,
-                tint = MidnightNavy,
-                modifier = Modifier.size(24.dp)
-            )
+            Icon(resource.icon, contentDescription = null, tint = MidnightNavy, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = resource.title,
@@ -354,5 +579,3 @@ fun ResourceCard(resource: ResourceItem) {
         }
     }
 }
-
-data class ResourceItem(val title: String, val type: String, val icon: ImageVector)

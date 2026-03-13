@@ -89,30 +89,6 @@ fun ProfileScreen() {
             }
         }
 
-        // Stats Row
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                ProfileStatCard(
-                    label = "Patients",
-                    value = "6",
-                    modifier = Modifier.weight(1f)
-                )
-                ProfileStatCard(
-                    label = "Sessions",
-                    value = "71",
-                    modifier = Modifier.weight(1f)
-                )
-                ProfileStatCard(
-                    label = "Supervisions",
-                    value = "4",
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
         // Personal Information Section
         item {
             ProfileSection(title = "Personal Information") {
@@ -166,6 +142,35 @@ fun ProfileScreen() {
             }
         }
 
+        // Legal Section - ADDED to match iOS
+        item {
+            ProfileSection(title = "Legal") {
+                SettingsItem(
+                    icon = Icons.Filled.Description,
+                    title = "Documentation",
+                    subtitle = "Terms of service"
+                )
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                SettingsItem(
+                    icon = Icons.Filled.Gavel,
+                    title = "Terms of Service",
+                    subtitle = "Usage terms"
+                )
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                SettingsItem(
+                    icon = Icons.Filled.PrivacyTip,
+                    title = "Privacy Policy",
+                    subtitle = "Data protection"
+                )
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                SettingsItem(
+                    icon = Icons.Filled.Warning,
+                    title = "Disclaimers",
+                    subtitle = "Medical disclaimers"
+                )
+            }
+        }
+
         // Support Section
         item {
             ProfileSection(title = "Support") {
@@ -198,38 +203,7 @@ fun ProfileScreen() {
             }
         }
         
-        // Bottom spacing
-        item {
-            Spacer(modifier = Modifier.height(80.dp))
-        }
-    }
-}
-
-@Composable
-fun ProfileStatCard(label: String, value: String, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = CardBackground),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MidnightNavy
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary
-            )
-        }
+        item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
@@ -251,9 +225,7 @@ fun ProfileSection(
             colors = CardDefaults.cardColors(containerColor = CardBackground),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 content()
             }
         }

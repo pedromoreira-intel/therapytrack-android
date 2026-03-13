@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.therapytrack_android.data.model.Patient
 import com.example.therapytrack_android.data.model.Session
@@ -33,7 +34,6 @@ fun HomeScreen(
     onNavigateToNetworking: () -> Unit = {},
     onNavigateToTraining: () -> Unit = {}
 ) {
-    
     LaunchedEffect(Unit) {
         if (viewModel.patients.isEmpty()) {
             viewModel.fetchAll()
@@ -41,12 +41,10 @@ fun HomeScreen(
     }
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(0.dp),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        // Header with gradient
+        // Header with gradient - matching iOS exactly
         item {
             Column(
                 modifier = Modifier
@@ -72,11 +70,9 @@ fun HomeScreen(
             }
         }
 
-        // Quick Actions
+        // Quick Actions - iOS style: 4 buttons in 2x2 grid
         item {
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)
-            ) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
                 Text(
                     text = "Quick Actions",
                     style = MaterialTheme.typography.titleMedium,
@@ -92,23 +88,16 @@ fun HomeScreen(
                 ) {
                     QuickActionCard(
                         icon = Icons.Filled.CalendarMonth,
-                        label = "Schedule",
+                        label = "Schedule\nSession",
                         color = MidnightNavy,
                         onClick = onNavigateToSchedule,
                         modifier = Modifier.weight(1f)
                     )
                     QuickActionCard(
-                        icon = Icons.Filled.People,
-                        label = "Patients",
+                        icon = Icons.Filled.PersonAdd,
+                        label = "Add\nPatient",
                         color = Color(0xFFD4A84B),
                         onClick = onNavigateToPatients,
-                        modifier = Modifier.weight(1f)
-                    )
-                    QuickActionCard(
-                        icon = Icons.Filled.Message,
-                        label = "Messages",
-                        color = DustyRose,
-                        onClick = onNavigateToMessages,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -120,64 +109,31 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     QuickActionCard(
-                        icon = Icons.Filled.SupervisorAccount,
-                        label = "Networking",
-                        color = Champagne,
-                        onClick = onNavigateToNetworking,
+                        icon = Icons.Filled.Note,
+                        label = "Session\nNotes",
+                        color = Color(0xFFC97875),
+                        onClick = { },
                         modifier = Modifier.weight(1f)
                     )
                     QuickActionCard(
-                        icon = Icons.Filled.School,
-                        label = "Training",
+                        icon = Icons.Filled.BarChart,
+                        label = "View\nReports",
                         color = Success,
-                        onClick = onNavigateToTraining,
+                        onClick = { },
                         modifier = Modifier.weight(1f)
                     )
                 }
             }
         }
 
-        // Quick Stats
+        // Upcoming Events - matching iOS
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                StatCard(
-                    title = "Patients",
-                    value = "${viewModel.patients.size}",
-                    color = MidnightNavy,
-                    onClick = onNavigateToPatients,
-                    modifier = Modifier.weight(1f)
-                )
-                StatCard(
-                    title = "Sessions",
-                    value = "${viewModel.sessions.size}",
-                    color = DustyRose,
-                    onClick = onNavigateToSchedule,
-                    modifier = Modifier.weight(1f)
-                )
-                StatCard(
-                    title = "Supervisions",
-                    value = "${viewModel.supervisionSessions.size}",
-                    color = Champagne,
-                    onClick = { },
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
-        // Upcoming Events
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable { onNavigateToSchedule() }
-            ) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToSchedule() }
+                        .padding(vertical = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -208,7 +164,28 @@ fun HomeScreen(
             SessionCard(session = session, onClick = onNavigateToSchedule)
         }
 
-        // Recent Patients
+        // High Risk Patients - matching iOS
+        item {
+            val highRiskPatients = viewModel.patients.filter { it.risk_level == "HIGH" }
+            if (highRiskPatients.isNotEmpty()) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "High Risk",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Critical,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    
+                    highRiskPatients.take(3).forEach { patient ->
+                        HighRiskPatientCard(patient = patient, onClick = onNavigateToPatients)
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+            }
+        }
+
+        // Recent Patients - matching iOS
         item {
             Column(
                 modifier = Modifier
@@ -246,11 +223,57 @@ fun HomeScreen(
         items(viewModel.patients.take(4)) { patient ->
             PatientCard(patient = patient, onClick = onNavigateToPatients)
         }
+
+        // Paper of the Day - matching iOS
+        item {
+            PaperOfTheDayCard(onClick = { })
+        }
+
+        // Recent Messages - matching iOS
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable { onNavigateToMessages() }
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Messages",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "See all",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MidnightNavy
+                        )
+                        Icon(
+                            Icons.Filled.ChevronRight,
+                            contentDescription = null,
+                            tint = MidnightNavy,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // Sample messages
+        items(listOf(
+            MessagePreview("John Doe", "Thank you for the session...", "2h ago"),
+            MessagePreview("Jane Smith", "I completed the homework", "5h ago")
+        )) { message ->
+            MessagePreviewCard(message = message, onClick = onNavigateToMessages)
+        }
         
         // Bottom spacing for navigation bar
-        item {
-            Spacer(modifier = Modifier.height(80.dp))
-        }
+        item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
@@ -276,55 +299,13 @@ fun QuickActionCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.size(24.dp)
-            )
+            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
                 color = color,
                 fontWeight = FontWeight.Medium
-            )
-        }
-    }
-}
-
-@Composable
-fun StatCard(
-    title: String,
-    value: String,
-    color: Color,
-    onClick: () -> Unit = {},
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .height(80.dp)
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = color
-            )
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary
             )
         }
     }
@@ -372,6 +353,57 @@ fun SessionCard(session: Session, onClick: () -> Unit = {}) {
                     color = Success
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun HighRiskPatientCard(patient: Patient, onClick: () -> Unit = {}) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = Critical.copy(alpha = 0.08f)),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(Critical.copy(alpha = 0.15f), RoundedCornerShape(20.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = patient.name.split(" ").map { it.first() }.take(2).joinToString(""),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = Critical
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = patient.name,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = "High Risk",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Critical,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+            Icon(Icons.Filled.Warning, contentDescription = null, tint = Critical)
         }
     }
 }
@@ -429,6 +461,118 @@ fun StatusChip(status: String, riskLevel: String?) {
             style = MaterialTheme.typography.labelSmall,
             color = color
         )
+    }
+}
+
+@Composable
+fun PaperOfTheDayCard(onClick: () -> Unit = {}) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Filled.MenuBook,
+                    contentDescription = null,
+                    tint = Champagne,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Paper of the Day",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "The Therapeutic Alliance in Remote Psychotherapy",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium,
+                color = MidnightNavy
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Smith et al. (2024) • Journal of Clinical Psychology",
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "A systematic review of therapeutic alliance measures in video-based therapy sessions...",
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+data class MessagePreview(val name: String, val preview: String, val time: String)
+
+@Composable
+fun MessagePreviewCard(message: MessagePreview, onClick: () -> Unit = {}) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(MidnightNavy.copy(alpha = 0.1f), RoundedCornerShape(24.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = message.name.split(" ").map { it.first() }.joinToString(""),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MidnightNavy
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = message.name,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = message.time,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TextTertiary
+                    )
+                }
+                Text(
+                    text = message.preview,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
     }
 }
 

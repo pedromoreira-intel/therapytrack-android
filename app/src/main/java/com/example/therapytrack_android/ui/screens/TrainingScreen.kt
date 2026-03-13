@@ -1,16 +1,20 @@
 package com.example.therapytrack_android.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.therapytrack_android.ui.theme.*
 
 @Composable
 fun TrainingScreen() {
@@ -20,17 +24,17 @@ fun TrainingScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(SectionBackground)
     ) {
-        Text(
-            text = "Training",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TabRow(selectedTabIndex = selectedTab) {
+        // Tab Selector
+        TabRow(
+            selectedTabIndex = selectedTab,
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .background(SectionBackground),
+            containerColor = SectionBackground,
+            contentColor = MidnightNavy
+        ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTab == index,
@@ -39,8 +43,6 @@ fun TrainingScreen() {
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         when (selectedTab) {
             0 -> ProfDevTab()
@@ -52,30 +54,131 @@ fun TrainingScreen() {
 @Composable
 fun ProfDevTab() {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Stats
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                StatCard(
+                    title = "Trainings",
+                    value = "4",
+                    icon = Icons.Filled.School,
+                    color = MidnightNavy,
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard(
+                    title = "Credentials",
+                    value = "2",
+                    icon = Icons.Filled.Verified,
+                    color = Champagne,
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard(
+                    title = "Credits",
+                    value = "24",
+                    icon = Icons.Filled.Stars,
+                    color = DustyRose,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+
+        // Upcoming Trainings Section
         item {
             Text(
                 text = "Upcoming Trainings",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary
             )
         }
-        
+
         items(listOf(
-            TrainingItem("CBT Advanced Techniques", "March 15, 2026", "Online"),
-            TrainingItem("EMDR Basic Training", "March 20, 2026", "Lisbon"),
-            TrainingItem("Trauma-Informed Care", "March 25, 2026", "Online"),
-            TrainingItem("Child Psychology Update", "April 1, 2026", "Online")
+            TrainingItem("CBT Advanced Techniques", "March 15, 2026", "Online", "Certificate"),
+            TrainingItem("EMDR Basic Training", "March 20, 2026", "Lisbon", "Certification"),
+            TrainingItem("Trauma-Informed Care", "March 25, 2026", "Online", "Workshop")
         )) { training ->
             TrainingCard(training)
+        }
+
+        // Credentials Section
+        item {
+            Text(
+                text = "Credentials",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+
+        items(listOf(
+            CredentialItem("Psychologist", "12345", "Portugal", "Active", Icons.Filled.Badge),
+            CredentialItem("EMDR Practitioner", "EMDR-001", "Europe", "Active", Icons.Filled.VerifiedUser)
+        )) { credential ->
+            CredentialCard(credential)
+        }
+        
+        // Bottom spacing
+        item {
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+    }
+}
+
+@Composable
+fun StatCard(
+    title: String,
+    value: String,
+    icon: ImageVector,
+    color: androidx.compose.ui.graphics.Color,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.height(90.dp),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary
+            )
         }
     }
 }
 
 @Composable
 fun TrainingCard(training: TrainingItem) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,42 +189,109 @@ fun TrainingCard(training: TrainingItem) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = training.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPrimary
                 )
                 Text(
                     text = training.date,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = TextSecondary
                 )
             }
             Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = MaterialTheme.shapes.small
+                color = MidnightNavy.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(6.dp)
             ) {
                 Text(
                     text = training.location,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MidnightNavy
                 )
             }
         }
     }
 }
 
-data class TrainingItem(val title: String, val date: String, val location: String)
+data class TrainingItem(val title: String, val date: String, val location: String, val type: String)
+
+@Composable
+fun CredentialCard(credential: CredentialItem) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(MidnightNavy.copy(alpha = 0.1f), RoundedCornerShape(10.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    credential.icon,
+                    contentDescription = null,
+                    tint = MidnightNavy,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = credential.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPrimary
+                )
+                Text(
+                    text = "${credential.number} • ${credential.state}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary
+                )
+            }
+            Surface(
+                color = Success.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(6.dp)
+            ) {
+                Text(
+                    text = credential.status,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Success
+                )
+            }
+        }
+    }
+}
+
+data class CredentialItem(
+    val title: String,
+    val number: String,
+    val state: String,
+    val status: String,
+    val icon: ImageVector
+)
 
 @Composable
 fun ResourcesTab() {
     LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
             Text(
                 text = "Learning Resources",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary
             )
         }
 
@@ -130,17 +300,26 @@ fun ResourcesTab() {
             ResourceItem("DSM-5 Quick Reference", "PDF", Icons.Filled.PictureAsPdf),
             ResourceItem("CBT Techniques Handbook", "PDF", Icons.Filled.PictureAsPdf),
             ResourceItem("EMDR Protocol", "PDF", Icons.Filled.PictureAsPdf),
-            ResourceItem("Therapy Notes Template", "DOCX", Icons.Filled.Description),
-            ResourceItem("Consent Form Template", "DOCX", Icons.Filled.Description)
+            ResourceItem("Therapy Notes Template", "DOC", Icons.Filled.Description),
+            ResourceItem("Consent Form Template", "DOC", Icons.Filled.Description)
         )) { resource ->
             ResourceCard(resource)
+        }
+        
+        // Bottom spacing
+        item {
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
 
 @Composable
 fun ResourceCard(resource: ResourceItem) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -150,29 +329,30 @@ fun ResourceCard(resource: ResourceItem) {
             Icon(
                 resource.icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MidnightNavy,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = resource.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+            Text(
+                text = resource.title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium,
+                color = TextPrimary,
+                modifier = Modifier.weight(1f)
+            )
             Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = MaterialTheme.shapes.small
+                color = SectionBackground,
+                shape = RoundedCornerShape(6.dp)
             ) {
                 Text(
                     text = resource.type,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    style = MaterialTheme.typography.labelSmall
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TextSecondary
                 )
             }
         }
     }
 }
 
-data class ResourceItem(val title: String, val type: String, val icon: androidx.compose.ui.graphics.vector.ImageVector)
+data class ResourceItem(val title: String, val type: String, val icon: ImageVector)

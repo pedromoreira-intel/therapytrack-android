@@ -1,21 +1,38 @@
 package com.example.therapytrack_android.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.therapytrack_android.data.model.Patient
 import com.example.therapytrack_android.data.model.Session
+import com.example.therapytrack_android.ui.theme.*
 import com.example.therapytrack_android.ui.viewmodel.TherapyViewModel
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.*
 
 @Composable
-fun HomeScreen(viewModel: TherapyViewModel) {
+fun HomeScreen(
+    viewModel: TherapyViewModel,
+    onNavigateToSchedule: () -> Unit = {},
+    onNavigateToPatients: () -> Unit = {},
+    onNavigateToMessages: () -> Unit = {},
+    onNavigateToNetworking: () -> Unit = {},
+    onNavigateToTraining: () -> Unit = {}
+) {
     
     LaunchedEffect(Unit) {
         if (viewModel.patients.isEmpty()) {
@@ -26,100 +43,277 @@ fun HomeScreen(viewModel: TherapyViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(0.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        // Welcome Header
+        // Header with gradient
         item {
-            Text(
-                text = "Welcome back, Dr. Smith",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(MidnightNavy, Color(0xFF243B71))
+                        )
+                    )
+                    .padding(24.dp)
+            ) {
+                Text(
+                    text = getGreeting(),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = PearlWhite
+                )
+                Text(
+                    text = getTodayDate(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = PearlWhite.copy(alpha = 0.65f)
+                )
+            }
+        }
+
+        // Quick Actions
+        item {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)
+            ) {
+                Text(
+                    text = "Quick Actions",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary
+                )
+                
+                Spacer(modifier = Modifier.height(14.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    QuickActionCard(
+                        icon = Icons.Filled.CalendarMonth,
+                        label = "Schedule",
+                        color = MidnightNavy,
+                        onClick = onNavigateToSchedule,
+                        modifier = Modifier.weight(1f)
+                    )
+                    QuickActionCard(
+                        icon = Icons.Filled.People,
+                        label = "Patients",
+                        color = Color(0xFFD4A84B),
+                        onClick = onNavigateToPatients,
+                        modifier = Modifier.weight(1f)
+                    )
+                    QuickActionCard(
+                        icon = Icons.Filled.Message,
+                        label = "Messages",
+                        color = DustyRose,
+                        onClick = onNavigateToMessages,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    QuickActionCard(
+                        icon = Icons.Filled.SupervisorAccount,
+                        label = "Networking",
+                        color = Champagne,
+                        onClick = onNavigateToNetworking,
+                        modifier = Modifier.weight(1f)
+                    )
+                    QuickActionCard(
+                        icon = Icons.Filled.School,
+                        label = "Training",
+                        color = Success,
+                        onClick = onNavigateToTraining,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
         }
 
         // Quick Stats
         item {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 StatCard(
                     title = "Patients",
                     value = "${viewModel.patients.size}",
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MidnightNavy,
+                    onClick = onNavigateToPatients,
                     modifier = Modifier.weight(1f)
                 )
                 StatCard(
-                    title = "Sessions Today",
-                    value = "${viewModel.sessions.count { it.session_date.startsWith("2026-03-09") }}",
-                    color = MaterialTheme.colorScheme.secondary,
+                    title = "Sessions",
+                    value = "${viewModel.sessions.size}",
+                    color = DustyRose,
+                    onClick = onNavigateToSchedule,
                     modifier = Modifier.weight(1f)
                 )
                 StatCard(
                     title = "Supervisions",
                     value = "${viewModel.supervisionSessions.size}",
-                    color = MaterialTheme.colorScheme.tertiary,
+                    color = Champagne,
+                    onClick = { },
                     modifier = Modifier.weight(1f)
                 )
             }
         }
 
-        // Upcoming Sessions
+        // Upcoming Events
         item {
-            Text(
-                text = "Upcoming Sessions",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-
-        if (viewModel.sessions.isEmpty()) {
-            item {
-                Card(
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable { onNavigateToSchedule() }
+            ) {
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "No upcoming sessions",
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Upcoming",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary
                     )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "See full schedule",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MidnightNavy
+                        )
+                        Icon(
+                            Icons.Filled.ChevronRight,
+                            contentDescription = null,
+                            tint = MidnightNavy,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
             }
-        } else {
-            items(viewModel.sessions.take(5)) { session ->
-                SessionCard(session = session)
+        }
+
+        items(viewModel.sessions.take(3)) { session ->
+            SessionCard(session = session, onClick = onNavigateToSchedule)
+        }
+
+        // Recent Patients
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable { onNavigateToPatients() }
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Patients",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "See all",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MidnightNavy
+                        )
+                        Icon(
+                            Icons.Filled.ChevronRight,
+                            contentDescription = null,
+                            tint = MidnightNavy,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
             }
         }
 
-        // Patients
-        item {
-            Text(
-                text = "Recent Patients",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+        items(viewModel.patients.take(4)) { patient ->
+            PatientCard(patient = patient, onClick = onNavigateToPatients)
         }
-
-        items(viewModel.patients.take(5)) { patient ->
-            PatientCard(patient = patient)
+        
+        // Bottom spacing for navigation bar
+        item {
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
 
 @Composable
-fun StatCard(title: String, value: String, color: Color, modifier: Modifier = Modifier) {
+fun QuickActionCard(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    color: Color,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f))
+        modifier = modifier
+            .height(80.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = color,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+fun StatCard(
+    title: String,
+    value: String,
+    color: Color,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .height(80.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = value,
@@ -130,16 +324,21 @@ fun StatCard(title: String, value: String, color: Color, modifier: Modifier = Mo
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = TextSecondary
             )
         }
     }
 }
 
 @Composable
-fun SessionCard(session: Session) {
+fun SessionCard(session: Session, onClick: () -> Unit = {}) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Row(
             modifier = Modifier
@@ -151,28 +350,41 @@ fun SessionCard(session: Session) {
             Column {
                 Text(
                     text = session.patient_name ?: "Patient",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPrimary
                 )
                 Text(
                     text = formatSessionDate(session.session_date),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = TextSecondary
                 )
             }
-            Text(
-                text = "${session.duration_minutes ?: 60} min",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = "${session.duration_minutes ?: 60} min",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MidnightNavy
+                )
+                Text(
+                    text = session.status.replaceFirstChar { it.uppercase() },
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Success
+                )
+            }
         }
     }
 }
 
 @Composable
-fun PatientCard(patient: Patient) {
+fun PatientCard(patient: Patient, onClick: () -> Unit = {}) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Row(
             modifier = Modifier
@@ -184,13 +396,14 @@ fun PatientCard(patient: Patient) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = patient.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPrimary
                 )
                 Text(
                     text = patient.diagnosis ?: "No diagnosis",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = TextSecondary
                 )
             }
             StatusChip(status = patient.status, riskLevel = patient.risk_level)
@@ -201,17 +414,17 @@ fun PatientCard(patient: Patient) {
 @Composable
 fun StatusChip(status: String, riskLevel: String?) {
     val color = when (riskLevel) {
-        "HIGH" -> MaterialTheme.colorScheme.error
-        "MEDIUM" -> MaterialTheme.colorScheme.tertiary
-        else -> MaterialTheme.colorScheme.primary
+        "HIGH" -> Critical
+        "MEDIUM" -> Warning
+        else -> Success
     }
     
     Surface(
         color = color.copy(alpha = 0.1f),
-        shape = MaterialTheme.shapes.small
+        shape = RoundedCornerShape(6.dp)
     ) {
         Text(
-            text = status,
+            text = status.replaceFirstChar { it.uppercase() },
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelSmall,
             color = color
@@ -219,10 +432,29 @@ fun StatusChip(status: String, riskLevel: String?) {
     }
 }
 
+fun getGreeting(): String {
+    val hour = java.time.LocalTime.now().hour
+    return when (hour) {
+        in 0..11 -> "Good morning"
+        in 12..16 -> "Good afternoon"
+        else -> "Good evening"
+    }
+}
+
+fun getTodayDate(): String {
+    val today = LocalDate.now()
+    val dayName = today.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+    val day = today.dayOfMonth
+    val month = today.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+    return "$dayName, $day $month"
+}
+
 fun formatSessionDate(isoString: String): String {
     return try {
-        // Simple formatting - just show date part for now
-        isoString.replace("T", " ").substringBefore("Z").take(16)
+        val date = LocalDate.parse(isoString.substringBefore("T"))
+        val time = isoString.substringAfter("T").substringBefore("Z").take(5)
+        val dayName = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+        "$dayName, ${date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${date.dayOfMonth} at $time"
     } catch (e: Exception) {
         isoString
     }

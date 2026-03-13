@@ -1,39 +1,38 @@
 package com.example.therapytrack_android.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.therapytrack_android.ui.theme.*
 
 @Composable
 fun ProfileScreen() {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .background(SectionBackground),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        item {
-            Text(
-                text = "Profile",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        // Profile Card
+        // Profile Header Card
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                colors = CardDefaults.cardColors(containerColor = CardBackground),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -41,44 +40,56 @@ fun ProfileScreen() {
                         .padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Surface(
-                        modifier = Modifier.size(64.dp),
-                        shape = MaterialTheme.shapes.medium,
-                        color = MaterialTheme.colorScheme.primary
+                    Box(
+                        modifier = Modifier
+                            .size(68.dp)
+                            .clip(CircleShape)
+                            .background(MidnightNavy.copy(alpha = 0.12f)),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                Icons.Filled.Person,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
+                        Icon(
+                            Icons.Filled.Person,
+                            contentDescription = null,
+                            tint = MidnightNavy,
+                            modifier = Modifier.size(36.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "Dr. Sarah Smith",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TextPrimary
                         )
                         Text(
                             text = "Clinical Psychologist",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                            color = TextSecondary
                         )
                         Text(
                             text = "therapist@therapytrack.com",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                            color = TextSecondary
+                        )
+                    }
+                    Surface(
+                        color = MidnightNavy.copy(alpha = 0.12f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Therapist",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MidnightNavy,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                         )
                     }
                 }
             }
         }
 
-        // Stats
+        // Stats Row
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -102,60 +113,94 @@ fun ProfileScreen() {
             }
         }
 
-        // Settings
+        // Personal Information Section
         item {
-            Text(
-                text = "Settings",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
+            ProfileSection(title = "Personal Information") {
+                ProfileInfoRow(label = "Name", value = "Dr. Sarah Smith")
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                ProfileInfoRow(label = "Email", value = "therapist@therapytrack.com")
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                ProfileInfoRow(label = "Phone", value = "+351 912 345 678")
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                ProfileInfoRow(label = "License", value = "PSY-12345")
+            }
         }
 
+        // Professional Details Section
         item {
-            SettingsItem(
-                icon = Icons.Filled.Notifications,
-                title = "Notifications",
-                subtitle = "Manage notifications"
-            )
+            ProfileSection(title = "Professional Details") {
+                ProfileInfoRow(label = "Title", value = "Clinical Psychologist")
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                ProfileInfoRow(label = "Specialization", value = "Anxiety, Depression, PTSD")
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                ProfileInfoRow(label = "Location", value = "Lisbon, Portugal")
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                ProfileInfoRow(label = "Timezone", value = "Europe/Lisbon (WET)")
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                ProfileInfoRow(label = "Languages", value = "English, Portuguese")
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                ProfileInfoRow(label = "Experience", value = "8 years")
+            }
         }
 
+        // App Settings Section
         item {
-            SettingsItem(
-                icon = Icons.Filled.Lock,
-                title = "Privacy",
-                subtitle = "Privacy settings"
-            )
+            ProfileSection(title = "App Settings") {
+                SettingsItem(
+                    icon = Icons.Filled.Notifications,
+                    title = "Notifications",
+                    subtitle = "Manage notifications"
+                )
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                SettingsItem(
+                    icon = Icons.Filled.Lock,
+                    title = "Privacy",
+                    subtitle = "Privacy settings"
+                )
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                SettingsItem(
+                    icon = Icons.Filled.Language,
+                    title = "Language",
+                    subtitle = "English"
+                )
+            }
         }
 
+        // Support Section
         item {
-            SettingsItem(
-                icon = Icons.Filled.Help,
-                title = "Help & Support",
-                subtitle = "Get help"
-            )
+            ProfileSection(title = "Support") {
+                SettingsItem(
+                    icon = Icons.Filled.Help,
+                    title = "Help & Support",
+                    subtitle = "Get help"
+                )
+                HorizontalDivider(color = SectionBackground, thickness = 1.dp)
+                SettingsItem(
+                    icon = Icons.Filled.Info,
+                    title = "About",
+                    subtitle = "Version 1.0.0"
+                )
+            }
         }
 
+        // Sign Out Button
         item {
-            SettingsItem(
-                icon = Icons.Filled.Info,
-                title = "About",
-                subtitle = "Version 1.0.0"
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedButton(
                 onClick = { /* Logout */ },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error
-                )
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Critical),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(Icons.Filled.Logout, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Sign Out")
             }
+        }
+        
+        // Bottom spacing
+        item {
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
@@ -164,9 +209,8 @@ fun ProfileScreen() {
 fun ProfileStatCard(label: String, value: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Column(
             modifier = Modifier
@@ -178,56 +222,103 @@ fun ProfileStatCard(label: String, value: String, modifier: Modifier = Modifier)
                 text = value,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MidnightNavy
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = TextSecondary
             )
         }
     }
 }
 
 @Composable
+fun ProfileSection(
+    title: String,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = TextPrimary,
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = CardBackground),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+@Composable
+fun ProfileInfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextSecondary
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            color = TextPrimary
+        )
+    }
+}
+
+@Composable
 fun SettingsItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     title: String,
     subtitle: String
 ) {
-    Card(
-        onClick = { /* Navigate */ },
-        modifier = Modifier.fillMaxWidth()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { }
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = MidnightNavy,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium,
+                color = TextPrimary
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Icon(
-                Icons.Filled.ChevronRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary
             )
         }
+        Icon(
+            Icons.Filled.ChevronRight,
+            contentDescription = null,
+            tint = TextTertiary
+        )
     }
 }

@@ -6,14 +6,17 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.therapytrack_android.ui.navigation.Screen
+import com.example.therapytrack_android.ui.navigation.therapistBottomNavItems
 import com.example.therapytrack_android.ui.screens.*
 import com.example.therapytrack_android.ui.theme.Therapytrack_androidTheme
 import com.example.therapytrack_android.ui.viewmodel.TherapyViewModel
@@ -22,60 +25,86 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
+        val viewModel = TherapyViewModel()
+        
         setContent {
             Therapytrack_androidTheme {
-                MainScreen()
+                MainScreen(viewModel)
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    var selectedTab by remember { mutableIntStateOf(0) }
-    val viewModel: TherapyViewModel = viewModel()
-
-    val tabs = listOf(
-        TabItem("Home", Icons.Filled.Home, Icons.Outlined.Home),
-        TabItem("Schedule", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
-        TabItem("Supervision", Icons.Filled.SupervisorAccount, Icons.Outlined.SupervisorAccount),
-        TabItem("Training", Icons.Filled.School, Icons.Outlined.School),
-        TabItem("Profile", Icons.Filled.Person, Icons.Outlined.Person)
-    )
-
+fun MainScreen(viewModel: TherapyViewModel) {
+    val navController = rememberNavController()
+    
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
-                tabs.forEachIndexed { index, tab ->
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                
+                therapistBottomNavItems.forEach { item ->
                     NavigationBarItem(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
+                        selected = currentDestination?.hierarchy?.any { it.route == item.screen.route } == true,
+                        onClick = {
+                            navController.navigate(item.screen.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
                         icon = {
                             Icon(
-                                if (selectedTab == index) tab.selectedIcon else tab.unselectedIcon,
-                                contentDescription = tab.title
+                                if (currentDestination?.hierarchy?.any { it.route == item.screen.route } == true) 
+                                    item.selectedIcon else item.unselectedIcon,
+                                contentDescription = item.title
                             )
                         },
-                        label = { Text(tab.title) }
+                        label = { Text(item.title) }
                     )
                 }
             }
         }
     ) { innerPadding ->
-        when (selectedTab) {
-            0 -> HomeScreen(viewModel)
-            1 -> ScheduleScreen(viewModel)
-            2 -> SupervisionScreen(viewModel)
-            3 -> TrainingScreen()
-            4 -> ProfileScreen()
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Home.route,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    viewModel = viewModel,
+                    onNavigateToSchedule = { navController.navigate(Screen.Schedule.route) },
+                    onNavigateToPatients = { navController.navigate(Screen.Patients.route) },
+                    onNavigateToMessages = { navController.navigate(Screen.Messages.route) },
+                    onNavigateToNetworking = { navController.navigate(Screen.Networking.route) },
+                    onNavigateToTraining = { navController.navigate(Screen.Training.route) }
+                )
+            }
+            composable(Screen.Schedule.route) {
+                ScheduleScreen(viewModel)
+            }
+            composable(Screen.Networking.route) {
+                NetworkingScreen(viewModel)
+            }
+            composable(Screen.Training.route) {
+                TrainingScreen()
+            }
+            composable(Screen.Profile.route) {
+                ProfileScreen()
+            }
+            composable(Screen.Patients.route) {
+                PatientsScreen(viewModel)
+            }
+            composable(Screen.Messages.route) {
+                MessagesScreen(viewModel)
+            }
         }
     }
 }
-
-data class TabItem(
-    val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector
-)

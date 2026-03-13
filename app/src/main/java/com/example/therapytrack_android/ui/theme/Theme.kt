@@ -5,49 +5,95 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = MidnightNavy,
+    onPrimary = PearlWhite,
+    primaryContainer = MidnightNavy.copy(alpha = 0.1f),
+    onPrimaryContainer = MidnightNavy,
+    
+    secondary = DustyRose,
+    onSecondary = MidnightNavy,
+    secondaryContainer = DustyRose.copy(alpha = 0.15f),
+    onSecondaryContainer = MidnightNavy,
+    
+    tertiary = Champagne,
+    onTertiary = MidnightNavy,
+    tertiaryContainer = Champagne.copy(alpha = 0.2f),
+    onTertiaryContainer = MidnightNavy,
+    
+    error = Critical,
+    onError = Color.White,
+    errorContainer = Critical.copy(alpha = 0.1f),
+    onErrorContainer = Critical,
+    
+    background = PearlWhite,
+    onBackground = TextPrimary,
+    
+    surface = CardBackground,
+    onSurface = TextPrimary,
+    surfaceVariant = SectionBackground,
+    onSurfaceVariant = TextSecondary,
+    
+    outline = Neutral,
+    outlineVariant = Color(0xFFE0E0E0)
+)
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkColorScheme = darkColorScheme(
+    primary = Champagne,
+    onPrimary = MidnightNavy,
+    primaryContainer = MidnightNavy.copy(alpha = 0.3f),
+    onPrimaryContainer = Champagne,
+    
+    secondary = DustyRose,
+    onSecondary = MidnightNavy,
+    secondaryContainer = DustyRose.copy(alpha = 0.2f),
+    onSecondaryContainer = DustyRose,
+    
+    tertiary = Champagne,
+    onTertiary = MidnightNavy,
+    tertiaryContainer = Champagne.copy(alpha = 0.2f),
+    onTertiaryContainer = Champagne,
+    
+    error = Critical,
+    onError = Color.White,
+    errorContainer = Critical.copy(alpha = 0.2f),
+    onErrorContainer = Critical,
+    
+    background = Color(0xFF1C1C1E),
+    onBackground = Color.White,
+    
+    surface = Color(0xFF2C2C2E),
+    onSurface = Color.White,
+    surfaceVariant = Color(0xFF3A3A3C),
+    onSurfaceVariant = Color(0xFFAEAEB2),
+    
+    outline = Neutral,
+    outlineVariant = Color(0xFF3A3A3C)
 )
 
 @Composable
 fun Therapytrack_androidTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // Disabled to use custom colors
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
     }
 
     MaterialTheme(

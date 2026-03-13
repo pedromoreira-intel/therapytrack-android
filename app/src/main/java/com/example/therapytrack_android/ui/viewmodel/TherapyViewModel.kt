@@ -3,13 +3,12 @@ package com.example.therapytrack_android.ui.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.therapytrack_android.data.api.ApiClient
 import com.example.therapytrack_android.data.model.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class TherapyViewModel : ViewModel() {
+class TherapyViewModel() {
     
     var patients by mutableStateOf<List<Patient>>(emptyList())
     var sessions by mutableStateOf<List<Session>>(emptyList())
@@ -21,93 +20,45 @@ class TherapyViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
     var error by mutableStateOf<String?>(null)
     
-    // Current user (hardcoded for demo)
     val currentUserId = 1
-    val authToken = ApiClient.TEST_TOKEN
+    val authToken = "test-token-123"
+
+    init {
+        // Load mock data on init
+        loadMockData()
+    }
+
+    fun loadMockData() {
+        patients = getMockPatients()
+        sessions = getMockSessions()
+        supervisionSessions = getMockSupervisionSessions()
+        supervisionNetwork = getMockSupervisionNetwork()
+        intervisionGroups = getMockIntervisionGroups()
+    }
 
     fun fetchPatients() {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                patients = ApiClient.api.getPatients("Bearer $authToken")
-            } catch (e: Exception) {
-                error = e.message
-                // Use mock data if API fails
-                patients = getMockPatients()
-            } finally {
-                isLoading = false
-            }
-        }
+        // Using mock data for now
+        patients = getMockPatients()
     }
 
     fun fetchSessions() {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                sessions = ApiClient.api.getSessions("Bearer $authToken")
-            } catch (e: Exception) {
-                error = e.message
-                sessions = getMockSessions()
-            } finally {
-                isLoading = false
-            }
-        }
+        sessions = getMockSessions()
     }
 
     fun fetchMessages() {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                messages = ApiClient.api.getMessages("Bearer $authToken")
-            } catch (e: Exception) {
-                error = e.message
-                messages = emptyList()
-            } finally {
-                isLoading = false
-            }
-        }
+        messages = emptyList()
     }
 
     fun fetchSupervisionSessions() {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                supervisionSessions = ApiClient.api.getSupervisionSessions("Bearer $authToken")
-            } catch (e: Exception) {
-                error = e.message
-                supervisionSessions = getMockSupervisionSessions()
-            } finally {
-                isLoading = false
-            }
-        }
+        supervisionSessions = getMockSupervisionSessions()
     }
 
     fun fetchSupervisionNetwork() {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                supervisionNetwork = ApiClient.api.getSupervisionNetwork("Bearer $authToken")
-            } catch (e: Exception) {
-                error = e.message
-                supervisionNetwork = getMockSupervisionNetwork()
-            } finally {
-                isLoading = false
-            }
-        }
+        supervisionNetwork = getMockSupervisionNetwork()
     }
 
     fun fetchIntervisionGroups() {
-        viewModelScope.launch {
-            isLoading = true
-            try {
-                intervisionGroups = ApiClient.api.getIntervisionGroups("Bearer $authToken")
-            } catch (e: Exception) {
-                error = e.message
-                intervisionGroups = getMockIntervisionGroups()
-            } finally {
-                isLoading = false
-            }
-        }
+        intervisionGroups = getMockIntervisionGroups()
     }
 
     fun fetchAll() {
@@ -119,7 +70,6 @@ class TherapyViewModel : ViewModel() {
         fetchIntervisionGroups()
     }
 
-    // Mock data for offline/testing
     private fun getMockPatients() = listOf(
         Patient(1, "John Anderson", "john@email.com", diagnosis = "Anxiety Disorder", status = "STABLE", risk_level = "LOW", session_count = 12),
         Patient(2, "Emma Wilson", "emma@email.com", diagnosis = "Depression", status = "IMPROVING", risk_level = "MEDIUM", session_count = 8),

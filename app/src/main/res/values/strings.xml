@@ -1,3 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">therapytrack_android</string>
+    <string name="app_name">TherapyTrack</string>
+
+    <!-- Consent -->
+    <string name="consent_title">Antes de começar</string>
+    <string name="consent_body">O TherapyTrack guarda informação sobre a sua saúde mental para a partilhar com o seu psicólogo. Fica registada no servidor da sua prática clínica e só quem o acompanha a pode ver.</string>
+    <string name="consent_terms">Li e aceito os termos de utilização</string>
+    <string name="consent_privacy">Compreendo como os meus dados são tratados</string>
+    <string name="continue_">Continuar</string>
+
+    <!-- Auth -->
+    <string name="sign_in">Iniciar sessão</string>
+    <string name="email">Email</string>
+    <string name="password">Palavra-passe</string>
+    <string name="name">Nome</string>
+    <string name="have_invite">Tenho um código de convite</string>
+    <string name="im_a_therapist">Sou psicólogo/a e quero criar conta</string>
+    <string name="accept_invite_title">Ativar a sua conta</string>
+    <string name="invite_code">Código de convite</string>
+    <string name="check_code">Verificar código</string>
+    <string name="invite_for">Convite para %1$s</string>
+    <string name="choose_password">Escolha uma palavra-passe</string>
+    <string name="activate">Ativar e entrar</string>
+    <string name="register_title">Criar conta profissional</string>
+    <string name="create_account">Criar conta</string>
+    <string name="back">Voltar</string>
+    <string name="sign_out">Terminar sessão</string>
+    <string name="login_failed">Não foi possível iniciar sessão. Verifique o email e a palavra-passe.</string>
+    <string name="offline_login">Sem ligação. Precisa de rede para iniciar sessão.</string>
+    <string name="session_expired">A sua sessão terminou. Inicie sessão novamente.</string>
+
+    <!-- Tabs -->
+    <string name="tab_home">Início</string>
+    <string name="tab_journal">Diário</string>
+    <string name="tab_assessments">Testes</string>
+    <string name="tab_messages">Mensagens</string>
+    <string name="tab_profile">Perfil</string>
+
+    <!-- Home -->
+    <string name="greeting_morning">Bom dia, %1$s</string>
+    <string name="greeting_afternoon">Boa tarde, %1$s</string>
+    <string name="greeting_evening">Boa noite, %1$s</string>
+    <string name="how_are_you_today">Como está hoje?</string>
+    <string name="daily_check_in">Check-in diário</string>
+    <string name="check_in_done_today">Check-in de hoje feito</string>
+    <string name="start_check_in">Fazer check-in</string>
+    <string name="your_therapist">O seu psicólogo</string>
+    <string name="recent_check_ins">Check-ins recentes</string>
+    <string name="no_check_ins_yet">Ainda não fez nenhum check-in.</string>
+    <string name="need_help_now">Precisa de ajuda agora?</string>
+    <string name="crisis_support">Apoio em crise</string>
+    <string name="loading">A carregar…</string>
+    <string name="could_not_load">Não foi possível carregar. Puxe para atualizar.</string>
+    <string name="refresh">Atualizar</string>
+    <string name="offline_showing_saved">Sem ligação — a mostrar o que está guardado.</string>
+
+    <!-- Check-in -->
+    <string name="mood_question">Como está o seu humor?</string>
+    <string name="mood_hint">O seu estado emocional geral hoje</string>
+    <string name="anxiety_question">Nível de ansiedade?</string>
+    <string name="anxiety_hint">Quão tenso/a ou preocupado/a se sente</string>
+    <string name="sleep_question">Como dormiu?</string>
+    <string name="sleep_hint">A qualidade do seu descanso esta noite</string>
+    <string name="notes_question">Quer acrescentar alguma coisa?</string>
+    <string name="notes_hint">Opcional. O seu psicólogo vai ler isto.</string>
+    <string name="very_low">Muito em baixo</string>
+    <string name="excellent">Excelente</string>
+    <string name="very_calm">Muito calmo/a</string>
+    <string name="very_anxious">Muito ansioso/a</string>
+    <string name="very_poor">Muito mal</string>
+    <string name="very_well">Muito bem</string>
+    <string name="next">Seguinte</string>
+    <string name="finish">Concluir</string>
+    <string name="step_of">Passo %1$d de %2$d</string>
+    <string name="check_in_sent">Check-in registado</string>
+    <string name="check_in_sent_detail">O seu psicólogo já o pode ver.</string>
+    <string name="check_in_queued">Guardado neste dispositivo</string>
+    <string name="check_in_queued_detail">Sem ligação. Será enviado assim que houver rede — ainda não chegou ao seu psicólogo.</string>
+    <string name="not_stored">Não foi guardado</string>
+    <string name="not_stored_detail">Não foi possível enviar nem guardar neste dispositivo. Tente novamente daqui a pouco.</string>
+    <string name="done">Feito</string>
+
+    <!-- Journal -->
+    <string name="journal_title">Diário</string>
+    <string name="new_entry">Nova entrada</string>
+    <string name="entry_title_hint">Título (opcional)</string>
+    <string name="entry_content_hint">Escreva o que quiser…</string>
+    <string name="private_entry">Só para mim</string>
+    <string name="private_entry_detail">Fica só neste registo. O seu psicólogo não vê.</string>
+    <string name="shared_entry_detail">O seu psicólogo pode ler esta entrada.</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="no_entries">Ainda não escreveu nada. Escrever entre sessões ajuda a perceber padrões.</string>
+    <string name="waiting_to_send">Por enviar</string>
+    <string name="entry_not_saved">A entrada não foi guardada. O texto ficou aqui para tentar de novo.</string>
+    <string name="private_label">Privado</string>
+    <string name="shared_label">Partilhado</string>
+    <string name="delete_entry">Apagar entrada</string>
+    <string name="delete_entry_confirm">Apagar esta entrada? Não pode ser recuperada.</string>
+    <string name="delete">Apagar</string>
+
+    <!-- Assessments -->
+    <string name="assessments_title">Avaliações</string>
+    <string name="assessments_intro">Questionários breves que ajudam a acompanhar como está ao longo do tempo. Os resultados ficam com o seu psicólogo.</string>
+    <string name="phq9_title">PHQ-9</string>
+    <string name="phq9_subtitle">Sintomas depressivos · 9 perguntas</string>
+    <string name="gad7_title">GAD-7</string>
+    <string name="gad7_subtitle">Ansiedade · 7 perguntas</string>
+    <string name="waisr_title">WAI-SR</string>
+    <string name="waisr_subtitle">Relação terapêutica · 12 perguntas</string>
+    <string name="last_result">Último: %1$s · %2$s</string>
+    <string name="no_results_yet">Ainda sem resultados</string>
+    <string name="start">Começar</string>
+    <string name="two_weeks_intro">Nas últimas 2 semanas, com que frequência foi incomodado/a por cada um dos seguintes problemas?</string>
+    <string name="waisr_intro">Pense na sua relação com o seu psicólogo. Para cada frase, indique com que frequência se aplica.</string>
+    <string name="question_of">Pergunta %1$d de %2$d</string>
+    <string name="submit">Enviar</string>
+    <string name="your_score">A sua pontuação</string>
+    <string name="result_sent">Enviado ao seu psicólogo</string>
+    <string name="result_queued">Guardado neste dispositivo — será enviado quando houver rede</string>
+    <string name="result_not_stored">Não foi possível enviar nem guardar. As suas respostas ficaram aqui; tente de novo.</string>
+    <string name="result_disclaimer">Este resultado não é um diagnóstico. É uma medida de como se sentiu nas últimas duas semanas, para conversar com o seu psicólogo.</string>
+    <string name="item9_notice">Respondeu que teve pensamentos de que estaria melhor morto/a ou de se magoar. O seu psicólogo será informado. Se estiver em perigo agora, ligue:</string>
+
+    <string name="opt_not_at_all">Nunca</string>
+    <string name="opt_several_days">Vários dias</string>
+    <string name="opt_more_than_half">Mais de metade dos dias</string>
+    <string name="opt_nearly_every_day">Quase todos os dias</string>
+    <string name="opt_seldom">Raramente</string>
+    <string name="opt_sometimes">Às vezes</string>
+    <string name="opt_fairly_often">Com frequência</string>
+    <string name="opt_very_often">Muitas vezes</string>
+    <string name="opt_always">Sempre</string>
+
+    <string name="phq9_1">Pouco interesse ou prazer em fazer as coisas</string>
+    <string name="phq9_2">Sentir-se em baixo, deprimido/a ou sem esperança</string>
+    <string name="phq9_3">Dificuldade em adormecer ou em manter-se a dormir, ou dormir demasiado</string>
+    <string name="phq9_4">Sentir-se cansado/a ou com pouca energia</string>
+    <string name="phq9_5">Falta de apetite ou comer em demasia</string>
+    <string name="phq9_6">Sentir-se mal consigo próprio/a — ou que é um fracasso ou que desiludiu a sua família ou a si próprio/a</string>
+    <string name="phq9_7">Dificuldade em concentrar-se, por exemplo a ler o jornal ou a ver televisão</string>
+    <string name="phq9_8">Mover-se ou falar tão devagar que outras pessoas podem ter reparado. Ou o contrário — estar tão agitado/a ou inquieto/a que se mexe muito mais do que o habitual</string>
+    <string name="phq9_9">Pensar que estaria melhor morto/a ou em magoar-se de alguma forma</string>
+
+    <string name="gad7_1">Sentir-se nervoso/a, ansioso/a ou muito tenso/a</string>
+    <string name="gad7_2">Não conseguir parar ou controlar as preocupações</string>
+    <string name="gad7_3">Preocupar-se demasiado com diversas coisas</string>
+    <string name="gad7_4">Dificuldade em relaxar</string>
+    <string name="gad7_5">Estar tão inquieto/a que é difícil ficar parado/a</string>
+    <string name="gad7_6">Ficar facilmente aborrecido/a ou irritável</string>
+    <string name="gad7_7">Sentir medo, como se algo terrível pudesse acontecer</string>
+
+    <string name="waisr_1">O meu psicólogo e eu concordamos sobre o que preciso de fazer na terapia para melhorar a minha situação</string>
+    <string name="waisr_2">O que estou a fazer na terapia dá-me novas formas de olhar para o meu problema</string>
+    <string name="waisr_3">Acredito que o meu psicólogo gosta de mim</string>
+    <string name="waisr_4">O meu psicólogo não compreende o que estou a tentar alcançar na terapia</string>
+    <string name="waisr_5">Confio na capacidade do meu psicólogo para me ajudar</string>
+    <string name="waisr_6">O meu psicólogo e eu estamos a trabalhar para objetivos acordados em conjunto</string>
+    <string name="waisr_7">Sinto que o meu psicólogo me valoriza</string>
+    <string name="waisr_8">O meu psicólogo e eu concordamos sobre o que é importante eu trabalhar</string>
+    <string name="waisr_9">Sinto que o meu psicólogo se preocupa comigo mesmo quando faço coisas de que não aprova</string>
+    <string name="waisr_10">Sinto que aquilo que o meu psicólogo e eu fazemos na terapia me vai ajudar a alcançar as mudanças que quero</string>
+    <string name="waisr_11">O meu psicólogo e eu chegámos a um bom entendimento sobre o tipo de mudanças que seriam boas para mim</string>
+    <string name="waisr_12">Acredito que a forma como estamos a trabalhar o meu problema é a correta</string>
+
+    <string name="band_minimal">Mínimo</string>
+    <string name="band_mild">Ligeiro</string>
+    <string name="band_moderate">Moderado</string>
+    <string name="band_moderately_severe">Moderadamente grave</string>
+    <string name="band_severe">Grave</string>
+    <string name="alliance_weak">Relação frágil</string>
+    <string name="alliance_fair">Relação razoável</string>
+    <string name="alliance_moderate">Relação moderada</string>
+    <string name="alliance_good">Boa relação</string>
+    <string name="alliance_strong">Relação forte</string>
+
+    <!-- Crisis -->
+    <string name="crisis_title">Se precisar de ajuda agora</string>
+    <string name="crisis_intro">Não tem de esperar pela próxima sessão. Estas linhas atendem a qualquer hora.</string>
+    <string name="call">Ligar</string>
+    <string name="crisis_international">Fora de Portugal? Encontre uma linha de apoio no seu país.</string>
+    <string name="crisis_therapist_note">O seu psicólogo é informado quando uma avaliação indica risco, mas esta app não é vigiada em tempo real.</string>
+
+    <!-- Messages -->
+    <string name="messages_title">Mensagens</string>
+    <string name="message_hint">Escreva uma mensagem…</string>
+    <string name="send">Enviar</string>
+    <string name="no_messages">Ainda não há mensagens. Pode escrever ao seu psicólogo entre sessões.</string>
+    <string name="message_pending">Por enviar</string>
+    <string name="message_failed">Não foi guardada</string>
+    <string name="messages_not_realtime">As mensagens não são lidas em tempo real. Em emergência, ligue 112.</string>
+
+    <!-- Profile / privacy -->
+    <string name="profile_title">Perfil</string>
+    <string name="your_data">Os seus dados</string>
+    <string name="your_data_detail">Consentimento, exportação e eliminação</string>
+    <string name="consents_title">Consentimentos</string>
+    <string name="consent_clinical">Tratamento de dados clínicos</string>
+    <string name="consent_ai">Rascunhos com IA (pelo psicólogo)</string>
+    <string name="granted">Dado</string>
+    <string name="not_granted">Não dado</string>
+    <string name="outdated_consent">Dado para uma versão anterior do texto</string>
+    <string name="export_data">Exportar os meus dados</string>
+    <string name="export_detail">Uma cópia de tudo o que o TherapyTrack guarda sobre si, em JSON.</string>
+    <string name="export_ready">Exportação pronta</string>
+    <string name="share_export">Partilhar ficheiro</string>
+    <string name="erase_account">Eliminar a minha conta</string>
+    <string name="erase_detail">Remove o seu nome, email e acesso. O registo clínico fica com o seu psicólogo, sob um número.</string>
+    <string name="erase_what_happens">O que acontece</string>
+    <string name="erase_removed">Eliminado</string>
+    <string name="erase_kept">Mantido</string>
+    <string name="erase_confirm_title">Eliminar a conta?</string>
+    <string name="erase_confirm_body">Deixa de conseguir entrar nesta app. Não pode ser anulado.</string>
+    <string name="erase_confirm_action">Eliminar</string>
+    <string name="erased_done">A sua conta foi eliminada.</string>
+    <string name="version">Versão %1$s</string>
+
+    <!-- Stuck work -->
+    <string name="stuck_headline_client">Há coisas que não chegaram ao seu psicólogo</string>
+    <string name="stuck_body">Depois de várias tentativas, isto ainda não foi enviado. Pode tentar de novo ou descartar.</string>
+    <string name="retry">Tentar de novo</string>
+    <string name="discard">Descartar</string>
+    <string name="discard_irreplaceable_title">Descartar? Não existe noutro sítio.</string>
+    <string name="discard_replaceable_title">Descartar?</string>
+    <string name="discard_body">Não vai ser enviado nem guardado. Esta ação não pode ser anulada.</string>
+    <string name="kind_check_in">Check-in</string>
+    <string name="kind_assessment">Avaliação</string>
+    <string name="kind_journal">Entrada do diário</string>
+    <string name="kind_message">Mensagem</string>
+    <string name="kind_session_note">Nota de sessão</string>
+    <string name="attempts">%1$d tentativas</string>
+
+    <!-- Misc -->
+    <string name="today">Hoje</string>
+    <string name="yesterday">Ontem</string>
+    <string name="ok">OK</string>
+    <string name="error_generic">Algo correu mal. Tente novamente.</string>
 </resources>

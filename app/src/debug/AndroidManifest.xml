@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Debug builds talk to a local server over plain HTTP through the
+         emulator's host alias. Release builds never allow cleartext. -->
+    <application android:usesCleartextTraffic="true" tools:replace="android:usesCleartextTraffic"
+        xmlns:tools="http://schemas.android.com/tools" />
+</manifest>

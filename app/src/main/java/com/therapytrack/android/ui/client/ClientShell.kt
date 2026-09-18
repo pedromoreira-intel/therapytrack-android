@@ -106,14 +106,3 @@ fun ClientShell(onSignedOut: () -> Unit) {
     }
 }
 
-/** The therapist side is not built on Android yet; a signed-in therapist is told so rather than shown a client's home. */
-@Composable
-fun TherapistPlaceholder(onSignedOut: () -> Unit) {
-    val container = LocalContainer.current
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
-    Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
-        Text("A área do psicólogo ainda não está disponível no Android. Use a app iOS por agora.", style = androidx.compose.material3.MaterialTheme.typography.bodyLarge)
-        androidx.compose.foundation.layout.Spacer(Modifier.padding(12.dp))
-        com.therapytrack.android.ui.common.PrimaryButton(stringResource(R.string.sign_out)) { scope.launch { container.api.signOut(); onSignedOut() } }
-    }
-}

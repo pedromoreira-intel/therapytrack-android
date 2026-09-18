@@ -1,8 +1,10 @@
 # TherapyTrack — Android
 
 Native Android client for TherapyTrack, written in Kotlin with Jetpack Compose.
-This is the **client (patient) side**; the therapist side is not built here yet
-and a signed-in therapist is told to use the iOS app.
+Both roles: the **client (patient) side** — check-ins, journal, assessments,
+messages, data rights — and the **therapist side** — today's alerts and
+sessions, caseload with invitations, the pre-session brief, session notes,
+scheduling, and messaging.
 
 It talks to the same backend as the iOS app and follows the same rules:
 
@@ -40,12 +42,16 @@ session by intent extras (`debug_token`, `debug_refresh`, `debug_user_id`,
 core/       ApiClient, Api (typed endpoints), models, session store, timestamps
 offline/    DurableQueue, FlushCoalescer, StuckWork, the four outboxes
 clinical/   Scoring, CrisisResources, instrument definitions
-ui/         Compose theme, auth screens, client shell and screens
+ui/         Compose theme, auth screens, client and therapist shells and screens
 ```
 
 ## Known gaps
 
-- Therapist side.
+- Therapist extras that live in the iOS app only: professional records,
+  supervision, intervision, referrals, billing, community, AI drafting.
+- `GET /messages/threads` uses Postgres `DISTINCT ON`, so on the SQLite dev
+  backend the therapist's Messages tab reports "could not load"; open a
+  conversation from the client's page instead. Production is unaffected.
 - Crisis numbers are chosen by device region, as on iOS. A Portuguese pilot
   on a phone set to another region shows that region's numbers.
 - Instrument wording in Portuguese is a working translation pending clinical

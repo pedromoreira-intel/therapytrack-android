@@ -13,6 +13,8 @@ data class LoginResponse(val token: String, @SerialName("refresh_token") val ref
 @Serializable
 data class ApiPatient(
     val id: Int,
+    /** The client's user account, which is what a message is addressed to. */
+    @SerialName("user_id") val userId: Int? = null,
     val name: String,
     val email: String = "",
     val diagnosis: String? = null,
@@ -101,4 +103,141 @@ data class ErasureOutcome(
     val retention: String? = null,
     @SerialName("what_will_happen") val whatWillHappen: ErasurePreview? = null,
     val reason: String? = null
+)
+
+// Therapist side ---------------------------------------------------------
+
+@Serializable
+data class ApiSession(
+    val id: Int,
+    @SerialName("patient_id") val patientId: Int,
+    @SerialName("patient_name") val patientName: String? = null,
+    @SerialName("session_date") val sessionDate: String,
+    @SerialName("duration_minutes") val durationMinutes: Int? = null,
+    val status: String = "scheduled",
+    val notes: String? = null,
+    @SerialName("risk_level") val riskLevel: String? = null
+)
+
+@Serializable
+data class ApiSessionNote(
+    val id: Int,
+    @SerialName("patient_id") val patientId: Int,
+    @SerialName("patient_name") val patientName: String? = null,
+    @SerialName("session_number") val sessionNumber: Int,
+    @SerialName("session_date") val sessionDate: String,
+    val focus: String? = null,
+    val interventions: String = "",
+    @SerialName("progress_notes") val progressNotes: String = "",
+    val homework: String? = null,
+    @SerialName("risk_level") val riskLevel: String? = null,
+    @SerialName("next_session_plan") val nextSessionPlan: String? = null
+)
+
+/** `POST /session-notes` replies with the id and assigned number only. */
+@Serializable
+data class ApiSessionNoteCreated(
+    val id: Int? = null,
+    @SerialName("session_number") val sessionNumber: Int,
+    @Serializable(with = LenientBoolean::class) val duplicate: Boolean = false
+)
+
+@Serializable
+data class ApiClinicalAlert(
+    val id: Int,
+    @SerialName("patient_id") val patientId: Int,
+    @SerialName("patient_name") val patientName: String? = null,
+    @SerialName("alert_type") val alertType: String,
+    val severity: String,
+    val source: String = "",
+    val detail: String = "",
+    @SerialName("created_at") val createdAt: String,
+    @SerialName("acknowledged_at") val acknowledgedAt: String? = null
+) {
+    val isCritical get() = severity == "CRITICAL"
+}
+
+@Serializable
+data class ApiThread(
+    val id: Int,
+    @SerialName("other_user_id") val otherUserId: Int,
+    @SerialName("other_user_name") val otherUserName: String? = null,
+    @SerialName("last_message") val lastMessage: String = "",
+    @SerialName("created_at") val createdAt: String,
+    @SerialName("unread_count") val unreadCount: Int = 0
+)
+
+@Serializable
+data class ApiThreads(val threads: List<ApiThread>, @SerialName("total_unread") val totalUnread: Int = 0)
+
+@Serializable
+data class ApiInviteIssued(
+    @SerialName("invite_code") val inviteCode: String,
+    @SerialName("invite_expires_at") val inviteExpiresAt: String,
+    val name: String? = null,
+    val email: String? = null
+)
+
+/** A newly created client plus the invitation their therapist has to pass on. */
+data class CreatedPatient(val patient: ApiPatient, val inviteCode: String?, val inviteExpiresAt: String?)
+
+// Pre-session brief
+
+@Serializable
+data class BriefLastSession(
+    val date: String? = null,
+    @SerialName("session_number") val sessionNumber: Int? = null,
+    val focus: String? = null,
+    @SerialName("homework_set") val homeworkSet: String? = null,
+    val plan: String? = null,
+    @SerialName("risk_level") val riskLevel: String? = null
+)
+
+@Serializable
+data class BriefReading(val score: Double, val severity: String? = null, val date: String? = null)
+
+@Serializable
+data class BriefChange(val delta: Double = 0.0, val direction: String = "unchanged", @Serializable(with = LenientBoolean::class) val notable: Boolean = false)
+
+@Serializable
+data class BriefMeasure(
+    @SerialName("has_data") @Serializable(with = LenientBoolean::class) val hasData: Boolean = false,
+    val latest: BriefReading? = null,
+    val previous: BriefReading? = null,
+    val change: BriefChange? = null
+)
+
+@Serializable
+data class BriefConcern(val type: String, val instrument: String = "", val severity: String = "", val detail: String = "",
+                        @Serializable(with = LenientBoolean::class) val provisional: Boolean = false)
+
+@Serializable
+data class BriefCheckIns(val count: Int = 0, @SerialName("mood_avg") val moodAvg: Double? = null,
+                         @SerialName("anxiety_avg") val anxietyAvg: Double? = null, @SerialName("sleep_avg") val sleepAvg: Double? = null,
+                         val latest: String? = null)
+
+@Serializable
+data class BriefHomeworkItem(val id: Int, val title: String, val category: String? = null, @SerialName("due_date") val dueDate: String? = null)
+
+@Serializable
+data class BriefHomework(@SerialName("outstanding_count") val outstandingCount: Int = 0, val outstanding: List<BriefHomeworkItem> = emptyList(),
+                         @SerialName("completed_total") val completedTotal: Int = 0)
+
+@Serializable
+data class BriefJournalLatest(val date: String? = null, val title: String? = null, val excerpt: String = "")
+
+@Serializable
+data class BriefJournal(@SerialName("shared_count") val sharedCount: Int = 0, val latest: BriefJournalLatest? = null)
+
+@Serializable
+data class ApiBrief(
+    val patient: ApiPatient,
+    @SerialName("last_session") val lastSession: BriefLastSession? = null,
+    val since: String = "",
+    @SerialName("open_alerts") val openAlerts: List<ApiClinicalAlert> = emptyList(),
+    val trajectory: List<BriefConcern> = emptyList(),
+    val measures: Map<String, BriefMeasure> = emptyMap(),
+    @SerialName("check_ins") val checkIns: BriefCheckIns = BriefCheckIns(),
+    val homework: BriefHomework = BriefHomework(),
+    val journal: BriefJournal = BriefJournal()
 )

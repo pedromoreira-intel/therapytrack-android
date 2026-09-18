@@ -48,7 +48,7 @@ fun StuckWorkBanner(refreshKey: Any? = Unit) {
     if (items.isEmpty()) return
 
     Card(tint = TherapyColors.rose.copy(alpha = 0.25f), modifier = Modifier.padding(bottom = 12.dp)) {
-        Text(stringResource(R.string.stuck_headline_client), style = MaterialTheme.typography.titleMedium, color = TherapyColors.navy)
+        Text(stringResource(if (container.client.currentRole == "therapist") R.string.stuck_headline_therapist else R.string.stuck_headline_client), style = MaterialTheme.typography.titleMedium, color = TherapyColors.navy)
         Muted(stringResource(R.string.stuck_body), Modifier.padding(top = 4.dp, bottom = 8.dp))
         items.forEach { item ->
             Column(Modifier.fillMaxWidth().padding(vertical = 6.dp)) {

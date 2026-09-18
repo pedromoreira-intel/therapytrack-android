@@ -50,12 +50,19 @@ private sealed class Bubble(val mine: Boolean, val text: String, val whenMillis:
     class Pending(p: PendingMessage) : Bubble(true, p.text, p.createdAtMillis)
 }
 
+/** The client's one conversation: with their therapist. */
 @Composable
 fun MessagesScreen(state: ClientState) {
+    ConversationScreen(otherUserId = state.patient?.therapistId, title = stringResource(R.string.messages_title), showNotRealtime = true)
+}
+
+/** One thread, used by both roles. `otherUserId` null means the other party is not known yet. */
+@Composable
+fun ConversationScreen(otherUserId: Int?, title: String, showNotRealtime: Boolean = false, onBack: (() -> Unit)? = null) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
     val me = container.client.currentUserId
-    val therapist = state.patient?.therapistId
+    val therapist = otherUserId
     var delivered by remember { mutableStateOf<List<ApiMessage>>(emptyList()) }
     var pending by remember { mutableStateOf<List<PendingMessage>>(emptyList()) }
     var draft by rememberSaveable { mutableStateOf("") }
@@ -74,8 +81,9 @@ fun MessagesScreen(state: ClientState) {
     LaunchedEffect(bubbles.size) { if (bubbles.isNotEmpty()) listState.animateScrollToItem(bubbles.size - 1) }
 
     Column(Modifier.fillMaxSize().imePadding()) {
-        Text(stringResource(R.string.messages_title), style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy, modifier = Modifier.padding(20.dp, 16.dp, 20.dp, 4.dp))
-        Muted(stringResource(R.string.messages_not_realtime), Modifier.padding(horizontal = 20.dp))
+        if (onBack != null) TextButton(onBack) { Text(stringResource(R.string.back)) }
+        Text(title, style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy, modifier = Modifier.padding(20.dp, if (onBack == null) 16.dp else 0.dp, 20.dp, 4.dp))
+        if (showNotRealtime) Muted(stringResource(R.string.messages_not_realtime), Modifier.padding(horizontal = 20.dp))
         LazyColumn(Modifier.weight(1f).padding(horizontal = 16.dp), state = listState, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (bubbles.isEmpty()) item { Muted(stringResource(R.string.no_messages), Modifier.padding(top = 24.dp)) }
             items(bubbles) { b ->

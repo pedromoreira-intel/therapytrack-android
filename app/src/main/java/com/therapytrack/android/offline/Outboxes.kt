@@ -112,3 +112,42 @@ class MessageOutbox(queue: DurableQueue<PendingMessage>, private val api: Api) :
     override fun summary(item: PendingMessage) = StuckWork.oneLine(item.text)
     override fun recordAttempt(item: PendingMessage, error: Throwable) = item.copy(attempts = item.attempts + 1, lastError = error.message)
 }
+
+@Serializable
+data class PendingSessionNote(
+    override val id: String = UUID.randomUUID().toString(),
+    override val clientId: String = UUID.randomUUID().toString(),
+    override val ownerUserId: Int,
+    val patientId: Int,
+    /** Kept so the stuck-work row can name the client without a network. */
+    val patientName: String,
+    val sessionDate: String,
+    val focus: String?,
+    val interventions: String,
+    val progressNotes: String,
+    val homework: String?,
+    val riskLevel: String,
+    val nextSessionPlan: String?,
+    override val createdAtMillis: Long = System.currentTimeMillis(),
+    override val attempts: Int = 0,
+    override val lastError: String? = null
+) : Pending
+
+/** Clinical text only this therapist has, so it retries longer than the others before it is called stuck. */
+class SessionNoteOutbox(queue: DurableQueue<PendingSessionNote>, private val api: Api) :
+    Outbox<PendingSessionNote>(queue, { api.client.currentUserId }, StuckItem.Kind.SESSION_NOTE, maxAttempts = 50) {
+
+    suspend fun save(patientId: Int, patientName: String, sessionDate: String, focus: String?, interventions: String,
+                     progressNotes: String, homework: String?, riskLevel: String, nextSessionPlan: String?): SaveOutcome {
+        val owner = api.client.currentUserId ?: return SaveOutcome.NOT_STORED
+        return submit(PendingSessionNote(ownerUserId = owner, patientId = patientId, patientName = patientName, sessionDate = sessionDate,
+            focus = focus, interventions = interventions, progressNotes = progressNotes, homework = homework,
+            riskLevel = riskLevel, nextSessionPlan = nextSessionPlan))
+    }
+    suspend fun pending(patientId: Int): List<PendingSessionNote> = mine().filter { it.patientId == patientId }
+    override suspend fun send(item: PendingSessionNote) { api.createSessionNote(
+        item.patientId, item.sessionDate, item.focus, item.interventions, item.progressNotes, item.homework,
+        item.riskLevel, item.nextSessionPlan, item.clientId, item.ownerUserId) }
+    override fun summary(item: PendingSessionNote) = "${item.patientName} · ${item.sessionDate}"
+    override fun recordAttempt(item: PendingSessionNote, error: Throwable) = item.copy(attempts = item.attempts + 1, lastError = error.message)
+}

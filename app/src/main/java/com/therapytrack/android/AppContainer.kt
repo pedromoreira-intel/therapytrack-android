@@ -18,6 +18,8 @@ import com.therapytrack.android.offline.PendingAssessment
 import com.therapytrack.android.offline.PendingCheckIn
 import com.therapytrack.android.offline.PendingJournalEntry
 import com.therapytrack.android.offline.PendingMessage
+import com.therapytrack.android.offline.PendingSessionNote
+import com.therapytrack.android.offline.SessionNoteOutbox
 import com.therapytrack.android.offline.StuckWorkSource
 import kotlinx.serialization.KSerializer
 
@@ -36,11 +38,12 @@ class AppContainer(private val app: Context) {
     val assessments = AssessmentOutbox(queue("pending-assessments.json", PendingAssessment.serializer()), api)
     val journal = JournalOutbox(queue("pending-journal-entries.json", PendingJournalEntry.serializer()), api)
     val messages = MessageOutbox(queue("pending-messages.json", PendingMessage.serializer()), api)
+    val sessionNotes = SessionNoteOutbox(queue("pending-session-notes.json", PendingSessionNote.serializer()), api)
 
-    val stuckSources: List<StuckWorkSource> get() = listOf(checkIns, assessments, journal, messages)
+    val stuckSources: List<StuckWorkSource> get() = listOf(checkIns, assessments, journal, messages, sessionNotes)
 
     /** Retry everything queued. Safe on launch, on foreground, and when the network returns. */
     suspend fun drainQueues() {
-        checkIns.flush(); assessments.flush(); journal.flush(); messages.flush()
+        checkIns.flush(); assessments.flush(); journal.flush(); messages.flush(); sessionNotes.flush()
     }
 }

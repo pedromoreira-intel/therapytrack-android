@@ -15,7 +15,7 @@ import com.therapytrack.android.ui.auth.LoginScreen
 import com.therapytrack.android.ui.auth.RegisterScreen
 import com.therapytrack.android.ui.client.ClientShell
 
-private enum class Gate { CONSENT, LOGIN, ACCEPT_INVITE, REGISTER, CLIENT, THERAPIST_PLACEHOLDER }
+private enum class Gate { CONSENT, LOGIN, ACCEPT_INVITE, REGISTER, CLIENT, THERAPIST }
 
 /**
  * The outermost routing: consent once per install, then sign-in, then the
@@ -39,7 +39,7 @@ fun AppNav() {
     val current = when {
         !consented && !signedIn -> Gate.CONSENT
         signedIn && role == "patient" -> Gate.CLIENT   // the server calls the client role "patient"
-        signedIn -> Gate.THERAPIST_PLACEHOLDER
+        signedIn -> Gate.THERAPIST
         else -> gate
     }
 
@@ -52,6 +52,6 @@ fun AppNav() {
         Gate.ACCEPT_INVITE -> AcceptInviteScreen(onSignedIn = { }, onBack = { gate = Gate.LOGIN })
         Gate.REGISTER -> RegisterScreen(onSignedIn = { }, onBack = { gate = Gate.LOGIN })
         Gate.CLIENT -> ClientShell(onSignedOut = { gate = Gate.LOGIN })
-        Gate.THERAPIST_PLACEHOLDER -> com.therapytrack.android.ui.client.TherapistPlaceholder(onSignedOut = { gate = Gate.LOGIN })
+        Gate.THERAPIST -> com.therapytrack.android.ui.therapist.TherapistShell(onSignedOut = { gate = Gate.LOGIN })
     }
 }

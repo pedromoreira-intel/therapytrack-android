@@ -1,5 +1,6 @@
 package com.therapytrack.android.ui.auth
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -72,8 +73,9 @@ fun ConsentScreen(onConsentGiven: () -> Unit) {
 
     AuthFrame(stringResource(R.string.consent_title)) {
         Card { Text(stringResource(R.string.consent_body), style = MaterialTheme.typography.bodyLarge) }
-        Row(verticalAlignment = Alignment.CenterVertically) { Checkbox(terms, { terms = it }); Text(stringResource(R.string.consent_terms)) }
-        Row(verticalAlignment = Alignment.CenterVertically) { Checkbox(privacy, { privacy = it }); Text(stringResource(R.string.consent_privacy)) }
+        // The whole row toggles, not only the 20dp box: the text is what people tap.
+        Row(Modifier.fillMaxWidth().clickable { terms = !terms }, verticalAlignment = Alignment.CenterVertically) { Checkbox(terms, { terms = it }); Text(stringResource(R.string.consent_terms)) }
+        Row(Modifier.fillMaxWidth().clickable { privacy = !privacy }, verticalAlignment = Alignment.CenterVertically) { Checkbox(privacy, { privacy = it }); Text(stringResource(R.string.consent_privacy)) }
         PrimaryButton(stringResource(R.string.continue_), enabled = terms && privacy) {
             // Best effort and not blocking: a network failure must not trap
             // someone here. The state is visible again under Profile → Your data.

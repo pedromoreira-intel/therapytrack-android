@@ -39,6 +39,23 @@ emulator); release builds at the production API. Debug builds also accept a
 session by intent extras (`debug_token`, `debug_refresh`, `debug_user_id`,
 `debug_role`) so a smoke run never needs typed credentials.
 
+## Installing on a phone
+
+A release build is signed with a key that lives **outside the repo** at
+`~/.therapytrack-android/keystore.properties` + `release.keystore` (or
+wherever `THERAPYTRACK_KEYSTORE_PROPERTIES` points). Without it
+`assembleRelease` produces an unsigned APK that Android will not install.
+
+```
+./gradlew assembleRelease
+# → app/build/outputs/apk/release/app-release.apk, pointed at production
+```
+
+Sideload it: copy the APK to the phone and open it (allow "install unknown
+apps" for the app you opened it from), or `adb install app-release.apk`.
+Keep the keystore backed up: every future update must be signed with the
+same key or the phone will refuse it as a different app.
+
 ## Layout
 
 ```

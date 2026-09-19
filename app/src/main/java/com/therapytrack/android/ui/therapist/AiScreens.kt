@@ -139,8 +139,8 @@ fun AiToolsScreen(patientId: Int, patientName: String, onBack: () -> Unit, onSee
 /** Draft field values the note editor can take over — editable text, never auto-saved. */
 data class NoteDraft(val focus: String?, val interventions: String?, val progressNotes: String?, val homework: String?, val plan: String?)
 
-fun JsonObject.toNoteDraft(): NoteDraft {
-    fun str(k: String) = (this[k] as? JsonPrimitive)?.contentOrNull
+fun toNoteDraft(json: JsonObject): NoteDraft {
+    fun str(k: String) = (json[k] as? JsonPrimitive)?.contentOrNull
     return NoteDraft(str("focus"), str("interventions"), str("progress_notes"), str("homework"), str("next_session_plan") ?: str("plan"))
 }
 
@@ -163,7 +163,7 @@ fun TranscriptDraftPanel(patientId: Int, onSeePlan: () -> Unit, onUse: (NoteDraf
         Spacer(Modifier.height(8.dp))
         AiResult(outcome, onSeePlan) { json ->
             Muted(stringResource(R.string.ai_draft_ready), Modifier.padding(top = 6.dp))
-            PrimaryButton(stringResource(R.string.ai_use_draft)) { onUse(json.toNoteDraft()) }
+            PrimaryButton(stringResource(R.string.ai_use_draft)) { onUse(toNoteDraft(json)) }
         }
     }
 }

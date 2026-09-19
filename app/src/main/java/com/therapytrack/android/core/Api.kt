@@ -369,6 +369,16 @@ class Api(val client: ApiClient) {
     suspend fun replyToPost(id: Int, content: String) { client.request("POST", "/posts/$id/reply", buildJsonObject { put("content", content) }) }
     suspend fun acceptAnswer(postId: Int, replyId: Int) { client.request("POST", "/posts/$postId/accept", buildJsonObject { put("reply_id", replyId) }) }
 
+    // In-app inbox -----------------------------------------------------------
+
+    suspend fun inboxSummary(): ApiInboxSummary = decode(client.request("GET", "/notifications/summary").body)
+    suspend fun notifications(unreadOnly: Boolean = false): List<ApiNotification> = list(ApiNotification.serializer(), "/notifications?unread=$unreadOnly&limit=100")
+    suspend fun markNotificationRead(id: Int) { client.request("PUT", "/notifications/$id/read", buildJsonObject {}) }
+    suspend fun markNotificationsRead(kind: String? = null, refId: Int? = null) {
+        val q = listOfNotNull(kind?.let { "kind=$it" }, refId?.let { "ref_id=$it" }).joinToString("&")
+        client.request("PUT", "/notifications/read-all" + if (q.isEmpty()) "" else "?$q", buildJsonObject {})
+    }
+
     private suspend fun <T> list(serializer: kotlinx.serialization.KSerializer<T>, path: String): List<T> =
         json.decodeFromString(ListSerializer(serializer), client.request("GET", path).body)
 

@@ -618,4 +618,15 @@
     <string name="app_info">Informação da aplicação</string>
     <string name="version_label">Versão</string>
     <string name="sign_out_confirm">Tem a certeza de que quer terminar sessão?</string>
+
+    <!-- Activity / inbox -->
+    <string name="activity_title">Atividade</string>
+    <string name="no_activity">Nada de novo.</string>
+    <string name="mark_all_read">Marcar tudo como lido</string>
+    <string name="n_message">Nova mensagem de</string>
+    <string name="n_referral">Referenciação de</string>
+    <string name="n_referral_response">Resposta à sua referenciação por</string>
+    <string name="n_join_request">Pedido para entrar em</string>
+    <string name="n_join_response">Resposta ao seu pedido para</string>
+    <string name="n_alert">Alerta clínico</string>
 </resources>

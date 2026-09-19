@@ -54,7 +54,10 @@ fun ReferralsScreen(onBack: () -> Unit, onSeePlan: () -> Unit) {
     var responding by remember { mutableStateOf<ApiReferral?>(null) }
     var note by rememberSaveable { mutableStateOf("") }
 
-    LaunchedEffect(direction, reload) { result = load { container.api.referrals(direction) } }
+    LaunchedEffect(direction, reload) {
+        result = load { container.api.referrals(direction) }
+        runCatching { container.api.markNotificationsRead("referral"); container.api.markNotificationsRead("referral_response") }; container.refreshInbox()
+    }
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         TextButton(onBack) { Text(stringResource(R.string.back)) }

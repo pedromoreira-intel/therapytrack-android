@@ -587,4 +587,14 @@
     <string name="app_info">App information</string>
     <string name="version_label">Version</string>
     <string name="sign_out_confirm">Are you sure you want to sign out?</string>
+
+    <string name="activity_title">Activity</string>
+    <string name="no_activity">Nothing new.</string>
+    <string name="mark_all_read">Mark all as read</string>
+    <string name="n_message">New message from</string>
+    <string name="n_referral">Referral from</string>
+    <string name="n_referral_response">Reply to your referral from</string>
+    <string name="n_join_request">Request to join</string>
+    <string name="n_join_response">Reply to your request for</string>
+    <string name="n_alert">Clinical alert</string>
 </resources>

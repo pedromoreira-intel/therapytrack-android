@@ -167,6 +167,7 @@ fun GroupScreen(groupId: Int, onBack: () -> Unit, onDiscussion: (Int, String) ->
 
     LaunchedEffect(groupId, reload) {
         failed = runCatching { group = container.api.intervisionGroup(groupId); discussions = container.api.discussions(groupId) }.isFailure
+        runCatching { container.api.markNotificationsRead("join_request", groupId); container.api.markNotificationsRead("join_response", groupId) }; container.refreshInbox()
     }
     if (newMeeting) { NewMeetingForm(groupId) { newMeeting = false; reload++ }; return }
 

@@ -41,6 +41,7 @@ import com.therapytrack.android.core.ApiTimestamp
 import com.therapytrack.android.core.ApiUser
 import com.therapytrack.android.ui.client.StuckWorkBanner
 import com.therapytrack.android.ui.common.Avatar
+import com.therapytrack.android.ui.common.BellButton
 import com.therapytrack.android.ui.common.Card
 import com.therapytrack.android.ui.common.IconCircle
 import com.therapytrack.android.ui.common.ListCard
@@ -62,18 +63,18 @@ import java.time.ZoneId
 
 /** The iOS "Hoje": date overline, serif greeting, three tiles, quick actions, upcoming, clients — alerts first when there are any. */
 @Composable
-fun TodayScreen(onPatient: (Int) -> Unit, onClients: () -> Unit = {}, onNewClient: () -> Unit = {}) {
+fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onClients: () -> Unit = {}, onNewClient: () -> Unit = {}) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
     var me by remember { mutableStateOf<ApiUser?>(null) }
     var alerts by remember { mutableStateOf<List<ApiClinicalAlert>>(emptyList()) }
     var sessions by remember { mutableStateOf<List<ApiSession>>(emptyList()) }
     var patients by remember { mutableStateOf<List<ApiPatient>>(emptyList()) }
-    var unread by remember { mutableStateOf(0) }
     var pendingNotes by remember { mutableStateOf(0) }
     var offline by remember { mutableStateOf(false) }
     var reload by remember { mutableStateOf(0) }
     val outboxTick by container.sessionNotes.changes.collectAsState()
+    val inbox by container.inbox.collectAsState()
 
     LaunchedEffect(reload, outboxTick) {
         pendingNotes = container.sessionNotes.pendingCount()
@@ -84,7 +85,6 @@ fun TodayScreen(onPatient: (Int) -> Unit, onClients: () -> Unit = {}, onNewClien
             patients = container.api.patients()
             offline = false
         } catch (e: Exception) { offline = true }
-        runCatching { unread = container.api.threads().totalUnread }
     }
 
     val today = LocalDate.now()
@@ -95,9 +95,12 @@ fun TodayScreen(onPatient: (Int) -> Unit, onClients: () -> Unit = {}, onNewClien
     val greeting = stringResource(when { hour < 12 -> R.string.greeting_morning; hour < 19 -> R.string.greeting_afternoon; else -> R.string.greeting_evening }, me?.name?.split(' ')?.getOrNull(1) ?: me?.name?.substringBefore(' ') ?: "")
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp, 12.dp, 20.dp, 24.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        Column {
-            Overline(Instant.now().longDay(), color = com.therapytrack.android.ui.theme.TherapyColors.champagne.copy(alpha = 1f).let { androidx.compose.ui.graphics.Color(0xFFCFA84A) })
-            Text(greeting.trimEnd(',', ' '), style = TherapyType.display, color = TherapyColors.navy)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+            Column(Modifier.weight(1f)) {
+                Overline(Instant.now().longDay(), color = androidx.compose.ui.graphics.Color(0xFFCFA84A))
+                Text(greeting.trimEnd(',', ' '), style = TherapyType.display, color = TherapyColors.navy)
+            }
+            BellButton(onActivity)
         }
         if (offline) Row { Muted(stringResource(R.string.offline_showing_saved)); TextButton({ reload++ }) { Text(stringResource(R.string.refresh)) } }
         StuckWorkBanner(refreshKey = outboxTick)
@@ -106,7 +109,7 @@ fun TodayScreen(onPatient: (Int) -> Unit, onClients: () -> Unit = {}, onNewClien
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             MetricTile("${todays.size}", stringResource(R.string.tile_today))
             MetricTile("${alerts.size}", stringResource(R.string.tile_flagged), valueColor = if (alerts.isEmpty()) TherapyColors.navy else TherapyColors.critical)
-            MetricTile("$unread", stringResource(R.string.tile_unread))
+            MetricTile("${inbox.count("message")}", stringResource(R.string.tile_unread))
         }
 
         // Unacknowledged risk outranks everything else on this screen.

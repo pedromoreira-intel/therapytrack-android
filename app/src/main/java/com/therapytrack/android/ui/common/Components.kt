@@ -26,6 +26,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -214,3 +217,15 @@ private val longDay = DateTimeFormatter.ofPattern("EEEE, d MMMM")
 fun Instant.shortDateTime(): String = dayTime.format(atZone(ZoneId.systemDefault()))
 fun Instant.shortDate(): String = dayOnly.format(atZone(ZoneId.systemDefault()))
 fun Instant.longDay(): String = longDay.format(atZone(ZoneId.systemDefault()))
+
+/** The bell: opens the activity feed, with the unread total on it. */
+@Composable
+fun BellButton(onClick: () -> Unit) {
+    val container = com.therapytrack.android.LocalContainer.current
+    val inbox by container.inbox.collectAsState()
+    Box(Modifier.size(44.dp).clip(CircleShape).background(Color.White).clickable(onClick = onClick), contentAlignment = Alignment.Center) {
+        Icon(androidx.compose.material.icons.Icons.Outlined.Notifications, null, tint = TherapyColors.navy, modifier = Modifier.size(22.dp))
+        if (inbox.unreadTotal > 0) Text(if (inbox.unreadTotal > 99) "99+" else "${inbox.unreadTotal}", style = TherapyType.label, color = Color.White,
+            modifier = Modifier.align(Alignment.TopEnd).padding(2.dp).background(TherapyColors.critical, CircleShape).padding(horizontal = 5.dp, vertical = 1.dp))
+    }
+}

@@ -20,6 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
+import com.therapytrack.android.LocalContainer
+import com.therapytrack.android.ui.common.PollInbox
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,6 +72,8 @@ fun ClientShell(onSignedOut: () -> Unit) {
         }
     }
 
+    val inbox by container.inbox.collectAsState()
+    PollInbox(container)
     val backStack by nav.currentBackStackEntryAsState()
     // A destination with optional arguments is "clients?new={new}"; the tab is "clients".
     val route = backStack?.destination?.route?.substringBefore('?')
@@ -77,14 +82,18 @@ fun ClientShell(onSignedOut: () -> Unit) {
     Scaffold(
         containerColor = TherapyColors.canvas,
         bottomBar = {
-            if (showBar) TherapyTabBar(tabs.mapIndexed { i, t -> t.copy(label = stringResource(tabLabels[i])) }, route) {
+            val badges = mapOf("messages" to inbox.count("message"))
+            if (showBar) TherapyTabBar(tabs.mapIndexed { i, t -> t.copy(label = stringResource(tabLabels[i]), badge = badges[t.route] ?: 0) }, route) {
                 nav.navigate(it) { popUpTo("home") { saveState = true }; launchSingleTop = true; restoreState = true }
             }
         }
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).statusBarsPadding()) {
             NavHost(nav, startDestination = "home") {
-                composable("home") { HomeScreen(state, onCheckIn = { nav.navigate("checkin") }, onCrisis = { nav.navigate("crisis") }, onReload = { reloadTick++ }) }
+                composable("activity") { com.therapytrack.android.ui.common.ActivityScreen(onBack = { nav.popBackStack() }) { open ->
+                    if (open is com.therapytrack.android.ui.common.Open.Thread) nav.navigate("messages")
+                } }
+                composable("home") { HomeScreen(onActivity = { nav.navigate("activity") }, state, onCheckIn = { nav.navigate("checkin") }, onCrisis = { nav.navigate("crisis") }, onReload = { reloadTick++ }) }
                 composable("checkin") { CheckInScreen(state, onDone = { nav.popBackStack() }) }
                 composable("journal") { JournalScreen() }
                 composable("assessments") { AssessmentsScreen(state, onStart = { nav.navigate("assessment/${it.name}") }) }

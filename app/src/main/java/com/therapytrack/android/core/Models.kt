@@ -482,3 +482,22 @@ data class ApiReply(
 
 @Serializable
 data class ApiPostDetail(val post: ApiPost, val replies: List<ApiReply> = emptyList())
+
+// In-app inbox --------------------------------------------------------------
+
+@Serializable
+data class ApiNotification(
+    val id: Int,
+    val kind: String,
+    val title: String,
+    val body: String? = null,
+    @SerialName("ref_type") val refType: String? = null,
+    @SerialName("ref_id") val refId: Int? = null,
+    @SerialName("created_at") val createdAt: String,
+    @SerialName("read_at") val readAt: String? = null
+)
+
+@Serializable
+data class ApiInboxSummary(@SerialName("unread_total") val unreadTotal: Int = 0, @SerialName("by_kind") val byKind: Map<String, Int> = emptyMap()) {
+    fun count(vararg kinds: String) = kinds.sumOf { byKind[it] ?: 0 }
+}

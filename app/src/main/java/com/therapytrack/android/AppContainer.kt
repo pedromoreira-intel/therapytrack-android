@@ -53,6 +53,15 @@ class AppContainer(private val app: Context) {
      * what the plan is; every gate is the server's 402, never a local check.
      */
     val plan = MutableStateFlow<ApiPlan?>(null)
+
+    /**
+     * Unread counts for the tab badges. Polled while the app is in the
+     * foreground (see the shells) and refreshed after anything that reads or
+     * clears a notification. Until push exists, this is how a person learns
+     * something happened.
+     */
+    val inbox = MutableStateFlow(com.therapytrack.android.core.ApiInboxSummary())
+    suspend fun refreshInbox() { runCatching { inbox.value = api.inboxSummary() } }
     suspend fun refreshPlan() { runCatching { plan.value = api.plan() } }
 
     /** Retry everything queued. Safe on launch, on foreground, and when the network returns. */

@@ -55,7 +55,7 @@ import com.therapytrack.android.ui.theme.TherapyColors
 import com.therapytrack.android.ui.theme.TherapyType
 
 @Composable
-fun HomeScreen(state: ClientState, onCheckIn: () -> Unit, onCrisis: () -> Unit, onReload: () -> Unit) {
+fun HomeScreen(onActivity: () -> Unit = {}, state: ClientState, onCheckIn: () -> Unit, onCrisis: () -> Unit, onReload: () -> Unit) {
     val container = LocalContainer.current
     var checkIns by remember { mutableStateOf<List<ApiEmaResponse>>(emptyList()) }
     var goals by remember { mutableStateOf<List<ApiGoal>>(emptyList()) }
@@ -72,9 +72,13 @@ fun HomeScreen(state: ClientState, onCheckIn: () -> Unit, onCrisis: () -> Unit, 
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp, 8.dp, 20.dp, 24.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         // "Obter ajuda" sits top-left on iOS, always one tap away.
-        Row(Modifier.clip(CircleShape).background(TherapyColors.critical.copy(alpha = 0.12f)).clickable(onClick = onCrisis).padding(12.dp, 6.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Filled.Error, null, tint = TherapyColors.critical, modifier = Modifier.height(16.dp)); Spacer(Modifier.width(6.dp))
-            Text(stringResource(R.string.get_help), style = TherapyType.emphasis, color = TherapyColors.critical)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.clip(CircleShape).background(TherapyColors.critical.copy(alpha = 0.12f)).clickable(onClick = onCrisis).padding(12.dp, 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Filled.Error, null, tint = TherapyColors.critical, modifier = Modifier.height(16.dp)); Spacer(Modifier.width(6.dp))
+                Text(stringResource(R.string.get_help), style = TherapyType.emphasis, color = TherapyColors.critical)
+            }
+            Spacer(Modifier.weight(1f))
+            com.therapytrack.android.ui.common.BellButton(onActivity)
         }
         Column {
             Text(stringResource(R.string.welcome_back), style = TherapyType.bodyLarge, color = TherapyColors.muted)

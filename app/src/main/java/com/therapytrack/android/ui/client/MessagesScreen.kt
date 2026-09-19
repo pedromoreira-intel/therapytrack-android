@@ -73,6 +73,8 @@ fun ConversationScreen(otherUserId: Int?, title: String, showNotRealtime: Boolea
         val t = therapist ?: return@LaunchedEffect
         pending = container.messages.pending(t)
         runCatching { delivered = container.api.conversation(t).messages; container.api.markConversationRead(t) }
+        // Opening the thread is reading it: clear its notifications and refresh the badges.
+        runCatching { container.api.markNotificationsRead("message", t) }; container.refreshInbox()
     }
 
     val bubbles = (delivered.map { Bubble("d${it.id}", it.fromUserId == me, it.message, ApiTimestamp.parse(it.createdAt)?.shortDateTime() ?: "", it.fromName) }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
 
-data class TabSpec(val route: String, val label: String, val icon: ImageVector, val selectedIcon: ImageVector = icon)
+data class TabSpec(val route: String, val label: String, val icon: ImageVector, val selectedIcon: ImageVector = icon, val badge: Int = 0)
 
 /** iOS-style tab bar: pearl surface, hairline on top, navy selected, grey otherwise, no indicator pill. */
 @Composable
@@ -38,7 +39,12 @@ fun TherapyTabBar(tabs: List<TabSpec>, current: String?, onSelect: (String) -> U
                     Modifier.weight(1f).clickable(remember { MutableInteractionSource() }, null) { onSelect(tab.route) }.padding(vertical = 4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(if (on) tab.selectedIcon else tab.icon, null, tint = color, modifier = Modifier.size(26.dp))
+                    Box {
+                        Icon(if (on) tab.selectedIcon else tab.icon, null, tint = color, modifier = Modifier.size(26.dp))
+                        if (tab.badge > 0) Text(if (tab.badge > 99) "99+" else "${tab.badge}", style = TherapyType.label, color = androidx.compose.ui.graphics.Color.White,
+                            modifier = Modifier.align(Alignment.TopEnd).offset(x = 10.dp, y = (-6).dp)
+                                .background(TherapyColors.critical, androidx.compose.foundation.shape.CircleShape).padding(horizontal = 5.dp, vertical = 1.dp))
+                    }
                     Spacer(Modifier.height(3.dp))
                     Text(tab.label, style = TherapyType.label, color = color, maxLines = 1)
                 }

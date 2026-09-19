@@ -45,7 +45,7 @@ import java.time.LocalDate
  * network is tried and the text on screen is never cleared until it is.
  */
 @Composable
-fun SessionNoteScreen(patientId: Int, patientName: String, onDone: () -> Unit) {
+fun SessionNoteScreen(patientId: Int, patientName: String, onDone: () -> Unit, onSeePlan: () -> Unit = {}) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
     var date by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
@@ -75,6 +75,11 @@ fun SessionNoteScreen(patientId: Int, patientName: String, onDone: () -> Unit) {
             if (o != SaveOutcome.NOT_STORED) { PrimaryButton(stringResource(R.string.done), onClick = onDone); return@Column }
         }
 
+        // A draft fills the fields below as editable text; nothing is saved until the therapist saves.
+        TranscriptDraftPanel(patientId, onSeePlan) { d ->
+            d.focus?.let { focus = it }; d.interventions?.let { interventions = it }; d.progressNotes?.let { progress = it }
+            d.homework?.let { homework = it }; d.plan?.let { plan = it }
+        }
         OutlinedTextField(date, { date = it }, label = { Text(stringResource(R.string.session_date)) }, singleLine = true,
             isError = runCatching { LocalDate.parse(date) }.isFailure, modifier = Modifier.fillMaxWidth())
         OutlinedTextField(focus, { focus = it }, label = { Text(stringResource(R.string.focus)) }, singleLine = true, modifier = Modifier.fillMaxWidth())

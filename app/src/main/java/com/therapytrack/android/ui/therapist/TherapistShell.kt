@@ -71,11 +71,12 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                         onBack = { nav.popBackStack() },
                         onNewNote = { name -> nav.navigate("note/$id/${android.net.Uri.encode(name)}") },
                         onSchedule = { nav.navigate("schedule/$id") },
-                        onMessage = { userId, name -> nav.navigate("conversation/$userId/${android.net.Uri.encode(name)}") })
+                        onMessage = { userId, name -> nav.navigate("conversation/$userId/${android.net.Uri.encode(name)}") },
+                        onAiTools = { name -> nav.navigate("ai/$id/${android.net.Uri.encode(name)}") })
                 }
                 composable("note/{id}/{name}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
-                    SessionNoteScreen(id, entry.arguments?.getString("name") ?: "", onDone = { nav.popBackStack() })
+                    SessionNoteScreen(id, entry.arguments?.getString("name") ?: "", onDone = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") })
                 }
                 composable("schedule/{id}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
@@ -86,6 +87,15 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                     ConversationScreen(entry.arguments?.getString("userId")?.toIntOrNull(), entry.arguments?.getString("name") ?: "", onBack = { nav.popBackStack() })
                 }
                 composable("profile") { TherapistProfileScreen(onSignedOut = onSignedOut) }
+                composable("ai/{id}/{name}") { entry ->
+                    val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
+                    AiToolsScreen(id, entry.arguments?.getString("name") ?: "", onBack = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") })
+                }
+                composable("community") { CommunityScreen(onBack = { nav.popBackStack() }, onPost = { nav.navigate("post/$it") }) }
+                composable("post/{id}") { entry ->
+                    val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
+                    PostScreen(id, onBack = { nav.popBackStack() })
+                }
 
                 // Practice: plan, records, and the network features.
                 composable("practice") { PracticeScreen(onOpen = { nav.navigate(it) }) }

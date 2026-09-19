@@ -48,7 +48,8 @@ import java.time.Instant
 
 /** The pre-session brief, the notes, and the four things a therapist does from here. */
 @Composable
-fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) -> Unit, onSchedule: () -> Unit, onMessage: (Int, String) -> Unit) {
+fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) -> Unit, onSchedule: () -> Unit, onMessage: (Int, String) -> Unit,
+                        onAiTools: (String) -> Unit) {
     val container = LocalContainer.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -59,9 +60,11 @@ fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) 
     var invite by remember { mutableStateOf<ApiInviteIssued?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     var loadFailed by remember { mutableStateOf(false) }
+    var editing by remember { mutableStateOf(false) }
+    var reload by remember { mutableStateOf(0) }
     val outboxTick by container.sessionNotes.changes.collectAsState()
 
-    LaunchedEffect(patientId, outboxTick) {
+    LaunchedEffect(patientId, outboxTick, reload) {
         pending = container.sessionNotes.pending(patientId)
         runCatching { patient = container.api.patient(patientId); loadFailed = false }.onFailure { loadFailed = true }
         runCatching { brief = container.api.brief(patientId) }
@@ -77,6 +80,7 @@ fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) 
             }
             patient?.let { Pill(riskLabel(it.riskLevel), riskColor(it.riskLevel)) }
         }
+        patient?.let { p -> Row { TextButton({ editing = true }) { Text(stringResource(R.string.edit_client)) }; TextButton({ onAiTools(p.name) }) { Text(stringResource(R.string.ai_section)) } } }
         if (loadFailed) Muted(stringResource(R.string.offline_showing_saved))
         error?.let { Muted(it) }
 
@@ -167,6 +171,11 @@ fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) 
             }
         }
 
+        GoalsSection(patientId)
+        HistorySection(patientId)
+        SharedJournalSection(patientId)
+        ClientFeaturesSection(patientId)
+
         SectionTitle(stringResource(R.string.reissue_invite))
         Card {
             Muted(stringResource(R.string.reissue_invite_detail))
@@ -178,6 +187,12 @@ fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) 
         }
         Spacer(Modifier.height(24.dp))
     }
+    EditHost(patient, editing) { saved -> editing = false; if (saved) reload++ }
+}
+
+@Composable
+private fun EditHost(patient: ApiPatient?, editing: Boolean, onDone: (Boolean) -> Unit) {
+    if (editing && patient != null) EditClientDialog(patient, onDone)
 }
 
 private fun fmt(key: String, score: Double) = if (key == "wai_sr") String.format("%.1f", score) else score.toInt().toString()

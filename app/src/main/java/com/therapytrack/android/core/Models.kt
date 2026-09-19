@@ -52,6 +52,8 @@ data class ApiAssessmentResult(
 @Serializable
 data class ApiJournalEntry(
     val id: Int,
+    @SerialName("patient_id") val patientId: Int? = null,
+    @SerialName("patient_name") val patientName: String? = null,
     val title: String? = null,
     val content: String,
     @SerialName("is_private") @Serializable(with = LenientBoolean::class) val isPrivate: Boolean = true,
@@ -428,3 +430,51 @@ data class ApiDiscussionMessage(val id: Int, @SerialName("user_id") val userId: 
 
 @Serializable
 data class ApiCreated(val id: Int, val message: String? = null)
+
+// Goals, feature toggles, community ---------------------------------------
+
+@Serializable
+data class ApiGoal(
+    val id: Int,
+    @SerialName("patient_id") val patientId: Int,
+    val title: String,
+    val description: String? = null,
+    val category: String? = "general",
+    @SerialName("due_date") val dueDate: String? = null,
+    @Serializable(with = LenientBoolean::class) val completed: Boolean = false,
+    @SerialName("created_at") val createdAt: String? = null
+)
+
+@Serializable
+data class ApiPost(
+    val id: Int,
+    @SerialName("user_id") val userId: Int,
+    @SerialName("group_id") val groupId: Int? = null,
+    val title: String,
+    val content: String,
+    @SerialName("post_type") val postType: String = "question",
+    @SerialName("is_anonymous") @Serializable(with = LenientBoolean::class) val isAnonymous: Boolean = false,
+    val upvotes: Int = 0,
+    val downvotes: Int = 0,
+    @SerialName("reply_count") val replyCount: Int = 0,
+    @SerialName("accepted_answer_id") val acceptedAnswerId: Int? = null,
+    @SerialName("author_name") val authorName: String? = null,
+    @SerialName("user_vote") val userVote: Int? = null,
+    @SerialName("created_at") val createdAt: String
+)
+
+@Serializable
+data class ApiReply(
+    val id: Int,
+    @SerialName("post_id") val postId: Int,
+    @SerialName("user_id") val userId: Int,
+    @SerialName("parent_reply_id") val parentReplyId: Int? = null,
+    val content: String,
+    val upvotes: Int = 0,
+    @SerialName("is_accepted_answer") @Serializable(with = LenientBoolean::class) val isAcceptedAnswer: Boolean = false,
+    @SerialName("author_name") val authorName: String? = null,
+    @SerialName("created_at") val createdAt: String
+)
+
+@Serializable
+data class ApiPostDetail(val post: ApiPost, val replies: List<ApiReply> = emptyList())

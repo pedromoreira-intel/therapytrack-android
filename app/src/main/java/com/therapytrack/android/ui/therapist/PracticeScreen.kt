@@ -80,6 +80,7 @@ fun PracticeScreen(onOpen: (String) -> Unit) {
         Card(modifier = Modifier.clickable { onOpen("directory") }) { Text(stringResource(R.string.directory_title), style = MaterialTheme.typography.titleMedium) }
         Card(modifier = Modifier.clickable { onOpen("referrals") }) { Text(stringResource(R.string.referrals_title), style = MaterialTheme.typography.titleMedium) }
         Card(modifier = Modifier.clickable { onOpen("intervision") }) { Text(stringResource(R.string.intervision_title), style = MaterialTheme.typography.titleMedium) }
+        Card(modifier = Modifier.clickable { onOpen("community") }) { Text(stringResource(R.string.community_title), style = MaterialTheme.typography.titleMedium) }
         Card(modifier = Modifier.clickable { onOpen("myprofile") }) { Text(stringResource(R.string.my_profile), style = MaterialTheme.typography.titleMedium) }
         Spacer(Modifier.height(24.dp))
     }

@@ -3,7 +3,9 @@ package com.therapytrack.android.core
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
@@ -312,6 +314,60 @@ class Api(val client: ApiClient) {
             put("scheduled_at", scheduledAt); put("duration_minutes", minutes)
         })
     }
+
+    // Client page: goals, journal, toggles, edits -------------------------
+
+    suspend fun goals(patientId: Int): List<ApiGoal> = list(ApiGoal.serializer(), "/goals?patient_id=$patientId")
+    suspend fun createGoal(patientId: Int, title: String, description: String?, category: String, dueDate: String?) {
+        client.request("POST", "/goals", buildJsonObject {
+            put("patient_id", patientId); put("title", title); put("category", category)
+            description?.let { put("description", it) }; dueDate?.let { put("due_date", it) }
+        })
+    }
+    suspend fun setGoalCompleted(id: Int, completed: Boolean) { client.request("PUT", "/goals/$id", buildJsonObject { put("completed", completed) }) }
+    suspend fun deleteGoal(id: Int) { client.request("DELETE", "/goals/$id") }
+
+    /** For a therapist the server returns only entries the client chose to share. */
+    suspend fun sharedJournal(patientId: Int): List<ApiJournalEntry> =
+        list(ApiJournalEntry.serializer(), "/journal").filter { it.patientId == patientId }
+
+    suspend fun clientFeatures(patientId: Int): Map<String, Boolean> {
+        val obj = json.parseToJsonElement(client.request("GET", "/client-features/$patientId").body).jsonObject
+        return obj.mapValues { (_, v) -> v.jsonPrimitive.let { it.booleanOrNull ?: (it.intOrNull == 1) } }
+    }
+    suspend fun setClientFeature(patientId: Int, feature: String, enabled: Boolean) {
+        client.request("PUT", "/client-features/$patientId", buildJsonObject { put("feature_name", feature); put("enabled", enabled) })
+    }
+    suspend fun updatePatient(id: Int, diagnosis: String?, status: String?, riskLevel: String?) {
+        client.request("PUT", "/patients/$id", buildJsonObject {
+            diagnosis?.let { put("diagnosis", it) }; status?.let { put("status", it) }; riskLevel?.let { put("risk_level", it) }
+        })
+    }
+
+    // AI drafting ---------------------------------------------------------
+    // Every call names a client; the server checks plan (402) and the
+    // client's ai_drafting consent (403 with a reason). Results are returned
+    // as raw JSON objects: their shape is the model's, rendered generically.
+
+    suspend fun draftNoteFromTranscript(patientId: Int, transcript: String): JsonObject =
+        json.parseToJsonElement(client.request("POST", "/session-notes/generate", buildJsonObject { put("patient_id", patientId); put("transcript", transcript) }).body).jsonObject
+    suspend fun summarizeSession(patientId: Int, notes: String): JsonObject =
+        json.parseToJsonElement(client.request("POST", "/ai/summarize-session", buildJsonObject { put("patient_id", patientId); put("session_notes", notes) }).body).jsonObject
+    suspend fun suggestInterventions(patientId: Int, concerns: String?): JsonObject =
+        json.parseToJsonElement(client.request("POST", "/ai/suggest-interventions", buildJsonObject { put("patient_id", patientId); concerns?.let { put("current_concerns", it) } }).body).jsonObject
+    suspend fun progressReport(patientId: Int): JsonObject =
+        json.parseToJsonElement(client.request("POST", "/ai/generate-progress-report", buildJsonObject { put("patient_id", patientId) }).body).jsonObject
+
+    // Community -----------------------------------------------------------
+
+    suspend fun posts(sort: String = "recent"): List<ApiPost> = list(ApiPost.serializer(), "/posts?sort=$sort&limit=50")
+    suspend fun post(id: Int): ApiPostDetail = decode(client.request("GET", "/posts/$id").body)
+    suspend fun createPost(title: String, content: String, type: String, anonymous: Boolean) {
+        client.request("POST", "/posts", buildJsonObject { put("title", title); put("content", content); put("post_type", type); put("is_anonymous", anonymous) })
+    }
+    suspend fun votePost(id: Int, value: Int) { client.request("POST", "/posts/$id/vote", buildJsonObject { put("vote_value", value) }) }
+    suspend fun replyToPost(id: Int, content: String) { client.request("POST", "/posts/$id/reply", buildJsonObject { put("content", content) }) }
+    suspend fun acceptAnswer(postId: Int, replyId: Int) { client.request("POST", "/posts/$postId/accept", buildJsonObject { put("reply_id", replyId) }) }
 
     private suspend fun <T> list(serializer: kotlinx.serialization.KSerializer<T>, path: String): List<T> =
         json.decodeFromString(ListSerializer(serializer), client.request("GET", path).body)

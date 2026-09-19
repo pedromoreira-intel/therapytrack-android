@@ -473,4 +473,81 @@
     <string name="post">Publicar</string>
     <string name="write_reply">Escreva uma resposta…</string>
     <string name="intervision_confidentiality">Não identifique clientes nas discussões. Descreva o caso, não a pessoa.</string>
+
+    <!-- Client page extras -->
+    <string name="goals_section">Objetivos e tarefas</string>
+    <string name="no_goals">Sem objetivos definidos.</string>
+    <string name="new_goal">Novo objetivo</string>
+    <string name="goal_title">Título</string>
+    <string name="goal_category">Categoria</string>
+    <string name="gc_general">Geral</string>
+    <string name="gc_homework">Tarefa</string>
+    <string name="gc_behavioral">Comportamental</string>
+    <string name="gc_emotional">Emocional</string>
+    <string name="due_date">Prazo (AAAA-MM-DD, opcional)</string>
+    <string name="mark_done">Concluído</string>
+    <string name="reopen">Reabrir</string>
+    <string name="due">Prazo %1$s</string>
+    <string name="history_section">Histórico</string>
+    <string name="check_in_chart">Check-ins · últimos 30 dias</string>
+    <string name="legend_mood">humor</string>
+    <string name="legend_anxiety">ansiedade</string>
+    <string name="legend_sleep">sono</string>
+    <string name="no_history">Sem dados neste período.</string>
+    <string name="shared_journal_section">Diário partilhado</string>
+    <string name="no_shared_entries">O cliente ainda não partilhou entradas.</string>
+    <string name="client_app_section">O que o cliente vê na app</string>
+    <string name="cf_symptom_reporting">Registo de sintomas</string>
+    <string name="cf_messaging">Mensagens</string>
+    <string name="cf_journal">Diário</string>
+    <string name="cf_assessments">Questionários</string>
+    <string name="cf_ema">Check-ins diários</string>
+    <string name="edit_client">Editar cliente</string>
+    <string name="client_status">Estado</string>
+    <string name="cs_active">Em acompanhamento</string>
+    <string name="cs_stable">Estável</string>
+    <string name="cs_at_risk">Em risco</string>
+    <string name="cs_discharged">Alta</string>
+    <string name="client_saved">Cliente atualizado</string>
+
+    <!-- AI drafting -->
+    <string name="ai_section">Rascunhos com IA</string>
+    <string name="ai_draft_from_transcript">Rascunhar nota a partir de transcrição</string>
+    <string name="ai_transcript_hint">Cole ou dite a transcrição da sessão</string>
+    <string name="ai_generate">Gerar rascunho</string>
+    <string name="ai_draft_ready">Rascunho gerado. Reveja e corrija antes de guardar — nada foi guardado ainda.</string>
+    <string name="ai_use_draft">Usar no formulário</string>
+    <string name="ai_summarize">Resumir notas de sessão</string>
+    <string name="ai_notes_hint">Cole as suas notas de sessão</string>
+    <string name="ai_interventions">Sugerir intervenções</string>
+    <string name="ai_concerns_hint">Preocupações atuais (opcional)</string>
+    <string name="ai_progress_report">Relatório de evolução</string>
+    <string name="ai_consent_missing">Este cliente não deu consentimento para rascunhos com IA. Só o cliente o pode dar, na app dele.</string>
+    <string name="ai_disclaimer">Gerado a partir do registo deste cliente. Reveja, corrija e assine antes de usar.</string>
+    <string name="ai_sources">Baseado em</string>
+    <string name="copy">Copiar</string>
+    <string name="copied">Copiado</string>
+
+    <!-- Community -->
+    <string name="community_title">Comunidade</string>
+    <string name="sort_recent">Recentes</string>
+    <string name="sort_top">Mais votados</string>
+    <string name="sort_discussed">Mais discutidos</string>
+    <string name="no_posts">Ainda não há publicações.</string>
+    <string name="new_post">Nova publicação</string>
+    <string name="post_title">Título</string>
+    <string name="post_content">Texto</string>
+    <string name="post_type">Tipo</string>
+    <string name="pt_question">Pergunta</string>
+    <string name="pt_case">Caso</string>
+    <string name="pt_discussion">Discussão</string>
+    <string name="pt_resource">Recurso</string>
+    <string name="post_anonymous">Publicar anonimamente</string>
+    <string name="publish">Publicar</string>
+    <string name="anonymous">Anónimo</string>
+    <string name="replies_count">%1$d respostas</string>
+    <string name="accepted_answer">Resposta aceite</string>
+    <string name="accept_answer">Aceitar resposta</string>
+    <string name="reply">Responder</string>
+    <string name="community_confidentiality">Não identifique clientes. Descreva o caso, não a pessoa.</string>
 </resources>

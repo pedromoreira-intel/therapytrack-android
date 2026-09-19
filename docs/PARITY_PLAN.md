@@ -135,7 +135,7 @@ both post in a discussion, A schedules a meeting.
 
 ---
 
-## Phase 5 — Client page parity  (~1 day)
+## Phase 5 — Client page parity  ✅ done
 
 The Android client page has the brief and notes; iOS also has:
 
@@ -157,7 +157,7 @@ same).
 
 ---
 
-## Phase 6 — AI drafting  (~½ day)
+## Phase 6 — AI drafting  ✅ done
 
 Gated twice: plan (`402`) and client consent (`403` with `reason`).
 
@@ -184,7 +184,7 @@ invite-accept + consent for the seeded client (as the backend tests do).
 
 ---
 
-## Phase 7 — Community  (~1 day, lowest value; do last or skip)
+## Phase 7 — Community  ✅ done
 
 `GET|POST /posts`, `GET /posts/:id`, `POST /posts/:id/{vote,reply,accept}`.
 Feed, post detail with replies, compose. Plain requests. Only worth doing if
@@ -215,6 +215,21 @@ the community is actually used in the pilot.
   when it is absent.
 - The join-request review body is `{status: 'approved'|'rejected'}`, not
   `{accept}`.
+
+## Notes from building 5–7
+
+- Two backend defects surfaced and were fixed in the main repo:
+  `/session-notes/generate` sent transcripts to the model with no client
+  named, no consent check, the client's name in the prompt and a retired
+  model hard-coded (now routed through `services/claude` with consent);
+  and `routes/posts.js` never awaited the database, so post pages came
+  back empty and votes never toggled.
+- The AI stub returns the same report JSON for every prompt, so the
+  transcript → note-fields mapping is unit-tested (`NoteDraftTest`) rather
+  than seen in the emulator.
+- The client page now loads goals, three assessment histories, 30 days of
+  check-ins, shared journal and feature toggles on open — six extra calls.
+  Fine for a pilot; batch them server-side if the page ever feels slow.
 
 ## Order and total
 

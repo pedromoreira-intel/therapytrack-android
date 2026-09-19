@@ -31,3 +31,12 @@ class ScoringTest {
         assertEquals("weak", Scoring.serverKey(Scoring.waiSrAlliance(2.99)))
     }
 }
+
+class PlanTest {
+    @Test fun `feature lookup is a plain membership test on what the server sent`() {
+        val p = com.therapytrack.android.core.ApiPlan(plan = "professional", features = listOf("clients.unlimited", "session_notes"))
+        assertEquals(true, p.has("session_notes"))
+        assertEquals(false, p.has("directory"))
+        assertEquals(false, com.therapytrack.android.core.ApiPlan().has("messaging"))   // nothing sent → nothing assumed
+    }
+}

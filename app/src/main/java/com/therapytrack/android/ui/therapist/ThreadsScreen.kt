@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,12 +70,12 @@ fun TherapistProfileScreen(onSignedOut: () -> Unit) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
     var me by remember { mutableStateOf<ApiUser?>(null) }
-    LaunchedEffect(Unit) { runCatching { me = container.api.me() } }
+    LaunchedEffect(Unit) { runCatching { me = container.api.me() }; container.refreshPlan() }
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.profile_title), style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy)
         Card { Text(me?.name ?: "", style = MaterialTheme.typography.titleLarge); Muted(me?.email ?: "") }
-        Muted(stringResource(R.string.therapist_profile_note))
+        PlanCard(container.plan.collectAsState().value)
         TextButton({ scope.launch { container.api.signOut(); onSignedOut() } }) { Text(stringResource(R.string.sign_out), color = TherapyColors.critical) }
         Muted(stringResource(R.string.version, BuildConfig.VERSION_NAME))
     }

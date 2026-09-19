@@ -24,7 +24,7 @@ Effort is a working-session estimate for one person with the codebase warm.
 
 ---
 
-## Phase 1 — Plan & professional records  (~½ day)
+## Phase 1 — Plan & professional records  ✅ done
 
 Simple lists and forms; unlocks the gating UI every later phase needs.
 
@@ -58,7 +58,7 @@ card says so.
 
 ---
 
-## Phase 2 — Referrals & colleague directory  (~1 day)
+## Phase 2 — Referrals & colleague directory  ✅ done
 
 Network-plan features; first place the 402 path is exercised for real.
 
@@ -87,7 +87,7 @@ once to see the 402 card.
 
 ---
 
-## Phase 3 — Supervision log  (~½ day)
+## Phase 3 — Supervision log  ✅ done
 
 **Endpoints**
 - `GET|POST /intervision/supervision/sessions`, `DELETE …/:id`
@@ -108,7 +108,7 @@ reused or a new `SUPERVISION` kind with `isIrreplaceable = true`).
 
 ---
 
-## Phase 4 — Intervision groups  (~1½ days, the largest)
+## Phase 4 — Intervision groups  ✅ done
 
 **Endpoints**
 - `GET /intervision/groups` (public + mine), `GET /intervision/groups/:id`,
@@ -205,6 +205,16 @@ the community is actually used in the pilot.
 - **Tests to add**: `PlanTest` (feature lookup, expired → free), `ReferralShapeTest`
   (direction/status mapping), `SupervisionOutboxTest` if phase 3 adds an
   outbox — all JVM, no emulator.
+
+## Notes from building 1–4
+
+- Supervision routes are mounted at `/api/supervision/...`, not under
+  `/api/intervision/` (the router is mounted at `/api`). Found by a 404 in
+  the emulator; the app now logs every non-2xx response with its body.
+- `/intervision/my-groups` has no `member_count`; the list hides the count
+  when it is absent.
+- The join-request review body is `{status: 'approved'|'rejected'}`, not
+  `{accept}`.
 
 ## Order and total
 

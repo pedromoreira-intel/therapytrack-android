@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.School
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,7 @@ private data class Tab(val route: String, val label: Int, val icon: androidx.com
 private val tabs = listOf(
     Tab("today", R.string.tab_today, Icons.Outlined.Today),
     Tab("clients", R.string.tab_clients, Icons.Outlined.Group),
+    Tab("practice", R.string.tab_practice, Icons.Outlined.School),
     Tab("threads", R.string.tab_messages, Icons.Outlined.ChatBubbleOutline),
     Tab("profile", R.string.tab_profile, Icons.Outlined.Person)
 )
@@ -84,6 +86,29 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                     ConversationScreen(entry.arguments?.getString("userId")?.toIntOrNull(), entry.arguments?.getString("name") ?: "", onBack = { nav.popBackStack() })
                 }
                 composable("profile") { TherapistProfileScreen(onSignedOut = onSignedOut) }
+
+                // Practice: plan, records, and the network features.
+                composable("practice") { PracticeScreen(onOpen = { nav.navigate(it) }) }
+                composable("credentials") { CredentialsScreen(onBack = { nav.popBackStack() }) }
+                composable("training") { TrainingScreen(onBack = { nav.popBackStack() }) }
+                composable("supervision") { SupervisionScreen(onBack = { nav.popBackStack() }) }
+                composable("myprofile") { MyProfileScreen(onBack = { nav.popBackStack() }) }
+                composable("directory") { DirectoryScreen(onBack = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") },
+                    onRefer = { id, name -> nav.navigate("refer/$id/${android.net.Uri.encode(name)}") }) }
+                composable("refer/{id}/{name}") { entry ->
+                    val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
+                    NewReferralScreen(id, entry.arguments?.getString("name") ?: "", onDone = { nav.popBackStack() })
+                }
+                composable("referrals") { ReferralsScreen(onBack = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") }) }
+                composable("intervision") { IntervisionScreen(onBack = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") }, onGroup = { nav.navigate("group/$it") }) }
+                composable("group/{id}") { entry ->
+                    val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
+                    GroupScreen(id, onBack = { nav.popBackStack() }, onDiscussion = { did, title -> nav.navigate("discussion/$did/${android.net.Uri.encode(title)}") })
+                }
+                composable("discussion/{id}/{title}") { entry ->
+                    val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
+                    DiscussionScreen(id, entry.arguments?.getString("title") ?: "", onBack = { nav.popBackStack() })
+                }
             }
         }
     }

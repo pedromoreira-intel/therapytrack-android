@@ -241,3 +241,190 @@ data class ApiBrief(
     val homework: BriefHomework = BriefHomework(),
     val journal: BriefJournal = BriefJournal()
 )
+
+// Plan, professional records, supervision -------------------------------
+
+@Serializable
+data class ApiPlan(
+    val plan: String = "free",
+    val status: String = "active",
+    @SerialName("current_period_end") val currentPeriodEnd: String? = null,
+    val source: String? = null,
+    @SerialName("effective_reason") val effectiveReason: String? = null,
+    val features: List<String> = emptyList(),
+    @SerialName("free_client_limit") val freeClientLimit: Int? = null
+) {
+    fun has(feature: String) = feature in features
+}
+
+@Serializable
+data class ApiCredential(
+    val id: Int,
+    @SerialName("license_type") val licenseType: String,
+    @SerialName("license_number") val licenseNumber: String? = null,
+    @SerialName("issuing_body") val issuingBody: String? = null,
+    val region: String? = null,
+    @SerialName("expires_on") val expiresOn: String? = null,
+    val notes: String? = null,
+    /** active · renewal_due (≤90 days) · expiring_soon (≤30) · expired — computed by the server. */
+    val status: String = "active",
+    @SerialName("days_until_expiry") val daysUntilExpiry: Int? = null
+)
+
+@Serializable
+data class ApiTraining(
+    val id: Int,
+    val title: String,
+    val institution: String? = null,
+    @SerialName("training_type") val trainingType: String,
+    @SerialName("completed_on") val completedOn: String,
+    val hours: Double = 0.0,
+    @SerialName("certificate_url") val certificateUrl: String? = null,
+    val notes: String? = null
+)
+
+@Serializable
+data class ApiHours(val total: Double = 0.0, val individual: Double = 0.0, val group: Double = 0.0, val peer: Double = 0.0,
+                    @SerialName("session_count") val sessionCount: Int = 0, @SerialName("record_count") val recordCount: Int = 0)
+
+@Serializable
+data class ApiCredentialSummary(val total: Int = 0, val expired: List<ApiCredential> = emptyList(),
+                                @SerialName("expiring_soon") val expiringSoon: List<ApiCredential> = emptyList(),
+                                @SerialName("renewal_due") val renewalDue: List<ApiCredential> = emptyList())
+
+@Serializable
+data class ApiProfessionalSummary(
+    val year: Int,
+    @SerialName("supervision_hours") val supervisionHours: ApiHours = ApiHours(),
+    @SerialName("training_hours") val trainingHours: ApiHours = ApiHours(),
+    val credentials: ApiCredentialSummary = ApiCredentialSummary()
+)
+
+@Serializable
+data class ApiSupervisionSession(
+    val id: Int,
+    @SerialName("supervisor_name") val supervisorName: String,
+    @SerialName("supervisor_credentials") val supervisorCredentials: String? = null,
+    @SerialName("supervision_type") val supervisionType: String,
+    @SerialName("session_date") val sessionDate: String,
+    val hours: Double = 1.0,
+    val topics: String? = null,
+    val notes: String? = null,
+    val rating: Int? = null
+)
+
+@Serializable
+data class ApiSupervisor(
+    val id: Int,
+    @SerialName("professional_name") val professionalName: String,
+    val credentials: String? = null,
+    val specialization: String? = null,
+    @SerialName("is_online") @Serializable(with = LenientBoolean::class) val isOnline: Boolean = true,
+    @SerialName("hourly_rate") val hourlyRate: Double? = null,
+    @SerialName("contact_email") val contactEmail: String? = null
+)
+
+// Directory & referrals ----------------------------------------------------
+
+@Serializable
+data class ApiTherapistProfile(
+    @SerialName("therapist_id") val therapistId: Int,
+    val name: String = "",
+    val headline: String? = null,
+    val bio: String? = null,
+    @SerialName("years_experience") val yearsExperience: Int? = null,
+    val city: String? = null,
+    val region: String? = null,
+    val country: String? = null,
+    @SerialName("offers_in_person") @Serializable(with = LenientBoolean::class) val offersInPerson: Boolean = false,
+    @SerialName("offers_online") @Serializable(with = LenientBoolean::class) val offersOnline: Boolean = false,
+    @SerialName("accepting_clients") @Serializable(with = LenientBoolean::class) val acceptingClients: Boolean = false,
+    @SerialName("offers_supervision") @Serializable(with = LenientBoolean::class) val offersSupervision: Boolean = false,
+    @SerialName("is_listed") @Serializable(with = LenientBoolean::class) val isListed: Boolean = false,
+    val specialty: List<String> = emptyList(),
+    val population: List<String> = emptyList(),
+    val language: List<String> = emptyList(),
+    val approach: List<String> = emptyList()
+)
+
+@Serializable
+data class ApiReferral(
+    val id: Int,
+    val direction: String,
+    @SerialName("counterparty_id") val counterpartyId: Int,
+    @SerialName("counterparty_name") val counterpartyName: String? = null,
+    @SerialName("counterparty_email") val counterpartyEmail: String? = null,
+    @SerialName("presenting_issue") val presentingIssue: String? = null,
+    val population: String? = null,
+    val language: String? = null,
+    val city: String? = null,
+    val delivery: String = "either",
+    val urgency: String = "routine",
+    val note: String? = null,
+    val status: String = "pending",
+    @SerialName("response_note") val responseNote: String? = null,
+    @SerialName("responded_at") val respondedAt: String? = null,
+    @SerialName("created_at") val createdAt: String
+)
+
+// Intervision ---------------------------------------------------------------
+
+@Serializable
+data class ApiIntervisionGroup(
+    val id: Int,
+    val name: String,
+    val description: String? = null,
+    @SerialName("focus_area") val focusArea: String? = null,
+    @SerialName("meeting_schedule") val meetingSchedule: String? = null,
+    @SerialName("is_online") @Serializable(with = LenientBoolean::class) val isOnline: Boolean = true,
+    @SerialName("max_members") val maxMembers: Int = 10,
+    @SerialName("moderator_id") val moderatorId: Int,
+    @SerialName("moderator_name") val moderatorName: String? = null,
+    @SerialName("meeting_link") val meetingLink: String? = null,
+    @SerialName("member_count") val memberCount: Int = 0,
+    /** Present on `/my-groups`: this user's role in the group. */
+    val role: String? = null
+)
+
+@Serializable
+data class ApiGroupMember(val id: Int, @SerialName("user_id") val userId: Int, val role: String = "member",
+                          @SerialName("user_name") val userName: String? = null)
+
+@Serializable
+data class ApiJoinRequest(val id: Int, @SerialName("user_id") val userId: Int, @SerialName("user_name") val userName: String? = null,
+                          val message: String? = null, val status: String = "pending", @SerialName("requested_at") val requestedAt: String? = null)
+
+@Serializable
+data class ApiMeeting(val id: Int, val title: String, val agenda: String? = null, @SerialName("meeting_link") val meetingLink: String? = null,
+                      @SerialName("scheduled_at") val scheduledAt: String, @SerialName("duration_minutes") val durationMinutes: Int = 60)
+
+@Serializable
+data class ApiGroupDetail(
+    val id: Int,
+    val name: String,
+    val description: String? = null,
+    @SerialName("focus_area") val focusArea: String? = null,
+    @SerialName("meeting_schedule") val meetingSchedule: String? = null,
+    @SerialName("is_online") @Serializable(with = LenientBoolean::class) val isOnline: Boolean = true,
+    @SerialName("max_members") val maxMembers: Int = 10,
+    @SerialName("moderator_id") val moderatorId: Int,
+    @SerialName("moderator_name") val moderatorName: String? = null,
+    @SerialName("meeting_link") val meetingLink: String? = null,
+    val members: List<ApiGroupMember> = emptyList(),
+    /** Only sent to the moderator. */
+    val requests: List<ApiJoinRequest> = emptyList(),
+    val meetings: List<ApiMeeting> = emptyList(),
+    @SerialName("my_role") val myRole: String = "member"
+)
+
+@Serializable
+data class ApiDiscussion(val id: Int, @SerialName("group_id") val groupId: Int, val title: String,
+                         @SerialName("created_by") val createdBy: Int, @SerialName("creator_name") val creatorName: String? = null,
+                         @SerialName("created_at") val createdAt: String, @SerialName("message_count") val messageCount: Int = 0)
+
+@Serializable
+data class ApiDiscussionMessage(val id: Int, @SerialName("user_id") val userId: Int, @SerialName("user_name") val userName: String? = null,
+                                val content: String, @SerialName("posted_at") val postedAt: String)
+
+@Serializable
+data class ApiCreated(val id: Int, val message: String? = null)

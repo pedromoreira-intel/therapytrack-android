@@ -80,4 +80,5 @@ fun kindLabel(kind: StuckItem.Kind): Int = when (kind) {
     StuckItem.Kind.JOURNAL_ENTRY -> R.string.kind_journal
     StuckItem.Kind.MESSAGE -> R.string.kind_message
     StuckItem.Kind.SESSION_NOTE -> R.string.kind_session_note
+    StuckItem.Kind.SUPERVISION -> R.string.kind_supervision
 }

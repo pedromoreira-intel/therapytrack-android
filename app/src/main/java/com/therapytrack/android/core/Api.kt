@@ -205,6 +205,117 @@ class Api(val client: ApiClient) {
 
     suspend fun threads(): ApiThreads = decode(client.request("GET", "/messages/threads").body)
 
+    // Plan, professional records, supervision ------------------------------
+
+    suspend fun plan(): ApiPlan = decode(client.request("GET", "/billing/me").body)
+
+    suspend fun credentials(): List<ApiCredential> = list(ApiCredential.serializer(), "/professional/credentials")
+    suspend fun saveCredential(id: Int?, licenseType: String, licenseNumber: String?, issuingBody: String?, region: String?, expiresOn: String?, notes: String?): ApiCredential {
+        val body = buildJsonObject {
+            put("license_type", licenseType); licenseNumber?.let { put("license_number", it) }; issuingBody?.let { put("issuing_body", it) }
+            region?.let { put("region", it) }; expiresOn?.let { put("expires_on", it) }; notes?.let { put("notes", it) }
+        }
+        return decode(if (id == null) client.request("POST", "/professional/credentials", body).body
+                      else client.request("PUT", "/professional/credentials/$id", body).body)
+    }
+    suspend fun deleteCredential(id: Int) { client.request("DELETE", "/professional/credentials/$id") }
+
+    suspend fun training(): List<ApiTraining> = list(ApiTraining.serializer(), "/professional/training")
+    suspend fun addTraining(title: String, institution: String?, type: String, completedOn: String, hours: Double, notes: String?): ApiTraining =
+        decode(client.request("POST", "/professional/training", buildJsonObject {
+            put("title", title); institution?.let { put("institution", it) }; put("training_type", type)
+            put("completed_on", completedOn); put("hours", hours); notes?.let { put("notes", it) }
+        }).body)
+    suspend fun deleteTraining(id: Int) { client.request("DELETE", "/professional/training/$id") }
+
+    suspend fun professionalSummary(): ApiProfessionalSummary = decode(client.request("GET", "/professional/summary").body)
+
+    suspend fun supervisionSessions(): List<ApiSupervisionSession> = list(ApiSupervisionSession.serializer(), "/supervision/sessions")
+    suspend fun addSupervisionSession(supervisorName: String, credentials: String?, type: String, date: String, hours: Double,
+                                      topics: String?, notes: String?, rating: Int?, asUser: Int? = null) {
+        client.request("POST", "/supervision/sessions", buildJsonObject {
+            put("supervisor_name", supervisorName); credentials?.let { put("supervisor_credentials", it) }
+            put("supervision_type", type); put("session_date", date); put("hours", hours)
+            topics?.let { put("topics", it) }; notes?.let { put("notes", it) }; rating?.let { put("rating", it) }
+        }, asUser = asUser)
+    }
+    suspend fun deleteSupervisionSession(id: Int) { client.request("DELETE", "/supervision/sessions/$id") }
+    suspend fun supervisors(): List<ApiSupervisor> = list(ApiSupervisor.serializer(), "/supervision/network")
+    suspend fun addSupervisor(name: String, credentials: String?, specialization: String?, isOnline: Boolean, hourlyRate: Double?, email: String?) {
+        client.request("POST", "/supervision/network", buildJsonObject {
+            put("professional_name", name); credentials?.let { put("credentials", it) }; specialization?.let { put("specialization", it) }
+            put("is_online", isOnline); hourlyRate?.let { put("hourly_rate", it) }; email?.let { put("contact_email", it) }
+        })
+    }
+
+    // Directory & referrals -------------------------------------------------
+
+    suspend fun myProfile(): ApiTherapistProfile = decode(client.request("GET", "/profiles/me").body)
+    suspend fun therapistProfile(id: Int): ApiTherapistProfile = decode(client.request("GET", "/profiles/$id").body)
+    suspend fun updateMyProfile(p: ApiTherapistProfile): ApiTherapistProfile = decode(client.request("PUT", "/profiles/me", buildJsonObject {
+        p.headline?.let { put("headline", it) }; p.bio?.let { put("bio", it) }; p.yearsExperience?.let { put("years_experience", it) }
+        p.city?.let { put("city", it) }; p.region?.let { put("region", it) }; p.country?.let { put("country", it) }
+        put("offers_in_person", p.offersInPerson); put("offers_online", p.offersOnline); put("accepting_clients", p.acceptingClients)
+        put("offers_supervision", p.offersSupervision); put("is_listed", p.isListed)
+        listOf("specialty" to p.specialty, "population" to p.population, "language" to p.language, "approach" to p.approach).forEach { (kind, values) ->
+            putJsonArray(kind) { values.forEach { add(kotlinx.serialization.json.JsonPrimitive(it)) } }
+        }
+    }).body)
+
+    suspend fun directory(q: String? = null, city: String? = null, accepting: Boolean = false, online: Boolean = false): List<ApiTherapistProfile> {
+        val params = listOfNotNull(q?.takeIf { it.isNotBlank() }?.let { "q=" + URLEncoder.encode(it, "UTF-8") },
+            city?.takeIf { it.isNotBlank() }?.let { "city=" + URLEncoder.encode(it, "UTF-8") },
+            if (accepting) "accepting=true" else null, if (online) "online=true" else null)
+        return list(ApiTherapistProfile.serializer(), "/profiles/directory" + if (params.isEmpty()) "" else "?" + params.joinToString("&"))
+    }
+
+    suspend fun referrals(direction: String): List<ApiReferral> = list(ApiReferral.serializer(), "/referrals?direction=$direction")
+    /** A description, not a record: no client identity travels with a referral. */
+    suspend fun sendReferral(toTherapistId: Int, delivery: String, urgency: String, presentingIssue: String?, population: String?,
+                             language: String?, city: String?, note: String?): ApiReferral =
+        decode(client.request("POST", "/referrals", buildJsonObject {
+            put("to_therapist_id", toTherapistId); put("delivery", delivery); put("urgency", urgency)
+            presentingIssue?.let { put("presenting_issue", it) }; population?.let { put("population", it) }
+            language?.let { put("language", it) }; city?.let { put("city", it) }; note?.let { put("note", it) }
+        }).body)
+    suspend fun respondToReferral(id: Int, accept: Boolean, note: String?) {
+        client.request("PUT", "/referrals/$id/respond", buildJsonObject { put("accept", accept); note?.let { put("response_note", it) } })
+    }
+    suspend fun withdrawReferral(id: Int) { client.request("PUT", "/referrals/$id/withdraw", buildJsonObject {}) }
+
+    // Intervision -------------------------------------------------------------
+
+    suspend fun intervisionGroups(): List<ApiIntervisionGroup> = list(ApiIntervisionGroup.serializer(), "/intervision/groups")
+    suspend fun myIntervisionGroups(): List<ApiIntervisionGroup> = list(ApiIntervisionGroup.serializer(), "/intervision/my-groups")
+    suspend fun intervisionGroup(id: Int): ApiGroupDetail = decode(client.request("GET", "/intervision/groups/$id").body)
+    suspend fun createIntervisionGroup(name: String, description: String?, focusArea: String?, schedule: String?, isOnline: Boolean, maxMembers: Int, link: String?): ApiCreated =
+        decode(client.request("POST", "/intervision/groups", buildJsonObject {
+            put("name", name); description?.let { put("description", it) }; focusArea?.let { put("focus_area", it) }
+            schedule?.let { put("meeting_schedule", it) }; put("is_online", isOnline); put("max_members", maxMembers); link?.let { put("meeting_link", it) }
+        }).body)
+    suspend fun requestToJoin(groupId: Int, message: String?) {
+        client.request("POST", "/intervision/join", buildJsonObject { put("group_id", groupId); message?.let { put("message", it) } })
+    }
+    suspend fun reviewJoinRequest(requestId: Int, approve: Boolean) {
+        client.request("PUT", "/intervision/requests/$requestId", buildJsonObject { put("status", if (approve) "approved" else "rejected") })
+    }
+    suspend fun discussions(groupId: Int): List<ApiDiscussion> = list(ApiDiscussion.serializer(), "/intervision/groups/$groupId/discussions")
+    suspend fun createDiscussion(groupId: Int, title: String): ApiCreated =
+        decode(client.request("POST", "/intervision/discussions", buildJsonObject { put("group_id", groupId); put("title", title) }).body)
+    suspend fun discussionMessages(discussionId: Int): List<ApiDiscussionMessage> = list(ApiDiscussionMessage.serializer(), "/intervision/discussions/$discussionId/messages")
+    suspend fun postDiscussionMessage(discussionId: Int, content: String) {
+        client.request("POST", "/intervision/discussions/$discussionId/messages", buildJsonObject { put("content", content) })
+    }
+    suspend fun createMeeting(groupId: Int, title: String, agenda: String?, link: String?, scheduledAt: String, minutes: Int) {
+        client.request("POST", "/intervision/meetings", buildJsonObject {
+            put("group_id", groupId); put("title", title); agenda?.let { put("agenda", it) }; link?.let { put("meeting_link", it) }
+            put("scheduled_at", scheduledAt); put("duration_minutes", minutes)
+        })
+    }
+
+    private suspend fun <T> list(serializer: kotlinx.serialization.KSerializer<T>, path: String): List<T> =
+        json.decodeFromString(ListSerializer(serializer), client.request("GET", path).body)
+
     enum class Instrument(val path: String, val displayName: String) {
         PHQ9("phq9", "PHQ-9"), GAD7("gad7", "GAD-7"), WAISR("wai-sr", "WAI-SR")
     }

@@ -38,17 +38,15 @@ import com.therapytrack.android.core.ApiMessage
 import com.therapytrack.android.core.ApiTimestamp
 import com.therapytrack.android.offline.PendingMessage
 import com.therapytrack.android.offline.SaveOutcome
+import com.therapytrack.android.ui.common.Bubble
+import com.therapytrack.android.ui.common.Composer
 import com.therapytrack.android.ui.common.ErrorText
+import com.therapytrack.android.ui.common.MessageList
 import com.therapytrack.android.ui.common.Muted
 import com.therapytrack.android.ui.common.shortDateTime
 import com.therapytrack.android.ui.theme.TherapyColors
 import kotlinx.coroutines.launch
 import java.time.Instant
-
-private sealed class Bubble(val mine: Boolean, val text: String, val whenMillis: Long) {
-    class Delivered(m: ApiMessage, mine: Boolean) : Bubble(mine, m.message, ApiTimestamp.parse(m.createdAt)?.toEpochMilli() ?: 0)
-    class Pending(p: PendingMessage) : Bubble(true, p.text, p.createdAtMillis)
-}
 
 /** The client's one conversation: with their therapist. */
 @Composable
@@ -77,37 +75,24 @@ fun ConversationScreen(otherUserId: Int?, title: String, showNotRealtime: Boolea
         runCatching { delivered = container.api.conversation(t).messages; container.api.markConversationRead(t) }
     }
 
-    val bubbles = (delivered.map { Bubble.Delivered(it, it.fromUserId == me) } + pending.map { Bubble.Pending(it) }).sortedBy { it.whenMillis }
+    val bubbles = (delivered.map { Bubble("d${it.id}", it.fromUserId == me, it.message, ApiTimestamp.parse(it.createdAt)?.shortDateTime() ?: "", it.fromName) }
+        + pending.map { Bubble("p${it.id}", true, it.text, stringResource(R.string.message_pending)) })
     LaunchedEffect(bubbles.size) { if (bubbles.isNotEmpty()) listState.animateScrollToItem(bubbles.size - 1) }
 
     Column(Modifier.fillMaxSize().imePadding()) {
         if (onBack != null) TextButton(onBack) { Text(stringResource(R.string.back)) }
         Text(title, style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy, modifier = Modifier.padding(20.dp, if (onBack == null) 16.dp else 0.dp, 20.dp, 4.dp))
         if (showNotRealtime) Muted(stringResource(R.string.messages_not_realtime), Modifier.padding(horizontal = 20.dp))
-        LazyColumn(Modifier.weight(1f).padding(horizontal = 16.dp), state = listState, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (bubbles.isEmpty()) item { Muted(stringResource(R.string.no_messages), Modifier.padding(top = 24.dp)) }
-            items(bubbles) { b ->
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = if (b.mine) Alignment.End else Alignment.Start) {
-                    Box(
-                        Modifier.widthIn(max = 300.dp).clip(MaterialTheme.shapes.medium)
-                            .background(if (b.mine) TherapyColors.navy else TherapyColors.pearl).padding(12.dp)
-                    ) { Text(b.text, color = if (b.mine) Color.White else TherapyColors.ink) }
-                    Muted(if (b is Bubble.Pending) stringResource(R.string.message_pending) else Instant.ofEpochMilli(b.whenMillis).shortDateTime())
-                }
-            }
-        }
+        MessageList(bubbles, listState, Modifier.weight(1f)) { Muted(stringResource(R.string.no_messages), Modifier.padding(top = 24.dp)) }
         if (failed) ErrorText(stringResource(R.string.message_failed))
-        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(draft, { draft = it }, placeholder = { Text(stringResource(R.string.message_hint)) }, modifier = Modifier.weight(1f), maxLines = 4)
-            TextButton(enabled = draft.isNotBlank() && therapist != null, onClick = {
-                val t = therapist ?: return@TextButton
-                val text = draft
-                scope.launch {
-                    val outcome = container.messages.send(t, text)
-                    // The draft is cleared only once the outbox has it.
-                    if (outcome == SaveOutcome.NOT_STORED) failed = true else { failed = false; draft = ""; reload++ }
-                }
-            }) { Text(stringResource(R.string.send)) }
+        Composer(draft, { draft = it }, stringResource(R.string.message_hint), stringResource(R.string.send), enabled = draft.isNotBlank() && therapist != null) {
+            val t = therapist ?: return@Composer
+            val text = draft
+            scope.launch {
+                val outcome = container.messages.send(t, text)
+                // The draft is cleared only once the outbox has it.
+                if (outcome == SaveOutcome.NOT_STORED) failed = true else { failed = false; draft = ""; reload++ }
+            }
         }
     }
 }

@@ -103,6 +103,7 @@ class ApiClient(
             throw ApiError.Network(e)
         }
         val text = response.body?.string() ?: ""
+        if (response.code >= 400) android.util.Log.w("Api", "$method $path -> ${response.code}: ${text.take(200)}")
 
         if (response.code == 401) {
             if (allowRefresh && sessions.current().refreshToken != null && refreshSession()) {

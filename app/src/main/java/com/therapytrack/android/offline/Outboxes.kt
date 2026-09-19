@@ -151,3 +151,36 @@ class SessionNoteOutbox(queue: DurableQueue<PendingSessionNote>, private val api
     override fun summary(item: PendingSessionNote) = "${item.patientName} · ${item.sessionDate}"
     override fun recordAttempt(item: PendingSessionNote, error: Throwable) = item.copy(attempts = item.attempts + 1, lastError = error.message)
 }
+
+@Serializable
+data class PendingSupervision(
+    override val id: String = UUID.randomUUID().toString(),
+    override val clientId: String = UUID.randomUUID().toString(),
+    override val ownerUserId: Int,
+    val supervisorName: String,
+    val supervisorCredentials: String?,
+    val type: String,
+    val date: String,
+    val hours: Double,
+    val topics: String?,
+    val notes: String?,
+    val rating: Int?,
+    override val createdAtMillis: Long = System.currentTimeMillis(),
+    override val attempts: Int = 0,
+    override val lastError: String? = null
+) : Pending
+
+/** Reflective text the therapist wrote about their own practice; not recreatable, so it is queued like a note. */
+class SupervisionOutbox(queue: DurableQueue<PendingSupervision>, private val api: Api) :
+    Outbox<PendingSupervision>(queue, { api.client.currentUserId }, StuckItem.Kind.SUPERVISION, maxAttempts = 50) {
+
+    suspend fun save(supervisorName: String, credentials: String?, type: String, date: String, hours: Double, topics: String?, notes: String?, rating: Int?): SaveOutcome {
+        val owner = api.client.currentUserId ?: return SaveOutcome.NOT_STORED
+        return submit(PendingSupervision(ownerUserId = owner, supervisorName = supervisorName, supervisorCredentials = credentials, type = type,
+            date = date, hours = hours, topics = topics, notes = notes, rating = rating))
+    }
+    override suspend fun send(item: PendingSupervision) = api.addSupervisionSession(
+        item.supervisorName, item.supervisorCredentials, item.type, item.date, item.hours, item.topics, item.notes, item.rating, asUser = item.ownerUserId)
+    override fun summary(item: PendingSupervision) = "${item.supervisorName} · ${item.date}"
+    override fun recordAttempt(item: PendingSupervision, error: Throwable) = item.copy(attempts = item.attempts + 1, lastError = error.message)
+}

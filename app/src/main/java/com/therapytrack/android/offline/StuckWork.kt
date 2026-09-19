@@ -19,7 +19,8 @@ data class StuckItem(
         ASSESSMENT(true),
         CHECK_IN(false),
         MESSAGE(false),
-        JOURNAL_ENTRY(true)
+        JOURNAL_ENTRY(true),
+        SUPERVISION(true)
     }
 }
 

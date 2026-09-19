@@ -4,7 +4,8 @@ Native Android client for TherapyTrack, written in Kotlin with Jetpack Compose.
 Both roles: the **client (patient) side** — check-ins, journal, assessments,
 messages, data rights — and the **therapist side** — today's alerts and
 sessions, caseload with invitations, the pre-session brief, session notes,
-scheduling, and messaging.
+scheduling, messaging, and under **Prática**: plan, credentials, CPD training,
+supervision log, colleague directory, referrals, and intervision groups.
 
 It talks to the same backend as the iOS app and follows the same rules:
 
@@ -47,8 +48,8 @@ ui/         Compose theme, auth screens, client and therapist shells and screens
 
 ## Known gaps
 
-- Therapist extras that live in the iOS app only: professional records,
-  supervision, intervision, referrals, billing, community, AI drafting.
+- Still iOS-only: goals/homework and charts on the client page, AI drafting,
+  community posts (phases 5–7 in `docs/PARITY_PLAN.md`).
 - `GET /messages/threads` uses Postgres `DISTINCT ON`, so on the SQLite dev
   backend the therapist's Messages tab reports "could not load"; open a
   conversation from the client's page instead. Production is unaffected.

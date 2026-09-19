@@ -20,6 +20,10 @@ import com.therapytrack.android.offline.PendingJournalEntry
 import com.therapytrack.android.offline.PendingMessage
 import com.therapytrack.android.offline.PendingSessionNote
 import com.therapytrack.android.offline.SessionNoteOutbox
+import com.therapytrack.android.offline.PendingSupervision
+import com.therapytrack.android.offline.SupervisionOutbox
+import com.therapytrack.android.core.ApiPlan
+import kotlinx.coroutines.flow.MutableStateFlow
 import com.therapytrack.android.offline.StuckWorkSource
 import kotlinx.serialization.KSerializer
 
@@ -40,10 +44,19 @@ class AppContainer(private val app: Context) {
     val messages = MessageOutbox(queue("pending-messages.json", PendingMessage.serializer()), api)
     val sessionNotes = SessionNoteOutbox(queue("pending-session-notes.json", PendingSessionNote.serializer()), api)
 
-    val stuckSources: List<StuckWorkSource> get() = listOf(checkIns, assessments, journal, messages, sessionNotes)
+    val supervision = SupervisionOutbox(queue("pending-supervision.json", PendingSupervision.serializer()), api)
+
+    val stuckSources: List<StuckWorkSource> get() = listOf(checkIns, assessments, journal, messages, sessionNotes, supervision)
+
+    /**
+     * The therapist's plan as last read from the server. Only used to *say*
+     * what the plan is; every gate is the server's 402, never a local check.
+     */
+    val plan = MutableStateFlow<ApiPlan?>(null)
+    suspend fun refreshPlan() { runCatching { plan.value = api.plan() } }
 
     /** Retry everything queued. Safe on launch, on foreground, and when the network returns. */
     suspend fun drainQueues() {
-        checkIns.flush(); assessments.flush(); journal.flush(); messages.flush(); sessionNotes.flush()
+        checkIns.flush(); assessments.flush(); journal.flush(); messages.flush(); sessionNotes.flush(); supervision.flush()
     }
 }

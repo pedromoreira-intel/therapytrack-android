@@ -7,6 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.Emergency
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,24 +52,36 @@ import java.io.File
 fun ProfileScreen(state: ClientState, onPrivacy: () -> Unit, onCrisis: () -> Unit, onSignedOut: () -> Unit) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(stringResource(R.string.profile_title), style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy)
-        Card {
-            Text(state.patient?.name ?: "", style = MaterialTheme.typography.titleLarge)
-            Muted(state.patient?.email ?: "")
-            state.patient?.therapistName?.let { Muted("${stringResource(R.string.your_therapist)}: $it", Modifier.padding(top = 6.dp)) }
+    var confirm by remember { mutableStateOf(false) }
+    val p = state.patient
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp, 12.dp, 20.dp, 24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        com.therapytrack.android.ui.common.ProfileHeader(p?.name ?: "", stringResource(R.string.role_patient), p?.email ?: "", stringResource(R.string.role_patient))
+        com.therapytrack.android.ui.common.Overline(stringResource(R.string.personal_info), modifier = Modifier.padding(top = 12.dp))
+        com.therapytrack.android.ui.common.ListCard {
+            com.therapytrack.android.ui.common.ListRow(stringResource(R.string.name), trailing = p?.name ?: "")
+            com.therapytrack.android.ui.common.ListRow(stringResource(R.string.email), trailing = p?.email ?: "", divider = false)
         }
-        Card(modifier = Modifier.clickable(onClick = onPrivacy)) {
-            Text(stringResource(R.string.your_data), style = MaterialTheme.typography.titleMedium)
-            Muted(stringResource(R.string.your_data_detail))
+        com.therapytrack.android.ui.common.Overline(stringResource(R.string.your_care), modifier = Modifier.padding(top = 12.dp))
+        com.therapytrack.android.ui.common.ListCard {
+            com.therapytrack.android.ui.common.ListRow(stringResource(R.string.your_therapist), trailing = p?.therapistName ?: "—")
+            com.therapytrack.android.ui.common.ListRow(stringResource(R.string.diagnosis_label), trailing = p?.diagnosis?.takeIf { it.isNotBlank() && it != "—" } ?: "—", divider = false)
         }
-        Card(modifier = Modifier.clickable(onClick = onCrisis), tint = TherapyColors.rose.copy(alpha = 0.2f)) {
-            Text(stringResource(R.string.crisis_support), style = MaterialTheme.typography.titleMedium)
+        com.therapytrack.android.ui.common.Overline(stringResource(R.string.app_settings), modifier = Modifier.padding(top = 12.dp))
+        com.therapytrack.android.ui.common.ListCard {
+            com.therapytrack.android.ui.common.ListRow(stringResource(R.string.language_setting), trailing = java.util.Locale.getDefault().displayLanguage.replaceFirstChar { it.uppercase() }, icon = androidx.compose.material.icons.Icons.Outlined.Language)
+            com.therapytrack.android.ui.common.ListRow(stringResource(R.string.crisis_support), icon = androidx.compose.material.icons.Icons.Outlined.Emergency, tint = TherapyColors.critical, chevron = true, divider = false, onClick = onCrisis)
         }
-        Spacer(Modifier.height(8.dp))
-        TextButton({ scope.launch { container.api.signOut(); onSignedOut() } }) { Text(stringResource(R.string.sign_out), color = TherapyColors.critical) }
-        Muted(stringResource(R.string.version, BuildConfig.VERSION_NAME))
+        com.therapytrack.android.ui.common.Overline(stringResource(R.string.data_privacy), modifier = Modifier.padding(top = 12.dp))
+        com.therapytrack.android.ui.common.ListCard {
+            com.therapytrack.android.ui.common.ListRow(stringResource(R.string.your_data), subtitle = stringResource(R.string.your_data_detail), icon = androidx.compose.material.icons.Icons.Outlined.Shield, chevron = true, onClick = onPrivacy)
+            com.therapytrack.android.ui.common.ListRow(stringResource(R.string.sign_out), icon = androidx.compose.material.icons.Icons.AutoMirrored.Outlined.Logout, tint = TherapyColors.critical, titleColor = TherapyColors.critical, divider = false) { confirm = true }
+        }
+        com.therapytrack.android.ui.common.Overline(stringResource(R.string.app_info), modifier = Modifier.padding(top = 12.dp))
+        com.therapytrack.android.ui.common.ListCard { com.therapytrack.android.ui.common.ListRow(stringResource(R.string.version_label), trailing = BuildConfig.VERSION_NAME, divider = false) }
     }
+    if (confirm) AlertDialog(onDismissRequest = { confirm = false }, title = { Text(stringResource(R.string.sign_out)) }, text = { Text(stringResource(R.string.sign_out_confirm)) },
+        confirmButton = { TextButton({ confirm = false; scope.launch { container.api.signOut(); onSignedOut() } }) { Text(stringResource(R.string.sign_out), color = TherapyColors.critical) } },
+        dismissButton = { TextButton({ confirm = false }) { Text(stringResource(R.string.cancel)) } })
 }
 
 /** Consent state, the Art. 15 export, and the Art. 17 request — with the preview shown before the act. */

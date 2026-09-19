@@ -12,19 +12,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -35,25 +32,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.therapytrack.android.LocalContainer
 import com.therapytrack.android.R
 import com.therapytrack.android.core.ApiPatient
 import com.therapytrack.android.core.ApiTimestamp
 import com.therapytrack.android.core.CreatedPatient
+import com.therapytrack.android.ui.auth.LabelledField
 import com.therapytrack.android.ui.auth.errorText
+import com.therapytrack.android.ui.common.Avatar
 import com.therapytrack.android.ui.common.Card
 import com.therapytrack.android.ui.common.ErrorText
 import com.therapytrack.android.ui.common.Muted
+import com.therapytrack.android.ui.common.Overline
 import com.therapytrack.android.ui.common.Pill
 import com.therapytrack.android.ui.common.PrimaryButton
 import com.therapytrack.android.ui.common.shortDate
+import com.therapytrack.android.ui.common.shortDateTime
 import com.therapytrack.android.ui.theme.TherapyColors
+import com.therapytrack.android.ui.theme.TherapyType
 import kotlinx.coroutines.launch
 
 fun riskColor(level: String?) = when (level?.uppercase()) {
@@ -69,45 +73,47 @@ fun riskLabel(level: String?): String = stringResource(when (level?.uppercase())
     else -> R.string.risk_low
 })
 
+/** The caseload, as iOS lays it out: sans h1 title, "+ New client" top-right, one card per person. */
 @Composable
-fun PatientsScreen(onPatient: (Int) -> Unit) {
+fun PatientsScreen(onPatient: (Int) -> Unit, startCreating: Boolean = false) {
     val container = LocalContainer.current
     var patients by remember { mutableStateOf<List<ApiPatient>>(emptyList()) }
-    var query by rememberSaveable { mutableStateOf("") }
-    var creating by rememberSaveable { mutableStateOf(false) }
+    var creating by rememberSaveable { mutableStateOf(startCreating) }
     var reload by remember { mutableStateOf(0) }
     var loadFailed by remember { mutableStateOf(false) }
 
     LaunchedEffect(reload) { loadFailed = runCatching { patients = container.api.patients() }.isFailure }
-
     if (creating) { NewPatientScreen(onDone = { creating = false; reload++ }); return }
 
-    val shown = patients.filter { query.isBlank() || it.name.contains(query, ignoreCase = true) }
-    Scaffold(containerColor = TherapyColors.canvas, floatingActionButton = {
-        FloatingActionButton({ creating = true }, containerColor = TherapyColors.navy) { Icon(Icons.Filled.Add, stringResource(R.string.new_client), tint = Color.White) }
-    }) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            item {
-                Text(stringResource(R.string.clients_title), style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy, modifier = Modifier.padding(top = 16.dp))
-                OutlinedTextField(query, { query = it }, placeholder = { Text(stringResource(R.string.search_clients)) }, singleLine = true, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
-            }
-            // An empty caseload and a failed load are different things to say.
-            if (loadFailed) item { Row { Muted(stringResource(R.string.could_not_load)); TextButton({ reload++ }) { Text(stringResource(R.string.refresh)) } } }
-            else if (patients.isEmpty()) item { Muted(stringResource(R.string.no_clients)) }
-            items(shown, key = { it.id }) { p ->
-                Card(modifier = Modifier.clickable { onPatient(p.id) }) {
-                    Row(Modifier.fillMaxWidth()) {
-                        Column(Modifier.weight(1f)) {
-                            Text(p.name, style = MaterialTheme.typography.titleMedium)
-                            p.diagnosis?.takeIf { it.isNotBlank() && it != "—" }?.let { Muted(it) }
-                            p.lastEma?.let { Muted("Check-in: ${ApiTimestamp.parse(it)?.shortDate() ?: it}") }
-                        }
-                        Pill(riskLabel(p.riskLevel), riskColor(p.riskLevel))
-                    }
+    LazyColumn(Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        item {
+            Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+                TextButton({ creating = true }) {
+                    Icon(Icons.Filled.AddCircle, null, tint = TherapyColors.navy); Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.new_client), style = TherapyType.emphasisLarge, color = TherapyColors.navy)
                 }
             }
-            item { Spacer(Modifier.height(80.dp)) }
+            Text(stringResource(R.string.clients_title), style = TherapyType.h1, color = TherapyColors.ink, modifier = Modifier.padding(bottom = 8.dp))
         }
+        // An empty caseload and a failed load are different things to say.
+        if (loadFailed) item { Row { Muted(stringResource(R.string.could_not_load)); TextButton({ reload++ }) { Text(stringResource(R.string.refresh)) } } }
+        else if (patients.isEmpty()) item { Muted(stringResource(R.string.no_clients)) }
+        items(patients, key = { it.id }) { p ->
+            Card(modifier = Modifier.clickable { onPatient(p.id) }) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Avatar(p.name, 44.dp); Spacer(Modifier.width(14.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(p.name, style = TherapyType.emphasisLarge, color = TherapyColors.ink)
+                        p.diagnosis?.takeIf { it.isNotBlank() && it != "—" }?.let { Text(it, style = TherapyType.body, color = TherapyColors.muted, maxLines = 1, overflow = TextOverflow.Ellipsis) }
+                        p.nextSession?.let { Text(stringResource(R.string.next_session, ApiTimestamp.parse(it)?.shortDateTime() ?: it), style = TherapyType.caption, color = TherapyColors.muted) }
+                            ?: p.lastEma?.let { Text(stringResource(R.string.last_check_in) + ": " + (ApiTimestamp.parse(it)?.shortDate() ?: it), style = TherapyType.caption, color = TherapyColors.muted) }
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Pill(riskLabel(p.riskLevel), riskColor(p.riskLevel))
+                }
+            }
+        }
+        item { Spacer(Modifier.height(24.dp)) }
     }
 }
 
@@ -126,12 +132,13 @@ private fun NewPatientScreen(onDone: () -> Unit) {
     var created by remember { mutableStateOf<CreatedPatient?>(null) }
     var copied by remember { mutableStateOf(false) }
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         created?.let { c ->
-            Text(stringResource(R.string.invite_ready_title), style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy)
+            Text(stringResource(R.string.invite_ready_title), style = TherapyType.display, color = TherapyColors.navy)
             Muted(stringResource(R.string.invite_ready_body, c.patient.name, c.inviteExpiresAt?.let { ApiTimestamp.parse(it)?.shortDate() } ?: ""))
             Card(tint = TherapyColors.champagne.copy(alpha = 0.35f)) {
-                Text(c.inviteCode ?: "—", style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy)
+                Overline(stringResource(R.string.invite_code))
+                Text(c.inviteCode ?: "—", style = TherapyType.display, color = TherapyColors.navy)
             }
             TextButton({
                 (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(ClipData.newPlainText("invite", c.inviteCode ?: ""))
@@ -141,26 +148,21 @@ private fun NewPatientScreen(onDone: () -> Unit) {
             return@Column
         }
 
-        Text(stringResource(R.string.new_client), style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy)
-        OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.name)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(email, { email = it }, label = { Text(stringResource(R.string.email)) }, singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email), modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(diagnosis, { diagnosis = it }, label = { Text(stringResource(R.string.diagnosis)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
-        Muted(stringResource(R.string.risk_level))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("LOW" to R.string.risk_low, "MEDIUM" to R.string.risk_medium, "HIGH" to R.string.risk_high).forEach { (v, l) ->
-                FilterChip(selected = risk == v, onClick = { risk = v }, label = { Text(stringResource(l)) })
+        Text(stringResource(R.string.new_client), style = TherapyType.display, color = TherapyColors.navy)
+        Card(padding = 20.dp) {
+            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                LabelledField(stringResource(R.string.name), name, { name = it })
+                LabelledField(stringResource(R.string.email), email, { email = it }, keyboard = KeyboardType.Email)
+                LabelledField(stringResource(R.string.diagnosis), diagnosis, { diagnosis = it })
+                Overline(stringResource(R.string.risk_level))
+                ChipRow(listOf("LOW" to R.string.risk_low, "MEDIUM" to R.string.risk_medium, "HIGH" to R.string.risk_high), risk) { risk = it }
             }
         }
         error?.let { ErrorText(errorText(it)) }
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            TextButton(onDone, Modifier.weight(1f)) { Text(stringResource(R.string.cancel)) }
-            PrimaryButton(stringResource(R.string.create_client), Modifier.weight(2f), enabled = name.isNotBlank() && email.contains('@'), loading = busy) {
-                busy = true; error = null
-                scope.launch {
-                    try { created = container.api.createPatient(name.trim(), email.trim(), diagnosis, risk) } catch (e: Exception) { error = e } finally { busy = false }
-                }
-            }
+        PrimaryButton(stringResource(R.string.create_client), enabled = name.isNotBlank() && email.contains('@'), loading = busy) {
+            busy = true; error = null
+            scope.launch { try { created = container.api.createPatient(name.trim(), email.trim(), diagnosis, risk) } catch (e: Exception) { error = e } finally { busy = false } }
         }
+        TextButton(onDone, Modifier.align(Alignment.CenterHorizontally)) { Text(stringResource(R.string.cancel), color = TherapyColors.navy) }
     }
 }

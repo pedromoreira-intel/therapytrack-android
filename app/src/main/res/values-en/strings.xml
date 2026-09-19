@@ -2,8 +2,8 @@
 <resources>
     <string name="consent_title">Before you begin</string>
     <string name="consent_body">TherapyTrack keeps information about your mental health so it can be shared with your psychologist. It is stored on your practice\'s server and only the person treating you can see it.</string>
-    <string name="consent_terms">I have read and accept the terms of use</string>
-    <string name="consent_privacy">I understand how my data is handled</string>
+    <string name="consent_terms">I have read and agree to the Terms of Service</string>
+    <string name="consent_privacy">I have read and agree to the Privacy Policy</string>
     <string name="continue_">Continue</string>
 
     <string name="sign_in">Sign in</string>
@@ -525,4 +525,66 @@
     <string name="accept_answer">Accept answer</string>
     <string name="reply">Reply</string>
     <string name="community_confidentiality">Do not identify clients. Describe the case, not the person.</string>
+
+    <string name="consent_welcome">Welcome to TherapyTrack</string>
+    <string name="how_it_works">How it works</string>
+    <string name="terms_title">Terms of Service</string>
+    <string name="privacy_title">Privacy Policy</string>
+    <string name="important_notice">Important notice</string>
+    <string name="consent_disclaimer">This app was built to support your mental-health journey, but it does not replace professional medical care. If you are experiencing a mental-health emergency, call %1$s, or go to the nearest emergency department immediately.</string>
+    <string name="login_tagline">Professional mental health platform</string>
+    <string name="signing_in_as">Signing in as</string>
+    <string name="role_therapist">Therapist</string>
+    <string name="role_patient">Client</string>
+    <string name="tab_wellbeing">Wellbeing</string>
+
+    <string name="get_help">Get help</string>
+    <string name="welcome_back">Welcome back,</string>
+    <string name="how_it_works_client">Your psychologist can review your entries when preparing the next session — although answering regularly matters, they are not expected to follow your answers in real time.</string>
+    <string name="last_check_in">Last check-in</string>
+    <string name="homework_title">Homework</string>
+
+    <string name="tile_today">Today</string>
+    <string name="tile_flagged">Flagged</string>
+    <string name="tile_unread">Unread</string>
+    <string name="quick_actions">Quick actions</string>
+    <string name="qa_schedule">Schedule</string>
+    <string name="qa_notes">Notes</string>
+    <string name="qa_reports">Reports</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="agenda_link">Agenda</string>
+    <string name="all">All</string>
+    <string name="or_word">or</string>
+    <string name="next_session">Next: %1$s</string>
+
+    <string name="where_you_left_off">Where you left off</string>
+    <string name="what_moved">What moved</string>
+    <string name="between_sessions">Between sessions</string>
+    <string name="last_focus">Last focus</string>
+    <string name="measure_depression">Depression</string>
+    <string name="measure_anxiety">Anxiety</string>
+    <string name="measure_alliance">Alliance</string>
+    <string name="not_measured">Not measured</string>
+    <string name="to_complete">To complete</string>
+
+    <string name="seg_cpd">CPD</string>
+    <string name="seg_licences">Licences</string>
+    <string name="seg_peers">Peers</string>
+    <string name="seg_plan">Plan</string>
+    <string name="year_so_far">%1$d so far</string>
+    <string name="sessions_count">%1$d sessions</string>
+    <string name="records_count">%1$d records</string>
+    <string name="training_short">Training</string>
+    <string name="training_courses">Training and courses</string>
+    <string name="training_hint">Add training to build your CPD record.</string>
+
+    <string name="personal_info">Personal information</string>
+    <string name="your_care">Your care</string>
+    <string name="diagnosis_label">Diagnosis</string>
+    <string name="app_settings">App settings</string>
+    <string name="language_setting">Language</string>
+    <string name="data_privacy">Data and privacy</string>
+    <string name="app_info">App information</string>
+    <string name="version_label">Version</string>
+    <string name="sign_out_confirm">Are you sure you want to sign out?</string>
 </resources>

@@ -35,8 +35,12 @@ data class ApiEmaResponse(
     @SerialName("anxiety_score") val anxiety: Int? = null,
     @SerialName("sleep_score") val sleep: Int? = null,
     val notes: String? = null,
-    @SerialName("created_at") val createdAt: String
-)
+    @SerialName("created_at") val createdAt: String,
+    /** When it was done; created_at is when it reached the server. */
+    @SerialName("completed_at") val completedAt: String? = null
+) {
+    val doneAt: String get() = completedAt ?: createdAt
+}
 
 @Serializable
 data class ApiAssessmentResult(

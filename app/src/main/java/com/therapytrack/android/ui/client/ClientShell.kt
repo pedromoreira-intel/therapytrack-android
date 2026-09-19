@@ -3,16 +3,18 @@ package com.therapytrack.android.ui.client
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import com.therapytrack.android.ui.common.TabSpec
+import com.therapytrack.android.ui.common.TherapyTabBar
 import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,15 +37,15 @@ import com.therapytrack.android.core.Api
 import com.therapytrack.android.core.ApiPatient
 import com.therapytrack.android.ui.theme.TherapyColors
 
-private data class Tab(val route: String, val label: Int, val icon: androidx.compose.ui.graphics.vector.ImageVector)
 
 private val tabs = listOf(
-    Tab("home", R.string.tab_home, Icons.Outlined.Home),
-    Tab("journal", R.string.tab_journal, Icons.Outlined.MenuBook),
-    Tab("assessments", R.string.tab_assessments, Icons.Outlined.Assignment),
-    Tab("messages", R.string.tab_messages, Icons.Outlined.ChatBubbleOutline),
-    Tab("profile", R.string.tab_profile, Icons.Outlined.Person)
+    TabSpec("home", "", Icons.Outlined.Home, Icons.Filled.Home),
+    TabSpec("messages", "", Icons.Outlined.ChatBubbleOutline, Icons.Filled.ChatBubble),
+    TabSpec("journal", "", Icons.Outlined.MenuBook, Icons.Filled.MenuBook),
+    TabSpec("assessments", "", Icons.Outlined.Spa, Icons.Filled.Spa),
+    TabSpec("profile", "", Icons.Outlined.AccountCircle, Icons.Filled.AccountCircle)
 )
+private val tabLabels = listOf(R.string.tab_home, R.string.tab_messages, R.string.tab_journal, R.string.tab_wellbeing, R.string.tab_profile)
 
 /** What every client screen needs about the person: their patient record, loaded once and shared. */
 class ClientState {
@@ -68,26 +70,19 @@ fun ClientShell(onSignedOut: () -> Unit) {
     }
 
     val backStack by nav.currentBackStackEntryAsState()
-    val route = backStack?.destination?.route
+    // A destination with optional arguments is "clients?new={new}"; the tab is "clients".
+    val route = backStack?.destination?.route?.substringBefore('?')
     val showBar = route in tabs.map { it.route }
 
     Scaffold(
         containerColor = TherapyColors.canvas,
         bottomBar = {
-            if (showBar) NavigationBar(containerColor = TherapyColors.pearl) {
-                tabs.forEach { tab ->
-                    NavigationBarItem(
-                        selected = route == tab.route,
-                        onClick = { nav.navigate(tab.route) { popUpTo("home") { saveState = true }; launchSingleTop = true; restoreState = true } },
-                        icon = { Icon(tab.icon, null) },
-                        label = { Text(stringResource(tab.label), maxLines = 1, softWrap = false, style = androidx.compose.material3.MaterialTheme.typography.labelSmall) },
-                        colors = NavigationBarItemDefaults.colors(selectedIconColor = TherapyColors.navy, indicatorColor = TherapyColors.champagne.copy(alpha = 0.5f))
-                    )
-                }
+            if (showBar) TherapyTabBar(tabs.mapIndexed { i, t -> t.copy(label = stringResource(tabLabels[i])) }, route) {
+                nav.navigate(it) { popUpTo("home") { saveState = true }; launchSingleTop = true; restoreState = true }
             }
         }
     ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        Column(Modifier.fillMaxSize().padding(padding).statusBarsPadding()) {
             NavHost(nav, startDestination = "home") {
                 composable("home") { HomeScreen(state, onCheckIn = { nav.navigate("checkin") }, onCrisis = { nav.navigate("crisis") }, onReload = { reloadTick++ }) }
                 composable("checkin") { CheckInScreen(state, onDone = { nav.popBackStack() }) }

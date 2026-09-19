@@ -3,7 +3,12 @@ package com.therapytrack.android.ui.therapist
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import com.therapytrack.android.ui.common.TabSpec
+import com.therapytrack.android.ui.common.TherapyTabBar
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Person
@@ -11,9 +16,6 @@ import androidx.compose.material.icons.outlined.School
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,43 +30,34 @@ import com.therapytrack.android.R
 import com.therapytrack.android.ui.client.ConversationScreen
 import com.therapytrack.android.ui.theme.TherapyColors
 
-private data class Tab(val route: String, val label: Int, val icon: androidx.compose.ui.graphics.vector.ImageVector)
-
 private val tabs = listOf(
-    Tab("today", R.string.tab_today, Icons.Outlined.Today),
-    Tab("clients", R.string.tab_clients, Icons.Outlined.Group),
-    Tab("practice", R.string.tab_practice, Icons.Outlined.School),
-    Tab("threads", R.string.tab_messages, Icons.Outlined.ChatBubbleOutline),
-    Tab("profile", R.string.tab_profile, Icons.Outlined.Person)
+    TabSpec("today", "", Icons.Outlined.Home, Icons.Filled.Home),
+    TabSpec("clients", "", Icons.Outlined.Group, Icons.Filled.Group),
+    TabSpec("practice", "", Icons.Outlined.School, Icons.Filled.School),
+    TabSpec("profile", "", Icons.Outlined.AccountCircle, Icons.Filled.AccountCircle)
 )
+private val tabLabels = listOf(R.string.tab_today, R.string.tab_clients, R.string.tab_practice, R.string.tab_profile)
 
 @Composable
 fun TherapistShell(onSignedOut: () -> Unit) {
     val nav = rememberNavController()
     val backStack by nav.currentBackStackEntryAsState()
-    val route = backStack?.destination?.route
+    // A destination with optional arguments is "clients?new={new}"; the tab is "clients".
+    val route = backStack?.destination?.route?.substringBefore('?')
     val showBar = route in tabs.map { it.route }
 
     Scaffold(
         containerColor = TherapyColors.canvas,
         bottomBar = {
-            if (showBar) NavigationBar(containerColor = TherapyColors.pearl) {
-                tabs.forEach { tab ->
-                    NavigationBarItem(
-                        selected = route == tab.route,
-                        onClick = { nav.navigate(tab.route) { popUpTo("today") { saveState = true }; launchSingleTop = true; restoreState = true } },
-                        icon = { Icon(tab.icon, null) },
-                        label = { Text(stringResource(tab.label), maxLines = 1, softWrap = false, style = MaterialTheme.typography.labelSmall) },
-                        colors = NavigationBarItemDefaults.colors(selectedIconColor = TherapyColors.navy, indicatorColor = TherapyColors.champagne.copy(alpha = 0.5f))
-                    )
-                }
+            if (showBar) TherapyTabBar(tabs.mapIndexed { i, t -> t.copy(label = stringResource(tabLabels[i])) }, route) {
+                nav.navigate(it) { popUpTo("today") { saveState = true }; launchSingleTop = true; restoreState = true }
             }
         }
     ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        Column(Modifier.fillMaxSize().padding(padding).statusBarsPadding()) {
             NavHost(nav, startDestination = "today") {
-                composable("today") { TodayScreen(onPatient = { nav.navigate("patient/$it") }) }
-                composable("clients") { PatientsScreen(onPatient = { nav.navigate("patient/$it") }) }
+                composable("today") { TodayScreen(onPatient = { nav.navigate("patient/$it") }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }) }
+                composable("clients?new={new}") { entry -> PatientsScreen(onPatient = { nav.navigate("patient/$it") }, startCreating = entry.arguments?.getString("new") == "1") }
                 composable("patient/{id}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
                     PatientDetailScreen(id,

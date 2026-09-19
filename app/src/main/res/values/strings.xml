@@ -5,8 +5,8 @@
     <!-- Consent -->
     <string name="consent_title">Antes de começar</string>
     <string name="consent_body">O TherapyTrack guarda informação sobre a sua saúde mental para a partilhar com o seu psicólogo. Fica registada no servidor da sua prática clínica e só quem o acompanha a pode ver.</string>
-    <string name="consent_terms">Li e aceito os termos de utilização</string>
-    <string name="consent_privacy">Compreendo como os meus dados são tratados</string>
+    <string name="consent_terms">Li e concordo com os Termos de Serviço</string>
+    <string name="consent_privacy">Li e concordo com a Política de Privacidade</string>
     <string name="continue_">Continuar</string>
 
     <!-- Auth -->
@@ -550,4 +550,72 @@
     <string name="accept_answer">Aceitar resposta</string>
     <string name="reply">Responder</string>
     <string name="community_confidentiality">Não identifique clientes. Descreva o caso, não a pessoa.</string>
+
+    <!-- Auth (visual parity) -->
+    <string name="consent_welcome">Bem-vindo ao TherapyTrack</string>
+    <string name="how_it_works">Como funciona</string>
+    <string name="terms_title">Termos de Serviço</string>
+    <string name="privacy_title">Política de Privacidade</string>
+    <string name="important_notice">Aviso importante</string>
+    <string name="consent_disclaimer">Esta aplicação foi criada para apoiar o seu percurso de saúde mental, mas não substitui cuidados médicos profissionais. Se está a viver uma emergência de saúde mental, ligue %1$s, ou dirija-se ao serviço de urgência mais próximo, imediatamente.</string>
+    <string name="login_tagline">Plataforma profissional de saúde mental</string>
+    <string name="signing_in_as">A entrar como</string>
+    <string name="role_therapist">Psicólogo/a</string>
+    <string name="role_patient">Cliente</string>
+    <string name="tab_wellbeing">Bem-estar</string>
+
+    <!-- Home (visual parity) -->
+    <string name="get_help">Obter ajuda</string>
+    <string name="welcome_back">Bem-vindo de volta,</string>
+    <string name="how_it_works_client">O seu psicólogo poderá rever os seus registos ao preparar a próxima sessão — embora seja importante responder com regularidade, não se espera que acompanhe as suas respostas em tempo real.</string>
+    <string name="last_check_in">Último registo</string>
+    <string name="homework_title">Tarefas</string>
+
+    <!-- Today (visual parity) -->
+    <string name="tile_today">Hoje</string>
+    <string name="tile_flagged">Sinalizados</string>
+    <string name="tile_unread">Por ler</string>
+    <string name="quick_actions">Ações rápidas</string>
+    <string name="qa_schedule">Agenda</string>
+    <string name="qa_notes">Notas</string>
+    <string name="qa_reports">Relatórios</string>
+    <string name="upcoming">Próximas</string>
+    <string name="agenda_link">Agenda</string>
+    <string name="all">Todos</string>
+    <string name="or_word">ou</string>
+    <string name="next_session">Seguinte: %1$s</string>
+
+    <!-- Brief (visual parity) -->
+    <string name="where_you_left_off">Onde ficou</string>
+    <string name="what_moved">O que mudou</string>
+    <string name="between_sessions">Entre sessões</string>
+    <string name="last_focus">Último foco</string>
+    <string name="measure_depression">Depressão</string>
+    <string name="measure_anxiety">Ansiedade</string>
+    <string name="measure_alliance">Aliança</string>
+    <string name="not_measured">Não medido</string>
+    <string name="to_complete">Por concluir</string>
+
+    <!-- Practice (visual parity) -->
+    <string name="seg_cpd">DPC</string>
+    <string name="seg_licences">Licenças</string>
+    <string name="seg_peers">Pares</string>
+    <string name="seg_plan">Plano</string>
+    <string name="year_so_far">%1$d até agora</string>
+    <string name="sessions_count">%1$d sessões</string>
+    <string name="records_count">%1$d registos</string>
+    <string name="training_short">Formação</string>
+    <string name="training_courses">Formação e cursos</string>
+    <string name="training_hint">Adicione formação para construir o seu registo de DPC.</string>
+
+    <!-- Profile (visual parity) -->
+    <string name="personal_info">Informação pessoal</string>
+    <string name="your_care">Os seus cuidados</string>
+    <string name="diagnosis_label">Diagnóstico</string>
+    <string name="app_settings">Definições da aplicação</string>
+    <string name="language_setting">Idioma</string>
+    <string name="data_privacy">Dados e privacidade</string>
+    <string name="app_info">Informação da aplicação</string>
+    <string name="version_label">Versão</string>
+    <string name="sign_out_confirm">Tem a certeza de que quer terminar sessão?</string>
 </resources>

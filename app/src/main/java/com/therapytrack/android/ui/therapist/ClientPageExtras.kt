@@ -124,7 +124,7 @@ fun HistorySection(patientId: Int) {
     Card {
         Text(stringResource(R.string.check_in_chart), style = MaterialTheme.typography.titleMedium)
         val start = now.minus(30, ChronoUnit.DAYS)
-        val recent = checkIns.mapNotNull { c -> ApiTimestamp.parse(c.createdAt)?.takeIf { it.isAfter(start) }?.let { it to c } }.sortedBy { it.first }
+        val recent = checkIns.mapNotNull { c -> ApiTimestamp.parse(c.doneAt)?.takeIf { it.isAfter(start) }?.let { it to c } }.sortedBy { it.first }
         if (recent.isEmpty()) Muted(stringResource(R.string.no_history))
         else LineChart(listOf(
             Series(stringResource(R.string.legend_mood), TherapyColors.navy, recent.mapNotNull { (t, c) -> c.mood?.let { xOf(t, start, now)!! to it.toFloat() } }),

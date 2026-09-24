@@ -90,8 +90,30 @@ fun ListRow(title: String, subtitle: String? = null, trailing: String? = null, i
 
 /** Tracked uppercase label above a section or inside a card — champagne on canvas, grey on white. */
 @Composable
-fun Overline(text: String, color: Color = TherapyColors.muted, modifier: Modifier = Modifier) {
-    Text(text.uppercase(), style = TherapyType.overline, color = color, modifier = modifier)
+fun Overline(text: String, color: Color = TherapyColors.muted, modifier: Modifier = Modifier, singleLine: Boolean = false) {
+    if (singleLine) ShrinkToFit(text.uppercase(), TherapyType.overline, color, modifier)
+    else Text(text.uppercase(), style = TherapyType.overline, color = color, modifier = modifier)
+}
+
+/**
+ * One line, shrinking until it fits.
+ *
+ * A stat tile is a third of the screen and its label is an uppercase word with
+ * 1.6sp of tracking, so a long translation — "Flagged" becomes "SINALIZADOS" —
+ * wrapped and made that tile taller than the two beside it. Compose has no
+ * autosizing text in this version, so the size is stepped down on overflow;
+ * it settles in a frame or two and stays put.
+ */
+@Composable
+fun ShrinkToFit(text: String, style: androidx.compose.ui.text.TextStyle, color: Color, modifier: Modifier = Modifier, minScale: Float = 0.65f) {
+    val scale = androidx.compose.runtime.remember(text) { androidx.compose.runtime.mutableFloatStateOf(1f) }
+    Text(
+        text, modifier = modifier, color = color, maxLines = 1, softWrap = false,
+        style = style.copy(fontSize = style.fontSize * scale.floatValue, letterSpacing = style.letterSpacing * scale.floatValue),
+        onTextLayout = { result ->
+            if (result.didOverflowWidth && scale.floatValue > minScale) scale.floatValue = (scale.floatValue - 0.05f).coerceAtLeast(minScale)
+        }
+    )
 }
 
 @Composable
@@ -160,9 +182,9 @@ fun IconCircle(icon: ImageVector, tint: Color = TherapyColors.navy, size: androi
 @Composable
 fun RowScope.MetricTile(value: String, label: String, valueColor: Color = TherapyColors.navy, tint: Color = Color.White) {
     Card(Modifier.weight(1f), tint = tint, padding = 14.dp) {
-        Text(value, style = TherapyType.metricLarge, color = valueColor)
+        Text(value, style = TherapyType.metricLarge, color = valueColor, maxLines = 1)
         Spacer(Modifier.height(4.dp))
-        Overline(label)
+        Overline(label, singleLine = true)
     }
 }
 

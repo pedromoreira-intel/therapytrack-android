@@ -193,8 +193,9 @@ fun IconCircle(icon: ImageVector, tint: Color = TherapyColors.navy, size: androi
 
 /** A stat tile: rounded-bold number, overline label. Three side by side on Today. */
 @Composable
-fun RowScope.MetricTile(value: String, label: String, valueColor: Color = TherapyColors.navy, tint: Color = Color.White) {
-    Card(Modifier.weight(1f), tint = tint, padding = 14.dp) {
+fun RowScope.MetricTile(value: String, label: String, valueColor: Color = TherapyColors.navy, tint: Color = Color.White,
+                        onClick: (() -> Unit)? = null) {
+    Card(Modifier.weight(1f).then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier), tint = tint, padding = 14.dp) {
         Text(value, style = TherapyType.metricLarge, color = valueColor, maxLines = 1)
         Spacer(Modifier.height(4.dp))
         Overline(label, singleLine = true)

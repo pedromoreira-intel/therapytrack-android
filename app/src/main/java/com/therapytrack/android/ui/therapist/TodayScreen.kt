@@ -63,7 +63,8 @@ import java.time.ZoneId
 
 /** The iOS "Hoje": date overline, serif greeting, three tiles, quick actions, upcoming, clients — alerts first when there are any. */
 @Composable
-fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onClients: () -> Unit = {}, onNewClient: () -> Unit = {}) {
+fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onClients: () -> Unit = {}, onNewClient: () -> Unit = {},
+                onMessages: () -> Unit = {}) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
     var me by remember { mutableStateOf<ApiUser?>(null) }
@@ -109,7 +110,10 @@ fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onClients
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             MetricTile("${todays.size}", stringResource(R.string.tile_today))
             MetricTile("${alerts.size}", stringResource(R.string.tile_flagged), valueColor = if (alerts.isEmpty()) TherapyColors.navy else TherapyColors.critical)
-            MetricTile("${inbox.count("message")}", stringResource(R.string.tile_unread))
+            // The threads screen had a route and nothing that navigated to it, so
+            // the therapist's inbox was unreachable: messages could only be read
+            // by opening a client's record, one client at a time.
+            MetricTile("${inbox.count("message")}", stringResource(R.string.tile_unread), onClick = onMessages)
         }
 
         // Unacknowledged risk outranks everything else on this screen.

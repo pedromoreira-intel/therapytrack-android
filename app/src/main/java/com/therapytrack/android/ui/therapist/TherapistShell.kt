@@ -75,7 +75,7 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                         is com.therapytrack.android.ui.common.Open.Patient -> nav.navigate("patient/${open.id}")
                     }
                 } }
-                composable("today") { TodayScreen(onActivity = { nav.navigate("activity") }, onPatient = { nav.navigate("patient/$it") }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }) }
+                composable("today") { TodayScreen(onActivity = { nav.navigate("activity") }, onPatient = { nav.navigate("patient/$it") }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }, onMessages = { nav.navigate("threads") }) }
                 composable("clients?new={new}") { entry -> PatientsScreen(onPatient = { nav.navigate("patient/$it") }, startCreating = entry.arguments?.getString("new") == "1") }
                 composable("patient/{id}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable

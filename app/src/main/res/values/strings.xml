@@ -50,6 +50,7 @@
     <string name="no_check_ins_yet">Ainda não fez nenhum check-in.</string>
     <string name="need_help_now">Precisa de ajuda agora?</string>
     <string name="crisis_support">Apoio em crise</string>
+    <string name="new_message">Nova mensagem</string>
     <string name="loading">A carregar…</string>
     <string name="could_not_load">Não foi possível carregar. Puxe para atualizar.</string>
     <string name="refresh">Atualizar</string>

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,7 +50,7 @@ private val steps = listOf(
     Step(R.string.sleep_question, R.string.sleep_hint, R.string.very_poor, R.string.very_well)
 )
 
-/** Three 1–10 ratings, an optional note, then an honest account of where it went. */
+/** Three 1–7 ratings, an optional note, then an honest account of where it went. */
 @Composable
 fun CheckInScreen(state: ClientState, onDone: () -> Unit) {
     val container = LocalContainer.current
@@ -122,21 +123,27 @@ fun CheckInScreen(state: ClientState, onDone: () -> Unit) {
 }
 
 @Composable
+/**
+ * Seven points, on one row.
+ *
+ * This offered 1–10 across two rows while iOS offered 1–7, and both wrote the
+ * same column — so a 6 from one client meant 86% of the scale and a 6 from the
+ * other meant 60%, with nothing recording which. 1–7 is now the scale on both.
+ *
+ * Sized by weight rather than a fixed 56dp: seven fixed circles do not fit the
+ * width of a small phone.
+ */
 private fun RatingRow(value: Int, onPick: (Int) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        listOf(1..5, 6..10).forEach { range ->
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                range.forEach { n ->
-                    val picked = n == value
-                    Box(
-                        Modifier.size(56.dp).clip(CircleShape)
-                            .background(if (picked) TherapyColors.navy else TherapyColors.pearl)
-                            .border(1.dp, if (picked) TherapyColors.navy else TherapyColors.hairline, CircleShape)
-                            .clickable { onPick(n) },
-                        contentAlignment = Alignment.Center
-                    ) { Text("$n", color = if (picked) Color.White else TherapyColors.ink, style = MaterialTheme.typography.titleMedium) }
-                }
-            }
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        (1..7).forEach { n ->
+            val picked = n == value
+            Box(
+                Modifier.weight(1f).aspectRatio(1f).clip(CircleShape)
+                    .background(if (picked) TherapyColors.navy else TherapyColors.pearl)
+                    .border(1.dp, if (picked) TherapyColors.navy else TherapyColors.hairline, CircleShape)
+                    .clickable { onPick(n) },
+                contentAlignment = Alignment.Center
+            ) { Text("$n", color = if (picked) Color.White else TherapyColors.ink, style = MaterialTheme.typography.titleMedium) }
         }
     }
 }

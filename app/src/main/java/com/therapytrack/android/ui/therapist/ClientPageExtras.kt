@@ -130,7 +130,8 @@ fun HistorySection(patientId: Int) {
             Series(stringResource(R.string.legend_mood), TherapyColors.navy, recent.mapNotNull { (t, c) -> c.mood?.let { xOf(t, start, now)!! to it.toFloat() } }),
             Series(stringResource(R.string.legend_anxiety), TherapyColors.warning, recent.mapNotNull { (t, c) -> c.anxiety?.let { xOf(t, start, now)!! to it.toFloat() } }),
             Series(stringResource(R.string.legend_sleep), TherapyColors.success, recent.mapNotNull { (t, c) -> c.sleep?.let { xOf(t, start, now)!! to it.toFloat() } })
-        ), minY = 0f, maxY = 10f)
+            // 1-7, the scale both clients now record on.
+        ), minY = 0f, maxY = 7f)
     }
 
     listOf(Api.Instrument.PHQ9 to 27f, Api.Instrument.GAD7 to 21f, Api.Instrument.WAISR to 5f).forEach { (inst, max) ->

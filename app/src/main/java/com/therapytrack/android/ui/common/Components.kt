@@ -66,10 +66,23 @@ fun Card(modifier: Modifier = Modifier, tint: Color = Color.White, radius: andro
 @Composable
 fun ListCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) = Card(modifier, padding = 0.dp, content = content)
 
+/**
+ * A row in a [ListCard].
+ *
+ * `onClick` is deliberately the last parameter. It used to sit before the two
+ * composable slots, so a call written with a trailing lambda — the obvious way
+ * to write a row that does something when tapped — bound that lambda to
+ * `trailingContent` instead. Compose then *invoked* it on every composition
+ * rather than on a tap: opening Profile fired the sign-out dialog immediately,
+ * and dismissing it recomposed the row and fired it again, with no way out but
+ * force-quitting. The six rows on Practice called navigation the same way.
+ * Nothing warned about it, because a lambda is a valid composable slot.
+ */
 @Composable
 fun ListRow(title: String, subtitle: String? = null, trailing: String? = null, icon: ImageVector? = null, tint: Color = TherapyColors.navy,
-            chevron: Boolean = false, titleColor: Color = TherapyColors.ink, divider: Boolean = true, onClick: (() -> Unit)? = null,
-            leading: (@Composable () -> Unit)? = null, trailingContent: (@Composable () -> Unit)? = null) {
+            chevron: Boolean = false, titleColor: Color = TherapyColors.ink, divider: Boolean = true,
+            leading: (@Composable () -> Unit)? = null, trailingContent: (@Composable () -> Unit)? = null,
+            onClick: (() -> Unit)? = null) {
     Column {
         Row(Modifier.fillMaxWidth().then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier).padding(16.dp, 14.dp), verticalAlignment = Alignment.CenterVertically) {
             leading?.let { it(); Spacer(Modifier.width(12.dp)) }

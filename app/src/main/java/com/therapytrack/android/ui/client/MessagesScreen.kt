@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -28,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -80,6 +83,15 @@ fun ConversationScreen(otherUserId: Int?, title: String, showNotRealtime: Boolea
     val bubbles = (delivered.map { Bubble("d${it.id}", it.fromUserId == me, it.message, ApiTimestamp.parse(it.createdAt)?.shortDateTime() ?: "", it.fromName) }
         + pending.map { Bubble("p${it.id}", true, it.text, stringResource(R.string.message_pending)) })
     LaunchedEffect(bubbles.size) { if (bubbles.isNotEmpty()) listState.animateScrollToItem(bubbles.size - 1) }
+
+    // And stay at the end while the keyboard opens. The list shrinks to make
+    // room for it and a LazyColumn keeps its top anchored, so the newest
+    // messages — the ones being replied to — slid out of sight behind the
+    // composer. Keyed on the inset itself rather than on "is it open", so this
+    // tracks the animation instead of firing once against the old height and
+    // landing short.
+    val keyboardHeight = WindowInsets.ime.getBottom(LocalDensity.current)
+    LaunchedEffect(keyboardHeight) { if (bubbles.isNotEmpty()) listState.scrollToItem(bubbles.size - 1) }
 
     Column(Modifier.fillMaxSize().imePadding()) {
         if (onBack != null) TextButton(onBack) { Text(stringResource(R.string.back)) }

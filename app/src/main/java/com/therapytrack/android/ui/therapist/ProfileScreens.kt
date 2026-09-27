@@ -65,7 +65,7 @@ fun TherapistProfileScreen(onSignedOut: () -> Unit) {
         Overline(stringResource(R.string.data_privacy), modifier = Modifier.padding(top = 12.dp))
         ListCard { ListRow(stringResource(R.string.sign_out), icon = Icons.AutoMirrored.Outlined.Logout, tint = TherapyColors.critical, titleColor = TherapyColors.critical, divider = false) { confirm = true } }
         Overline(stringResource(R.string.app_info), modifier = Modifier.padding(top = 12.dp))
-        ListCard { ListRow(stringResource(R.string.version_label), trailing = BuildConfig.VERSION_NAME, divider = false) }
+        ListCard { ListRow(stringResource(R.string.version_label), trailing = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", divider = false) }
         Spacer(Modifier.height(8.dp))
     }
     if (confirm) AlertDialog(onDismissRequest = { confirm = false }, title = { Text(stringResource(R.string.sign_out)) }, text = { Text(stringResource(R.string.sign_out_confirm)) },

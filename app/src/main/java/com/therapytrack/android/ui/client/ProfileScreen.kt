@@ -77,7 +77,7 @@ fun ProfileScreen(state: ClientState, onPrivacy: () -> Unit, onCrisis: () -> Uni
             com.therapytrack.android.ui.common.ListRow(stringResource(R.string.sign_out), icon = androidx.compose.material.icons.Icons.AutoMirrored.Outlined.Logout, tint = TherapyColors.critical, titleColor = TherapyColors.critical, divider = false) { confirm = true }
         }
         com.therapytrack.android.ui.common.Overline(stringResource(R.string.app_info), modifier = Modifier.padding(top = 12.dp))
-        com.therapytrack.android.ui.common.ListCard { com.therapytrack.android.ui.common.ListRow(stringResource(R.string.version_label), trailing = BuildConfig.VERSION_NAME, divider = false) }
+        com.therapytrack.android.ui.common.ListCard { com.therapytrack.android.ui.common.ListRow(stringResource(R.string.version_label), trailing = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", divider = false) }
     }
     if (confirm) AlertDialog(onDismissRequest = { confirm = false }, title = { Text(stringResource(R.string.sign_out)) }, text = { Text(stringResource(R.string.sign_out_confirm)) },
         confirmButton = { TextButton({ confirm = false; scope.launch { container.api.signOut(); onSignedOut() } }) { Text(stringResource(R.string.sign_out), color = TherapyColors.critical) } },

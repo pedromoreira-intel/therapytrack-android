@@ -26,7 +26,11 @@ android {
         applicationId = "com.therapytrack.android"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
+        // Bump on every build handed to someone else: a phone refuses a lower
+        // versionCode, and an equal one installs silently over the last, which
+        // is how three fixed bugs stayed indistinguishable from the build that
+        // had them.
+        versionCode = 2
         versionName = "0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

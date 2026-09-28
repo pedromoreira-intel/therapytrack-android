@@ -38,6 +38,7 @@ import com.therapytrack.android.ui.common.Pill
 import com.therapytrack.android.ui.common.PrimaryButton
 import com.therapytrack.android.ui.common.load
 import com.therapytrack.android.ui.common.shortDate
+import androidx.compose.ui.graphics.Color
 import com.therapytrack.android.ui.theme.TherapyColors
 import kotlinx.coroutines.launch
 
@@ -45,10 +46,11 @@ val deliveryOptions = listOf("either" to R.string.dl_either, "in_person" to R.st
 val urgencyOptions = listOf("routine" to R.string.ur_routine, "soon" to R.string.ur_soon, "urgent" to R.string.ur_urgent)
 
 @Composable
-fun ReferralsScreen(onBack: () -> Unit, onSeePlan: () -> Unit) {
+fun ReferralsScreen(onBack: () -> Unit, onSeePlan: () -> Unit, initialDirection: String = "received", focusId: Int? = null) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
-    var direction by rememberSaveable { mutableStateOf("received") }
+    // A notification names the referral it is about; open on its tab and mark it.
+    var direction by rememberSaveable { mutableStateOf(initialDirection) }
     var result by remember { mutableStateOf<Loaded<List<ApiReferral>>>(Loaded.Loading) }
     var reload by remember { mutableStateOf(0) }
     var responding by remember { mutableStateOf<ApiReferral?>(null) }
@@ -73,7 +75,7 @@ fun ReferralsScreen(onBack: () -> Unit, onSeePlan: () -> Unit) {
             is Loaded.Ok -> {
                 if (r.value.isEmpty()) Muted(stringResource(R.string.no_referrals))
                 r.value.forEach { ref ->
-                    Card {
+                    Card(tint = if (ref.id == focusId) TherapyColors.champagne.copy(alpha = 0.3f) else Color.White) {
                         Row(Modifier.fillMaxWidth()) {
                             Text(ref.counterpartyName ?: "#${ref.counterpartyId}", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
                             Pill(stringResource(when (ref.status) { "accepted" -> R.string.st_accepted; "declined" -> R.string.st_declined; "withdrawn" -> R.string.st_withdrawn; else -> R.string.st_pending }),

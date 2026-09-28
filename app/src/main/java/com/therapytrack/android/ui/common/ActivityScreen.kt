@@ -43,14 +43,16 @@ import kotlinx.coroutines.launch
 /** What a notification opens. The shells map this to a route. */
 sealed class Open {
     data class Thread(val userId: Int, val name: String) : Open()
-    object Referrals : Open()
+    /** [direction] is the tab it sits on: a referral you received, or your own that someone answered. */
+    data class Referral(val id: Int?, val direction: String) : Open()
     data class Group(val id: Int) : Open()
     data class Patient(val id: Int) : Open()
 }
 
 fun ApiNotification.target(): Open? = when (kind) {
     "message" -> refId?.let { Open.Thread(it, title) }
-    "referral", "referral_response" -> Open.Referrals
+    "referral" -> Open.Referral(refId, "received")
+    "referral_response" -> Open.Referral(refId, "sent")
     "join_request", "join_response" -> refId?.let { Open.Group(it) }
     "alert" -> refId?.let { Open.Patient(it) }
     else -> null

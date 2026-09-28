@@ -70,7 +70,7 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                 composable("activity") { com.therapytrack.android.ui.common.ActivityScreen(onBack = { nav.popBackStack() }) { open ->
                     when (open) {
                         is com.therapytrack.android.ui.common.Open.Thread -> nav.navigate("conversation/${open.userId}/${android.net.Uri.encode(open.name)}")
-                        is com.therapytrack.android.ui.common.Open.Referrals -> nav.navigate("referrals")
+                        is com.therapytrack.android.ui.common.Open.Referral -> nav.navigate("referrals?direction=${open.direction}&focus=${open.id ?: ""}")
                         is com.therapytrack.android.ui.common.Open.Group -> nav.navigate("group/${open.id}")
                         is com.therapytrack.android.ui.common.Open.Patient -> nav.navigate("patient/${open.id}")
                     }
@@ -121,7 +121,11 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
                     NewReferralScreen(id, entry.arguments?.getString("name") ?: "", onDone = { nav.popBackStack() })
                 }
-                composable("referrals") { ReferralsScreen(onBack = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") }) }
+                composable("referrals?direction={direction}&focus={focus}") { entry ->
+                    ReferralsScreen(onBack = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") },
+                        initialDirection = entry.arguments?.getString("direction") ?: "received",
+                        focusId = entry.arguments?.getString("focus")?.toIntOrNull())
+                }
                 composable("intervision") { IntervisionScreen(onBack = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") }, onGroup = { nav.navigate("group/$it") }) }
                 composable("group/{id}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable

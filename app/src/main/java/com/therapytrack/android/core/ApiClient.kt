@@ -103,7 +103,11 @@ class ApiClient(
             throw ApiError.Network(e)
         }
         val text = response.body?.string() ?: ""
-        if (response.code >= 400) android.util.Log.w("Api", "$method $path -> ${response.code}: ${text.take(200)}")
+        // Status only. This logged the first 200 characters of the body, which
+        // is fine for {"error": "..."} and not fine the day a route echoes back
+        // what was sent — a message, a journal entry — into the device log,
+        // where no access control reaches.
+        if (response.code >= 400) android.util.Log.w("Api", "$method $path -> ${response.code}")
 
         if (response.code == 401) {
             if (allowRefresh && sessions.current().refreshToken != null && refreshSession()) {

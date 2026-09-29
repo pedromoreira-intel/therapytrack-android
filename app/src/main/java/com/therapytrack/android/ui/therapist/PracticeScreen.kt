@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.outlined.Badge
+import androidx.compose.material.icons.outlined.Person2
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Person
@@ -101,6 +102,12 @@ fun PracticeScreen(onOpen: (String) -> Unit) {
                 ListCard {
                     ListRow(stringResource(R.string.directory_title), icon = Icons.Outlined.PersonSearch, chevron = true) { onOpen("directory") }
                     ListRow(stringResource(R.string.referrals_title), icon = Icons.Outlined.SwapHoriz, chevron = true) { onOpen("referrals") }
+                    // Supervision sits here as well as under CPD. The screen has
+                    // existed all along, reachable only from a "Log supervision
+                    // session" button on the CPD tab — so to anyone looking for
+                    // it beside intervision, where the other professional
+                    // relationships live, it did not exist.
+                    ListRow(stringResource(R.string.supervision_title), icon = Icons.Outlined.Person2, chevron = true) { onOpen("supervision") }
                     ListRow(stringResource(R.string.intervision_title), icon = Icons.Outlined.Groups, chevron = true) { onOpen("intervision") }
                     ListRow(stringResource(R.string.community_title), icon = Icons.Outlined.Forum, chevron = true) { onOpen("community") }
                     ListRow(stringResource(R.string.my_profile), icon = Icons.Outlined.Person, chevron = true, divider = false) { onOpen("myprofile") }

@@ -630,4 +630,8 @@
     <string name="n_join_request">Pedido para entrar em</string>
     <string name="n_join_response">Resposta ao seu pedido para</string>
     <string name="n_alert">Alerta clínico</string>
+    <string name="n_client_record">Novo registo de</string>
+    <string name="rec_check_in">Check-in</string>
+    <string name="rec_assessment">Questionário</string>
+    <string name="rec_journal">Entrada de diário partilhada</string>
 </resources>

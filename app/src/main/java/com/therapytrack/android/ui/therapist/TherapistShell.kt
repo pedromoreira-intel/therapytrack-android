@@ -57,7 +57,7 @@ fun TherapistShell(onSignedOut: () -> Unit) {
         bottomBar = {
             val badges = mapOf(
                 "today" to inbox.count("alert"),
-                "clients" to inbox.count("message"),
+                "clients" to inbox.count("message", "client_record"),
                 "practice" to inbox.count("referral", "referral_response", "join_request", "join_response")
             )
             if (showBar) TherapyTabBar(tabs.mapIndexed { i, t -> t.copy(label = stringResource(tabLabels[i]), badge = badges[t.route] ?: 0) }, route) {

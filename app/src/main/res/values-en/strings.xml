@@ -598,4 +598,8 @@
     <string name="n_join_request">Request to join</string>
     <string name="n_join_response">Reply to your request for</string>
     <string name="n_alert">Clinical alert</string>
+    <string name="n_client_record">New record from</string>
+    <string name="rec_check_in">Check-in</string>
+    <string name="rec_assessment">Questionnaire</string>
+    <string name="rec_journal">Shared journal entry</string>
 </resources>

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.Warning
@@ -54,7 +55,7 @@ fun ApiNotification.target(): Open? = when (kind) {
     "referral" -> Open.Referral(refId, "received")
     "referral_response" -> Open.Referral(refId, "sent")
     "join_request", "join_response" -> refId?.let { Open.Group(it) }
-    "alert" -> refId?.let { Open.Patient(it) }
+    "alert", "client_record" -> refId?.let { Open.Patient(it) }
     else -> null
 }
 
@@ -86,7 +87,7 @@ fun ActivityScreen(onBack: () -> Unit, onOpen: (Open) -> Unit) {
                 n.target()?.let(onOpen)
             }, tint = if (unread) androidx.compose.ui.graphics.Color.White else TherapyColors.canvas) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconCircle(when (n.kind) { "message" -> Icons.Outlined.ChatBubbleOutline; "alert" -> Icons.Outlined.Warning; "join_request", "join_response" -> Icons.Outlined.Groups; else -> Icons.Outlined.SwapHoriz },
+                    IconCircle(when (n.kind) { "message" -> Icons.Outlined.ChatBubbleOutline; "alert" -> Icons.Outlined.Warning; "join_request", "join_response" -> Icons.Outlined.Groups; "client_record" -> Icons.Outlined.EditNote; else -> Icons.Outlined.SwapHoriz },
                         tint = if (n.kind == "alert") TherapyColors.critical else TherapyColors.navy)
                     Spacer(Modifier.width(14.dp))
                     Column(Modifier.weight(1f)) {
@@ -105,11 +106,19 @@ fun ActivityScreen(onBack: () -> Unit, onOpen: (Open) -> Unit) {
 @Composable
 private fun kindLine(n: ApiNotification): String = stringResource(when (n.kind) {
     "message" -> R.string.n_message; "referral" -> R.string.n_referral; "referral_response" -> R.string.n_referral_response
-    "join_request" -> R.string.n_join_request; "join_response" -> R.string.n_join_response; "alert" -> R.string.n_alert; else -> R.string.activity_title
+    "join_request" -> R.string.n_join_request; "join_response" -> R.string.n_join_response; "alert" -> R.string.n_alert
+    "client_record" -> R.string.n_client_record; else -> R.string.activity_title
 })
 
 @Composable
 private fun bodyLine(kind: String, body: String): String = when (kind) {
     "referral_response", "join_response" -> stringResource(when (body) { "accepted", "approved" -> R.string.st_accepted; "declined", "rejected" -> R.string.st_declined; else -> R.string.st_pending })
+    // The kind of record the client made, never what was in it.
+    "client_record" -> when (body) {
+        "check_in" -> stringResource(R.string.rec_check_in)
+        "assessment" -> stringResource(R.string.rec_assessment)
+        "journal" -> stringResource(R.string.rec_journal)
+        else -> body
+    }
     else -> body
 }

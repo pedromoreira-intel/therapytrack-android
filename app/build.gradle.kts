@@ -30,7 +30,7 @@ android {
         // versionCode, and an equal one installs silently over the last, which
         // is how three fixed bugs stayed indistinguishable from the build that
         // had them.
-        versionCode = 3
+        versionCode = 4
         versionName = "0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

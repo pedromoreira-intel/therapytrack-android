@@ -71,7 +71,8 @@ fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) 
 
     LaunchedEffect(patientId, outboxTick, reload) {
         pending = container.sessionNotes.pending(patientId)
-        runCatching { container.api.markNotificationsRead("alert", patientId) }; container.refreshInbox()
+        runCatching { container.api.markNotificationsRead("alert", patientId) }
+        runCatching { container.api.markNotificationsRead("client_record", patientId) }; container.refreshInbox()
         runCatching { patient = container.api.patient(patientId); loadFailed = false }.onFailure { loadFailed = true }
         runCatching { brief = container.api.brief(patientId) }
         runCatching { notes = container.api.sessionNotes(patientId).sortedByDescending { it.sessionNumber } }

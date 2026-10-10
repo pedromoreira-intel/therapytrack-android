@@ -41,6 +41,15 @@ class ApiClient(
     private val http: OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
+        // The server writes some text itself — alert explanations — and writes
+        // it in the language asked for. The app shows English on an English
+        // phone and Portuguese otherwise, so the phone's language is the
+        // screen's; the server falls back to Portuguese for anything else.
+        .addInterceptor { chain ->
+            chain.proceed(chain.request().newBuilder()
+                .header("Accept-Language", java.util.Locale.getDefault().toLanguageTag())
+                .build())
+        }
         .build()
 ) {
     val json = Json { ignoreUnknownKeys = true; explicitNulls = false; encodeDefaults = false }

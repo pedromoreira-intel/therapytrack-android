@@ -369,6 +369,60 @@ class Api(val client: ApiClient) {
     suspend fun replyToPost(id: Int, content: String) { client.request("POST", "/posts/$id/reply", buildJsonObject { put("content", content) }) }
     suspend fun acceptAnswer(postId: Int, replyId: Int) { client.request("POST", "/posts/$postId/accept", buildJsonObject { put("reply_id", replyId) }) }
 
+    // Finding supervision (REA-31) -----------------------------------------
+
+    suspend fun mySupervisorListing(): ApiSupervisorListing = decode(client.request("GET", "/supervisors/me").body)
+    suspend fun setAcceptingSupervisees(accepting: Boolean): ApiSupervisorListing =
+        decode(client.request("PUT", "/supervisors/me", buildJsonObject { put("accepting_supervisees", accepting) }).body)
+    /** Publishing is consent: call it only after the text of what becomes visible was shown and confirmed. */
+    suspend fun publishSupervisorListing(): ApiSupervisorListing =
+        decode(client.request("POST", "/supervisors/me/publish", buildJsonObject { put("consent", true); put("source", "android") }).body)
+    suspend fun withdrawSupervisorListing(): ApiSupervisorListing =
+        decode(client.request("POST", "/supervisors/me/withdraw", buildJsonObject { put("source", "android") }).body)
+
+    suspend fun supervisionOffers(kind: String?, format: String?, topic: String?): List<ApiSupervisionOffer> {
+        val params = listOfNotNull(kind?.let { "kind=$it" }, format?.let { "format=$it" },
+            topic?.takeIf { it.isNotBlank() }?.let { "topic=" + URLEncoder.encode(it.trim(), "UTF-8") })
+        return list(ApiSupervisionOffer.serializer(), "/supervision/offers" + if (params.isEmpty()) "" else "?" + params.joinToString("&"))
+    }
+    suspend fun mySupervisionOffers(): List<ApiSupervisionOffer> = list(ApiSupervisionOffer.serializer(), "/supervision/offers/mine")
+    suspend fun mySupervisionPlaces(): List<ApiSupervisionOffer> = list(ApiSupervisionOffer.serializer(), "/supervision/places/mine")
+
+    /**
+     * Post a session ([id] null) or change one. A change sends every field, so
+     * clearing the description or the price is a change like any other; the
+     * kind is fixed once posted and is not sent.
+     */
+    suspend fun saveSupervisionOffer(id: Int?, kind: String, title: String, description: String?, topics: List<String>,
+                                     startsAt: Instant, durationMinutes: Int, format: String, location: String?,
+                                     places: Int, priceCents: Int?): ApiSupervisionOffer {
+        val body = buildJsonObject {
+            if (id == null) put("kind", kind)
+            put("title", title)
+            put("description", description?.takeIf { it.isNotBlank() })
+            putJsonArray("topics") { topics.forEach { add(kotlinx.serialization.json.JsonPrimitive(it)) } }
+            put("starts_at", ApiTimestamp.iso8601(startsAt))
+            put("duration_minutes", durationMinutes)
+            put("format", format)
+            put("location", location?.takeIf { it.isNotBlank() })
+            put("places", places)
+            put("price_cents", priceCents)
+        }
+        return decode(if (id == null) client.request("POST", "/supervision/offers", body).body
+                      else client.request("PUT", "/supervision/offers/$id", body).body)
+    }
+    suspend fun cancelSupervisionOffer(id: Int): ApiSupervisionOffer = decode(client.request("DELETE", "/supervision/offers/$id").body)
+
+    suspend fun requestSupervisionPlace(offerId: Int, note: String?): ApiSupervisionPlaceStatus =
+        decode(client.request("POST", "/supervision/offers/$offerId/places", buildJsonObject {
+            note?.takeIf { it.isNotBlank() }?.let { put("note", it.trim()) }
+        }).body)
+    suspend fun withdrawSupervisionPlace(id: Int): ApiSupervisionPlaceStatus = decode(client.request("DELETE", "/supervision/places/$id").body)
+    suspend fun supervisionPlaceRequests(offerId: Int): List<ApiSupervisionPlaceRequest> =
+        list(ApiSupervisionPlaceRequest.serializer(), "/supervision/offers/$offerId/places")
+    suspend fun answerSupervisionPlace(id: Int, accept: Boolean): ApiSupervisionPlaceStatus =
+        decode(client.request("POST", "/supervision/places/$id/${if (accept) "accept" else "decline"}", buildJsonObject {}).body)
+
     // In-app inbox -----------------------------------------------------------
 
     suspend fun inboxSummary(): ApiInboxSummary = decode(client.request("GET", "/notifications/summary").body)

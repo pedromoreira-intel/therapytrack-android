@@ -58,7 +58,8 @@ fun TherapistShell(onSignedOut: () -> Unit) {
             val badges = mapOf(
                 "today" to inbox.count("alert"),
                 "clients" to inbox.count("message", "client_record"),
-                "practice" to inbox.count("referral", "referral_response", "join_request", "join_response")
+                "practice" to inbox.count("referral", "referral_response", "join_request", "join_response",
+                    "supervision_request", "supervision_response", "supervision_cancelled", "supervision_changed")
             )
             if (showBar) TherapyTabBar(tabs.mapIndexed { i, t -> t.copy(label = stringResource(tabLabels[i]), badge = badges[t.route] ?: 0) }, route) {
                 nav.navigate(it) { popUpTo("today") { saveState = true }; launchSingleTop = true; restoreState = true }
@@ -73,6 +74,7 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                         is com.therapytrack.android.ui.common.Open.Referral -> nav.navigate("referrals?direction=${open.direction}&focus=${open.id ?: ""}")
                         is com.therapytrack.android.ui.common.Open.Group -> nav.navigate("group/${open.id}")
                         is com.therapytrack.android.ui.common.Open.Patient -> nav.navigate("patient/${open.id}")
+                        is com.therapytrack.android.ui.common.Open.Supervision -> nav.navigate(if (open.asSupervisor) "supervision/offer" else "supervision/find")
                     }
                 } }
                 composable("today") { TodayScreen(onActivity = { nav.navigate("activity") }, onPatient = { nav.navigate("patient/$it") }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }, onMessages = { nav.navigate("threads") }) }
@@ -113,7 +115,10 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                 composable("practice") { PracticeScreen(onOpen = { nav.navigate(it) }) }
                 composable("credentials") { CredentialsScreen(onBack = { nav.popBackStack() }) }
                 composable("training") { TrainingScreen(onBack = { nav.popBackStack() }) }
-                composable("supervision") { SupervisionScreen(onBack = { nav.popBackStack() }) }
+                composable("supervision") { SupervisionScreen(onBack = { nav.popBackStack() },
+                    onFind = { nav.navigate("supervision/find") }, onOffer = { nav.navigate("supervision/offer") }) }
+                composable("supervision/find") { FindSupervisionScreen(onBack = { nav.popBackStack() }) }
+                composable("supervision/offer") { OfferSupervisionScreen(onBack = { nav.popBackStack() }) }
                 composable("myprofile") { MyProfileScreen(onBack = { nav.popBackStack() }) }
                 composable("directory") { DirectoryScreen(onBack = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") },
                     onRefer = { id, name -> nav.navigate("refer/$id/${android.net.Uri.encode(name)}") }) }

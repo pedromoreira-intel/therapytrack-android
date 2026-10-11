@@ -501,3 +501,72 @@ data class ApiNotification(
 data class ApiInboxSummary(@SerialName("unread_total") val unreadTotal: Int = 0, @SerialName("by_kind") val byKind: Map<String, Int> = emptyMap()) {
     fun count(vararg kinds: String) = kinds.sumOf { byKind[it] ?: 0 }
 }
+
+// Finding supervision (REA-31) ---------------------------------------------------
+// Supervisors post open sessions; therapists ask for a place; the supervisor
+// decides. Times are ISO 8601 in UTC, money is integer cents, and verification
+// is whatever the server says — never something this app sets.
+
+@Serializable
+data class ApiSupervisorListing(
+    @SerialName("is_published") @Serializable(with = LenientBoolean::class) val isPublished: Boolean = false,
+    @SerialName("accepting_supervisees") @Serializable(with = LenientBoolean::class) val acceptingSupervisees: Boolean = true,
+    @SerialName("verification_status") val verificationStatus: String = "self_declared",
+    @SerialName("published_at") val publishedAt: String? = null,
+    val headline: String? = null,
+    val city: String? = null,
+    @SerialName("consent_version") val consentVersion: String = ""
+)
+
+@Serializable
+data class ApiSupervisionOffer(
+    val id: Int,
+    val kind: String,
+    val title: String,
+    val description: String? = null,
+    val topics: List<String> = emptyList(),
+    @SerialName("starts_at") val startsAt: String,
+    @SerialName("duration_minutes") val durationMinutes: Int,
+    val format: String,
+    val location: String? = null,
+    val places: Int,
+    @SerialName("places_left") val placesLeft: Int,
+    @SerialName("price_cents") val priceCents: Int? = null,
+    val currency: String = "EUR",
+    val status: String = "open",
+    val supervisor: Supervisor,
+    @SerialName("my_place") val myPlace: Place? = null,
+    /** Only on the supervisor's own list. */
+    @SerialName("requests_waiting") val requestsWaiting: Int? = null,
+    @SerialName("is_past") @Serializable(with = LenientBoolean::class) val isPast: Boolean = false
+) {
+    @Serializable
+    data class Supervisor(
+        @SerialName("user_id") val userId: Int,
+        val name: String,
+        val headline: String? = null,
+        val city: String? = null,
+        @SerialName("verification_status") val verificationStatus: String = "self_declared",
+        @SerialName("accepting_supervisees") @Serializable(with = LenientBoolean::class) val acceptingSupervisees: Boolean = true
+    )
+
+    @Serializable
+    data class Place(val id: Int, val status: String)
+
+    val isCancelled: Boolean get() = status == "cancelled"
+}
+
+@Serializable
+data class ApiSupervisionPlaceRequest(
+    val id: Int,
+    val status: String,
+    val note: String? = null,
+    @SerialName("requested_at") val requestedAt: String? = null,
+    val therapist: Therapist
+) {
+    @Serializable
+    data class Therapist(val name: String, val headline: String? = null, val city: String? = null)
+}
+
+@Serializable
+data class ApiSupervisionPlaceStatus(val id: Int, val status: String)

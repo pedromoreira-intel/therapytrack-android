@@ -16,6 +16,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.EditNote
+import androidx.compose.material.icons.outlined.EditCalendar
+import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.PersonSearch
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.Warning
@@ -48,6 +51,8 @@ sealed class Open {
     data class Referral(val id: Int?, val direction: String) : Open()
     data class Group(val id: Int) : Open()
     data class Patient(val id: Int) : Open()
+    /** A supervision session: the supervisor's side for a request, the finder's side for the rest. */
+    data class Supervision(val asSupervisor: Boolean) : Open()
 }
 
 fun ApiNotification.target(): Open? = when (kind) {
@@ -56,6 +61,8 @@ fun ApiNotification.target(): Open? = when (kind) {
     "referral_response" -> Open.Referral(refId, "sent")
     "join_request", "join_response" -> refId?.let { Open.Group(it) }
     "alert", "client_record" -> refId?.let { Open.Patient(it) }
+    "supervision_request" -> Open.Supervision(asSupervisor = true)
+    "supervision_response", "supervision_cancelled", "supervision_changed" -> Open.Supervision(asSupervisor = false)
     else -> null
 }
 
@@ -87,8 +94,11 @@ fun ActivityScreen(onBack: () -> Unit, onOpen: (Open) -> Unit) {
                 n.target()?.let(onOpen)
             }, tint = if (unread) androidx.compose.ui.graphics.Color.White else TherapyColors.canvas) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconCircle(when (n.kind) { "message" -> Icons.Outlined.ChatBubbleOutline; "alert" -> Icons.Outlined.Warning; "join_request", "join_response" -> Icons.Outlined.Groups; "client_record" -> Icons.Outlined.EditNote; else -> Icons.Outlined.SwapHoriz },
-                        tint = if (n.kind == "alert") TherapyColors.critical else TherapyColors.navy)
+                    IconCircle(when (n.kind) { "message" -> Icons.Outlined.ChatBubbleOutline; "alert" -> Icons.Outlined.Warning; "join_request", "join_response" -> Icons.Outlined.Groups; "client_record" -> Icons.Outlined.EditNote
+                        "supervision_request", "supervision_response" -> Icons.Outlined.PersonSearch
+                        "supervision_cancelled" -> Icons.Outlined.EventBusy
+                        "supervision_changed" -> Icons.Outlined.EditCalendar; else -> Icons.Outlined.SwapHoriz },
+                        tint = when (n.kind) { "alert" -> TherapyColors.critical; "supervision_cancelled", "supervision_changed" -> TherapyColors.warning; else -> TherapyColors.navy })
                     Spacer(Modifier.width(14.dp))
                     Column(Modifier.weight(1f)) {
                         Text(kindLine(n), style = TherapyType.caption, color = TherapyColors.muted)
@@ -107,12 +117,15 @@ fun ActivityScreen(onBack: () -> Unit, onOpen: (Open) -> Unit) {
 private fun kindLine(n: ApiNotification): String = stringResource(when (n.kind) {
     "message" -> R.string.n_message; "referral" -> R.string.n_referral; "referral_response" -> R.string.n_referral_response
     "join_request" -> R.string.n_join_request; "join_response" -> R.string.n_join_response; "alert" -> R.string.n_alert
-    "client_record" -> R.string.n_client_record; else -> R.string.activity_title
+    "client_record" -> R.string.n_client_record
+    "supervision_request" -> R.string.n_supervision_request; "supervision_response" -> R.string.n_supervision_response
+    "supervision_cancelled" -> R.string.n_supervision_cancelled; "supervision_changed" -> R.string.n_supervision_changed
+    else -> R.string.activity_title
 })
 
 @Composable
 private fun bodyLine(kind: String, body: String): String = when (kind) {
-    "referral_response", "join_response" -> stringResource(when (body) { "accepted", "approved" -> R.string.st_accepted; "declined", "rejected" -> R.string.st_declined; else -> R.string.st_pending })
+    "referral_response", "join_response", "supervision_response" -> stringResource(when (body) { "accepted", "approved" -> R.string.st_accepted; "declined", "rejected" -> R.string.st_declined; else -> R.string.st_pending })
     // The kind of record the client made, never what was in it.
     "client_record" -> when (body) {
         "check_in" -> stringResource(R.string.rec_check_in)

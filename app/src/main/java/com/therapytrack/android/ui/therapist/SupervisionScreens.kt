@@ -33,6 +33,12 @@ import com.therapytrack.android.core.ApiTimestamp
 import com.therapytrack.android.offline.PendingSupervision
 import com.therapytrack.android.offline.SaveOutcome
 import com.therapytrack.android.ui.common.Card
+import com.therapytrack.android.ui.common.ListCard
+import com.therapytrack.android.ui.common.ListRow
+import com.therapytrack.android.ui.common.Overline
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Campaign
+import androidx.compose.material.icons.outlined.Search
 import com.therapytrack.android.ui.common.Muted
 import com.therapytrack.android.ui.common.Pill
 import com.therapytrack.android.ui.common.PrimaryButton
@@ -45,7 +51,7 @@ import java.time.LocalDate
 val supervisionTypes = listOf("individual" to R.string.sv_individual, "group" to R.string.sv_group, "peer" to R.string.sv_peer)
 
 @Composable
-fun SupervisionScreen(onBack: () -> Unit) {
+fun SupervisionScreen(onBack: () -> Unit, onFind: () -> Unit = {}, onOffer: () -> Unit = {}) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
     var sessions by remember { mutableStateOf<List<ApiSupervisionSession>>(emptyList()) }
@@ -72,6 +78,13 @@ fun SupervisionScreen(onBack: () -> Unit) {
 
     ListScreen(stringResource(R.string.supervision_title), onBack, failed, { reload++ }, stringResource(R.string.log_supervision),
         form = null, showForm = false, setShowForm = {}) {
+        // Finding supervision and offering it (REA-31) come first: the log
+        // below is a record of what happened, these are how it happens.
+        ListCard {
+            ListRow(stringResource(R.string.sm_find), subtitle = stringResource(R.string.sm_find_detail), icon = Icons.Outlined.Search, chevron = true, onClick = onFind)
+            ListRow(stringResource(R.string.sm_offer), subtitle = stringResource(R.string.sm_offer_detail), icon = Icons.Outlined.Campaign, chevron = true, divider = false, onClick = onOffer)
+        }
+        Overline(stringResource(R.string.sm_your_log), modifier = Modifier.padding(top = 10.dp))
         PrimaryButton(stringResource(R.string.log_supervision)) { form = "session" }
         Muted(stringResource(R.string.hours_this_year, fmtHours(hoursThisYear)))
         pending.forEach { p ->

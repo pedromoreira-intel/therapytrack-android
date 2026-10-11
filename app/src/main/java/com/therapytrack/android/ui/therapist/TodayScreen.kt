@@ -92,8 +92,9 @@ fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onClients
     fun day(s: ApiSession) = ApiTimestamp.parse(s.sessionDate)?.atZone(ZoneId.systemDefault())?.toLocalDate()
     val todays = sessions.filter { day(it) == today }
     val upcoming = sessions.filter { (day(it) ?: today) >= today }.take(5)
+    // As on iOS: boa tarde until 20:00, boa noite after it and through the small hours.
     val hour = LocalTime.now().hour
-    val greeting = stringResource(when { hour < 12 -> R.string.greeting_morning; hour < 19 -> R.string.greeting_afternoon; else -> R.string.greeting_evening }, me?.name?.split(' ')?.getOrNull(1) ?: me?.name?.substringBefore(' ') ?: "")
+    val greeting = stringResource(when (hour) { in 5..11 -> R.string.greeting_morning; in 12..19 -> R.string.greeting_afternoon; else -> R.string.greeting_evening }, me?.name?.split(' ')?.getOrNull(1) ?: me?.name?.substringBefore(' ') ?: "")
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp, 12.dp, 20.dp, 24.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {

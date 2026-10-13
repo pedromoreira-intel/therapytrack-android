@@ -74,6 +74,7 @@ import kotlinx.coroutines.launch
 fun errorText(e: Throwable): String = when (e) {
     is ApiError.Network -> stringResource(R.string.offline_login)
     is ApiError.Unauthorized -> stringResource(R.string.login_failed)
+    is ApiError.WrongAccountType -> stringResource(if (e.accountRole == "patient") R.string.wrong_app_client else R.string.wrong_app_therapist)
     is ApiError.Server -> e.message ?: stringResource(R.string.error_generic)
     else -> stringResource(R.string.error_generic)
 }
@@ -208,7 +209,7 @@ fun LoginScreen(onSignedIn: () -> Unit, onAcceptInvite: () -> Unit, onRegister: 
         error?.let { ErrorText(errorText(it)) }
         PrimaryButton(stringResource(R.string.sign_in), enabled = email.isNotBlank() && password.isNotBlank(), loading = busy, style = ButtonStyle.Canvas, icon = Icons.AutoMirrored.Filled.ArrowForward) {
             busy = true; error = null
-            scope.launch { try { api.login(email.trim(), password); onSignedIn() } catch (e: Exception) { error = e } finally { busy = false } }
+            scope.launch { try { api.login(email.trim(), password, asRole = role); onSignedIn() } catch (e: Exception) { error = e } finally { busy = false } }
         }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             TextButton(onAcceptInvite) { Text(stringResource(R.string.have_invite), style = TherapyType.emphasis, color = TherapyColors.navy) }

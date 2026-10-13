@@ -213,18 +213,18 @@ class ApiClient(
     suspend fun storeSession(session: Session) = sessionLock.withLock { sessions.replace(session); publish() }
 
     suspend fun signOut() {
-        val refresh = sessions.current().refreshToken
-        if (refresh != null) {
-            // Tell the server so the refresh token is revoked; a failure here must
-            // not block local sign-out.
-            runCatching {
-                val body = """{"refresh_token":${json.encodeToString(kotlinx.serialization.serializer<String>(), refresh)}}"""
-                withContext(Dispatchers.IO) {
-                    http.newCall(Request.Builder().url("$baseUrl/auth/logout").post(body.toRequestBody(JSON_TYPE)).build()).execute().close()
-                }
+        sessions.current().refreshToken?.let { revoke(it) }
+        sessionLock.withLock { sessions.clear(); publish() }
+    }
+
+    /** Tell the server a refresh token is finished with. A failure here must not block signing out. */
+    suspend fun revoke(refreshToken: String) {
+        runCatching {
+            val body = """{"refresh_token":${json.encodeToString(kotlinx.serialization.serializer<String>(), refreshToken)}}"""
+            withContext(Dispatchers.IO) {
+                http.newCall(Request.Builder().url("$baseUrl/auth/logout").post(body.toRequestBody(JSON_TYPE)).build()).execute().close()
             }
         }
-        sessionLock.withLock { sessions.clear(); publish() }
     }
 
     companion object {

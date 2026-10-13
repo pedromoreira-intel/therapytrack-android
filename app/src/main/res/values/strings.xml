@@ -27,6 +27,8 @@
     <string name="back">Voltar</string>
     <string name="sign_out">Terminar sessão</string>
     <string name="login_failed">Não foi possível iniciar sessão. Verifique o email e a palavra-passe.</string>
+    <string name="wrong_app_client">Esta conta é de cliente. Para entrar, escolha Cliente.</string>
+    <string name="wrong_app_therapist">Esta conta é de psicólogo/a. Para entrar, escolha Psicólogo/a.</string>
     <string name="offline_login">Sem ligação. Precisa de rede para iniciar sessão.</string>
     <string name="session_expired">A sua sessão terminou. Inicie sessão novamente.</string>
 

@@ -7,6 +7,11 @@ sealed class ApiError(message: String) : Exception(message) {
     class NotInPlan(message: String) : ApiError(message)
     class Server(val status: Int, message: String) : ApiError(message)
     /**
+     * The credentials were right but belong to the other kind of account: a
+     * client choosing "therapist" at sign-in, or the reverse. Nothing is stored.
+     */
+    class WrongAccountType(val accountRole: String) : ApiError("Account is $accountRole")
+    /**
      * The signed-in account is not the one this request was written by. Not a
      * failure of the item — a drain that sees this stops and leaves the item for
      * its owner.

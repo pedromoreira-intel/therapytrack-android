@@ -23,6 +23,8 @@
     <string name="back">Back</string>
     <string name="sign_out">Sign out</string>
     <string name="login_failed">Could not sign in. Check your email and password.</string>
+    <string name="wrong_app_client">This is a client account. To sign in, choose Client.</string>
+    <string name="wrong_app_therapist">This is a therapist account. To sign in, choose Therapist.</string>
     <string name="offline_login">No connection. You need a network to sign in.</string>
     <string name="session_expired">Your session has ended. Please sign in again.</string>
 

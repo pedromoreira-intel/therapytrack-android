@@ -25,8 +25,13 @@ class Api(val client: ApiClient) {
 
     // Auth ---------------------------------------------------------------
 
-    suspend fun login(email: String, password: String): ApiUser = signIn(
-        "/auth/login", buildJsonObject { put("email", email); put("password", password) })
+    /**
+     * [asRole] is the kind of account the person chose on the sign-in screen.
+     * An account of the other kind is refused before its session is stored, so
+     * the app never opens as something the account is not.
+     */
+    suspend fun login(email: String, password: String, asRole: String? = null): ApiUser = signIn(
+        "/auth/login", buildJsonObject { put("email", email); put("password", password) }, asRole)
 
     /** Therapists only: a client's account is created by their therapist and activated with an invite. */
     suspend fun register(name: String, email: String, password: String): ApiUser = signIn(
@@ -39,9 +44,13 @@ class Api(val client: ApiClient) {
     suspend fun acceptInvite(code: String, password: String): ApiUser = signIn(
         "/auth/invite/accept", buildJsonObject { put("code", code); put("password", password) })
 
-    private suspend fun signIn(path: String, body: JsonObject): ApiUser {
+    private suspend fun signIn(path: String, body: JsonObject, asRole: String? = null): ApiUser {
         // Not bound to an account: there is none yet, or it is being replaced.
         val response: LoginResponse = decode(client.request("POST", path, body, allowRefresh = false).body)
+        if (asRole != null && response.user.role != asRole) {
+            response.refreshToken?.let { client.revoke(it) }
+            throw ApiError.WrongAccountType(response.user.role)
+        }
         client.storeSession(Session(response.token, response.refreshToken, response.user.id, response.user.role))
         return response.user
     }

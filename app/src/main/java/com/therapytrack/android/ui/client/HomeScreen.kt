@@ -55,16 +55,18 @@ import com.therapytrack.android.ui.theme.TherapyColors
 import com.therapytrack.android.ui.theme.TherapyType
 
 @Composable
-fun HomeScreen(onActivity: () -> Unit = {}, state: ClientState, onCheckIn: () -> Unit, onCrisis: () -> Unit, onReload: () -> Unit) {
+fun HomeScreen(onActivity: () -> Unit = {}, state: ClientState, onCheckIn: () -> Unit, onCrisis: () -> Unit, onReload: () -> Unit, onTopics: () -> Unit = {}) {
     val container = LocalContainer.current
     var checkIns by remember { mutableStateOf<List<ApiEmaResponse>>(emptyList()) }
     var goals by remember { mutableStateOf<List<ApiGoal>>(emptyList()) }
+    var topics by remember { mutableStateOf<List<com.therapytrack.android.core.ApiSessionTopic>>(emptyList()) }
     var offline by remember { mutableStateOf(false) }
     val outboxTick by container.checkIns.changes.collectAsState()
 
     LaunchedEffect(state.patient, outboxTick) {
         try { checkIns = container.api.checkIns().sortedByDescending { ApiTimestamp.parse(it.doneAt) }; offline = false } catch (e: Exception) { android.util.Log.w("Home", "check-ins: $e"); offline = true }
         state.patient?.let { p -> runCatching { goals = container.api.goals(p.id).filter { !it.completed } } }
+        runCatching { topics = container.api.sessionTopics().open }
     }
 
     val name = state.patient?.name?.substringBefore(' ') ?: ""
@@ -112,6 +114,9 @@ fun HomeScreen(onActivity: () -> Unit = {}, state: ClientState, onCheckIn: () ->
             }
         }
 
+        // What to bring to the next session (REA-22): the client's half of the therapy.
+        SessionTopicsCard(topics, onTopics)
+
         Card {
             Overline(stringResource(R.string.last_check_in), color = Color(0xFFCFA84A))
             Spacer(Modifier.height(14.dp))
@@ -142,7 +147,8 @@ private fun RowScope.Score(icon: androidx.compose.ui.graphics.vector.ImageVector
     Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
         IconCircle(icon, tint = tint, size = 44.dp)
         Spacer(Modifier.height(8.dp))
-        Text("${value ?: "–"}/10", style = TherapyType.emphasisLarge, color = TherapyColors.ink)
+        // Check-ins are 1–7 on both apps (REA-9); "/10" said otherwise.
+        Text("${value ?: "–"}/7", style = TherapyType.emphasisLarge, color = TherapyColors.ink)
         Text(label.replaceFirstChar { it.uppercase() }, style = TherapyType.caption, color = TherapyColors.muted)
     }
 }

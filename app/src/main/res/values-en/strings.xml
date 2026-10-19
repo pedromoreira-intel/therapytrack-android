@@ -705,4 +705,17 @@
     <string name="sm_err_full">This session is full</string>
     <string name="sm_err_cancelled">This session was cancelled</string>
     <string name="sm_err_already">You have already asked for a place</string>
+
+    <!-- For my next session (REA-22) -->
+    <string name="topics_title">For my next session</string>
+    <string name="topics_empty_hint">Note what you want to bring to your next session, whenever it comes to mind.</string>
+    <string name="topics_more">and %1$d more</string>
+    <string name="topics_prompt">What would you like to talk about?</string>
+    <string name="topics_footer">Your therapist sees this list before your session.</string>
+    <string name="topics_none">Nothing yet.</string>
+    <string name="topics_open">To talk about</string>
+    <string name="topics_discussed">Talked about</string>
+    <string name="topics_bring_back">Bring back</string>
+    <string name="topics_edit">Edit topic</string>
+    <string name="topics_client_wants">Your client wants to talk about</string>
 </resources>

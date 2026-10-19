@@ -378,6 +378,20 @@ class Api(val client: ApiClient) {
     suspend fun replyToPost(id: Int, content: String) { client.request("POST", "/posts/$id/reply", buildJsonObject { put("content", content) }) }
     suspend fun acceptAnswer(postId: Int, replyId: Int) { client.request("POST", "/posts/$postId/accept", buildJsonObject { put("reply_id", replyId) }) }
 
+    // Topics for the next session (REA-22) --------------------------------
+
+    /** The client's own list, or — for a therapist — one client's. */
+    suspend fun sessionTopics(patientId: Int? = null): ApiSessionTopics =
+        decode(client.request("GET", "/session-topics" + (patientId?.let { "?patient_id=$it" } ?: "")).body)
+    /** [clientId] is reused on a retry so the server keeps one topic, not two. */
+    suspend fun addSessionTopic(text: String, clientId: String): ApiSessionTopic =
+        decode(client.request("POST", "/session-topics", buildJsonObject { put("text", text); put("client_id", clientId) }).body)
+    suspend fun editSessionTopic(id: Int, text: String): ApiSessionTopic =
+        decode(client.request("PUT", "/session-topics/$id", buildJsonObject { put("text", text) }).body)
+    suspend fun setSessionTopicDiscussed(id: Int, discussed: Boolean): ApiSessionTopic =
+        decode(client.request("PUT", "/session-topics/$id", buildJsonObject { put("discussed", discussed) }).body)
+    suspend fun deleteSessionTopic(id: Int) { client.request("DELETE", "/session-topics/$id") }
+
     // Finding supervision (REA-31) -----------------------------------------
 
     suspend fun mySupervisorListing(): ApiSupervisorListing = decode(client.request("GET", "/supervisors/me").body)

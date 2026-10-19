@@ -737,4 +737,17 @@
     <string name="sm_err_full">Esta sessão está completa</string>
     <string name="sm_err_cancelled">Esta sessão foi cancelada</string>
     <string name="sm_err_already">Já pediu um lugar nesta sessão</string>
+
+    <!-- Para a próxima sessão (REA-22) -->
+    <string name="topics_title">Para a próxima sessão</string>
+    <string name="topics_empty_hint">Anote o que quer levar à próxima sessão, quando lhe ocorrer.</string>
+    <string name="topics_more">e mais %1$d</string>
+    <string name="topics_prompt">Sobre o que gostaria de falar?</string>
+    <string name="topics_footer">O seu terapeuta vê esta lista antes da sessão.</string>
+    <string name="topics_none">Ainda nada.</string>
+    <string name="topics_open">Por falar</string>
+    <string name="topics_discussed">Já falámos</string>
+    <string name="topics_bring_back">Voltar à lista</string>
+    <string name="topics_edit">Editar tema</string>
+    <string name="topics_client_wants">O cliente quer falar sobre</string>
 </resources>

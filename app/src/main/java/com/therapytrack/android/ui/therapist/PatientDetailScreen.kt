@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -123,6 +124,23 @@ fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) 
                 }
             }
 
+            // WHAT THE CLIENT WANTS TO TALK ABOUT (REA-22), before the therapist's plan.
+            if (b.clientTopics.isNotEmpty()) Card(padding = 18.dp) {
+                Overline(stringResource(R.string.topics_client_wants), color = TherapyColors.navy)
+                b.clientTopics.forEach { t ->
+                    Row(Modifier.fillMaxWidth().padding(top = 10.dp), verticalAlignment = Alignment.Top) {
+                        Column(Modifier.weight(1f)) {
+                            Text(t.text, style = TherapyType.bodyLarge, color = TherapyColors.ink)
+                            ApiTimestamp.parse(t.createdAt)?.let { Muted(it.shortDate()) }
+                        }
+                        // Talked about: off the brief, into the client's history.
+                        androidx.compose.material3.IconButton({ scope.launch { runCatching { container.api.setSessionTopicDiscussed(t.id, true) }; reload++ } }) {
+                            androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Filled.CheckCircle, stringResource(R.string.topics_discussed), tint = TherapyColors.success)
+                        }
+                    }
+                }
+            }
+
             // WHERE YOU LEFT OFF
             Card(padding = 18.dp) {
                 Overline(stringResource(R.string.where_you_left_off), color = TherapyColors.navy)
@@ -162,7 +180,7 @@ fun PatientDetailScreen(patientId: Int, onBack: () -> Unit, onNewNote: (String) 
                 Muted(stringResource(R.string.since_last_session, ApiTimestamp.parse(b.since)?.shortDate() ?: b.since), Modifier.padding(top = 4.dp))
                 LabelledValue(stringResource(R.string.tab_home).let { "Check-ins" },
                     if (b.checkIns.count == 0) stringResource(R.string.no_check_ins_since)
-                    else "${b.checkIns.count} · ${stringResource(R.string.legend_mood)} ${avg(b.checkIns.moodAvg)}/10 · ${stringResource(R.string.legend_anxiety)} ${avg(b.checkIns.anxietyAvg)}/10")
+                    else "${b.checkIns.count} · ${stringResource(R.string.legend_mood)} ${avg(b.checkIns.moodAvg)}/7 · ${stringResource(R.string.legend_anxiety)} ${avg(b.checkIns.anxietyAvg)}/7")
                 if (b.homework.outstandingCount > 0) LabelledValue(stringResource(R.string.to_complete), b.homework.outstanding.joinToString("\n") { it.title }, emphasis = true)
                 if (b.journal.sharedCount > 0) b.journal.latest?.let { j ->
                     LabelledValue(stringResource(R.string.shared_journal) + " (" + stringResource(R.string.shared_entries_count, b.journal.sharedCount) + ")", j.excerpt)

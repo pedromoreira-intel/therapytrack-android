@@ -93,7 +93,8 @@ fun ClientShell(onSignedOut: () -> Unit) {
                 composable("activity") { com.therapytrack.android.ui.common.ActivityScreen(onBack = { nav.popBackStack() }) { open ->
                     if (open is com.therapytrack.android.ui.common.Open.Thread) nav.navigate("messages")
                 } }
-                composable("home") { HomeScreen(onActivity = { nav.navigate("activity") }, state, onCheckIn = { nav.navigate("checkin") }, onCrisis = { nav.navigate("crisis") }, onReload = { reloadTick++ }) }
+                composable("home") { HomeScreen(onActivity = { nav.navigate("activity") }, state, onCheckIn = { nav.navigate("checkin") }, onCrisis = { nav.navigate("crisis") }, onReload = { reloadTick++ }, onTopics = { nav.navigate("topics") }) }
+                composable("topics") { SessionTopicsScreen(onBack = { nav.popBackStack() }) }
                 composable("checkin") { CheckInScreen(state, onDone = { nav.popBackStack() }) }
                 composable("journal") { JournalScreen() }
                 composable("assessments") { AssessmentsScreen(state, onStart = { nav.navigate("assessment/${it.name}") }) }

@@ -245,7 +245,9 @@ data class ApiBrief(
     val measures: Map<String, BriefMeasure> = emptyMap(),
     @SerialName("check_ins") val checkIns: BriefCheckIns = BriefCheckIns(),
     val homework: BriefHomework = BriefHomework(),
-    val journal: BriefJournal = BriefJournal()
+    val journal: BriefJournal = BriefJournal(),
+    /** What the client wants to talk about, still open (REA-22). */
+    @SerialName("client_topics") val clientTopics: List<ApiSessionTopic> = emptyList()
 )
 
 // Plan, professional records, supervision -------------------------------
@@ -570,3 +572,18 @@ data class ApiSupervisionPlaceRequest(
 
 @Serializable
 data class ApiSupervisionPlaceStatus(val id: Int, val status: String)
+
+// Topics for the next session (REA-22) -------------------------------------------
+// The client's words: only the client edits or deletes one; either side marks
+// it talked about, which takes it off the brief.
+
+@Serializable
+data class ApiSessionTopic(
+    val id: Int,
+    val text: String,
+    @SerialName("created_at") val createdAt: String? = null,
+    @SerialName("discussed_at") val discussedAt: String? = null
+)
+
+@Serializable
+data class ApiSessionTopics(val open: List<ApiSessionTopic> = emptyList(), val discussed: List<ApiSessionTopic> = emptyList())

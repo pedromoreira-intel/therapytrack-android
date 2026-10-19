@@ -571,6 +571,7 @@
     <string name="to_complete">To complete</string>
 
     <string name="seg_cpd">CPD</string>
+    <string name="cpd_explained">CPD is Continuing Professional Development: the training and supervision you record to keep your practice up to date.</string>
     <string name="seg_licences">Licences</string>
     <string name="seg_peers">Peers</string>
     <string name="seg_plan">Plan</string>

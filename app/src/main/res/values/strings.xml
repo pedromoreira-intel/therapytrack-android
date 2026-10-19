@@ -601,6 +601,7 @@
 
     <!-- Practice (visual parity) -->
     <string name="seg_cpd">DPC</string>
+    <string name="cpd_explained">DPC é o Desenvolvimento Profissional Contínuo: a formação e a supervisão que regista para manter a sua prática atualizada.</string>
     <string name="seg_licences">Licenças</string>
     <string name="seg_peers">Pares</string>
     <string name="seg_plan">Plano</string>

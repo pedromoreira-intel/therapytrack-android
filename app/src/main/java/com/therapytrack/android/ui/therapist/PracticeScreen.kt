@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material.icons.outlined.Person2
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PersonSearch
 import androidx.compose.material.icons.outlined.School
@@ -76,6 +78,12 @@ fun PracticeScreen(onOpen: (String) -> Unit) {
 
         when (segment) {
             "cpd" -> {
+                // "DPC" alone means nothing to most people: say what it is where it is used.
+                Row(verticalAlignment = Alignment.Top) {
+                    Icon(Icons.Outlined.Info, null, tint = TherapyColors.muted, modifier = Modifier.padding(top = 2.dp).size(16.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.cpd_explained), style = TherapyType.caption, color = TherapyColors.muted)
+                }
                 Card(padding = 18.dp) {
                     Overline(stringResource(R.string.year_so_far, summary?.year ?: java.time.LocalDate.now().year), color = Color(0xFFCFA84A))
                     Spacer(Modifier.height(12.dp))

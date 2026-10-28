@@ -66,7 +66,10 @@ fun ApiNotification.target(): Open? = when (kind) {
     else -> null
 }
 
-/** The feed behind the bell: newest first, unread marked, one tap opens the thing and marks it read. */
+/**
+ * The feed behind the bell: newest first, unread marked, one tap opens the
+ * thing and marks it read. One list, as on iOS, not a card per notification.
+ */
 @Composable
 fun ActivityScreen(onBack: () -> Unit, onOpen: (Open) -> Unit) {
     val container = LocalContainer.current
@@ -87,14 +90,15 @@ fun ActivityScreen(onBack: () -> Unit, onOpen: (Open) -> Unit) {
         }
         if (failed) item { Row { Muted(stringResource(R.string.could_not_load)); TextButton({ reload++ }) { Text(stringResource(R.string.refresh)) } } }
         else if (items.isEmpty()) item { Muted(stringResource(R.string.no_activity)) }
-        items(items, key = { it.id }) { n ->
+        if (items.isNotEmpty()) item { CompactCard {
+        items.forEachIndexed { i, n ->
             val unread = n.readAt == null
-            Card(modifier = Modifier.clickable {
+            Column(Modifier.fillMaxWidth().clickable {
                 scope.launch { runCatching { container.api.markNotificationRead(n.id) }; container.refreshInbox() }
                 n.target()?.let(onOpen)
-            }, tint = if (unread) androidx.compose.ui.graphics.Color.White else TherapyColors.canvas) {
+            }.padding(horizontal = 14.dp, vertical = 12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconCircle(when (n.kind) { "message" -> Icons.Outlined.ChatBubbleOutline; "alert" -> Icons.Outlined.Warning; "join_request", "join_response" -> Icons.Outlined.Groups; "client_record" -> Icons.Outlined.EditNote
+                    IconCircle(size = 36.dp, icon = when (n.kind) { "message" -> Icons.Outlined.ChatBubbleOutline; "alert" -> Icons.Outlined.Warning; "join_request", "join_response" -> Icons.Outlined.Groups; "client_record" -> Icons.Outlined.EditNote
                         "supervision_request", "supervision_response" -> Icons.Outlined.PersonSearch
                         "supervision_cancelled" -> Icons.Outlined.EventBusy
                         "supervision_changed" -> Icons.Outlined.EditCalendar; else -> Icons.Outlined.SwapHoriz },
@@ -109,7 +113,9 @@ fun ActivityScreen(onBack: () -> Unit, onOpen: (Open) -> Unit) {
                     if (unread) Icon(Icons.Filled.Circle, null, tint = TherapyColors.navy, modifier = Modifier.size(10.dp))
                 }
             }
+            if (i < items.lastIndex) RowDivider(inset = 64.dp)
         }
+        } }
     }
 }
 

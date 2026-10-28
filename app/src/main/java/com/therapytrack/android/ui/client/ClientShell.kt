@@ -41,12 +41,15 @@ import com.therapytrack.android.core.ApiPatient
 import com.therapytrack.android.ui.theme.TherapyColors
 
 
+// Outlines selected or not, as on iOS: the colour says which tab you are on.
+// Bem-estar holds the exercises, as on iOS; the questionnaires moved to a
+// link on Início.
 private val tabs = listOf(
-    TabSpec("home", "", Icons.Outlined.Home, Icons.Filled.Home),
-    TabSpec("messages", "", Icons.Outlined.ChatBubbleOutline, Icons.Filled.ChatBubble),
-    TabSpec("journal", "", Icons.Outlined.MenuBook, Icons.Filled.MenuBook),
-    TabSpec("assessments", "", Icons.Outlined.Spa, Icons.Filled.Spa),
-    TabSpec("profile", "", Icons.Outlined.AccountCircle, Icons.Filled.AccountCircle)
+    TabSpec("home", "", Icons.Outlined.Home),
+    TabSpec("messages", "", Icons.Outlined.ChatBubbleOutline),
+    TabSpec("journal", "", Icons.Outlined.MenuBook),
+    TabSpec("wellness", "", Icons.Outlined.Spa),
+    TabSpec("profile", "", Icons.Outlined.AccountCircle)
 )
 private val tabLabels = listOf(R.string.tab_home, R.string.tab_messages, R.string.tab_journal, R.string.tab_wellbeing, R.string.tab_profile)
 
@@ -93,11 +96,25 @@ fun ClientShell(onSignedOut: () -> Unit) {
                 composable("activity") { com.therapytrack.android.ui.common.ActivityScreen(onBack = { nav.popBackStack() }) { open ->
                     if (open is com.therapytrack.android.ui.common.Open.Thread) nav.navigate("messages")
                 } }
-                composable("home") { HomeScreen(onActivity = { nav.navigate("activity") }, state, onCheckIn = { nav.navigate("checkin") }, onCrisis = { nav.navigate("crisis") }, onReload = { reloadTick++ }, onTopics = { nav.navigate("topics") }) }
+                composable("home") {
+                    HomeScreen(state, onActivity = { nav.navigate("activity") }, onCheckIn = { nav.navigate("checkin") }, onCrisis = { nav.navigate("crisis") },
+                        onReload = { reloadTick++ }, onTopics = { nav.navigate("topics") }, onBreathing = { nav.navigate("breathing") },
+                        onMyCheckIns = { nav.navigate("mycheckins") }, onQuestionnaires = { nav.navigate("assessments") })
+                }
+                composable("mycheckins") { MyCheckInsScreen(onBack = { nav.popBackStack() }) }
+                composable("wellness") {
+                    WellnessScreen(onBreathing = { nav.navigate("breathing") }, onMeditation = { nav.navigate("meditation") },
+                        onGrounding = { nav.navigate("grounding") }, onCrisis = { nav.navigate("crisis") })
+                }
+                composable("breathing") { BreathingScreen(onClose = { nav.popBackStack() }) }
+                composable("meditation") { MeditationScreen(onClose = { nav.popBackStack() }) }
+                composable("grounding") { GroundingScreen(onBack = { nav.popBackStack() }, onSenses = { nav.navigate("senses") }, onBodyScan = { nav.navigate("bodyscan") }) }
+                composable("senses") { SensesScreen(onClose = { nav.popBackStack() }) }
+                composable("bodyscan") { BodyScanScreen(onClose = { nav.popBackStack() }) }
                 composable("topics") { SessionTopicsScreen(onBack = { nav.popBackStack() }) }
                 composable("checkin") { CheckInScreen(state, onDone = { nav.popBackStack() }) }
-                composable("journal") { JournalScreen() }
-                composable("assessments") { AssessmentsScreen(state, onStart = { nav.navigate("assessment/${it.name}") }) }
+                composable("journal") { JournalScreen(onCrisis = { nav.navigate("crisis") }) }
+                composable("assessments") { AssessmentsScreen(state, onBack = { nav.popBackStack() }, onStart = { nav.navigate("assessment/${it.name}") }) }
                 composable("assessment/{instrument}") { entry ->
                     val instrument = Api.Instrument.valueOf(entry.arguments?.getString("instrument") ?: "PHQ9")
                     QuestionnaireScreen(state, instrument, onDone = { nav.popBackStack() }, onCrisis = { nav.navigate("crisis") })

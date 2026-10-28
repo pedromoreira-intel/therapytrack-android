@@ -1,6 +1,7 @@
 package com.therapytrack.android.ui.client
 
 import androidx.compose.foundation.background
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,8 +47,9 @@ import com.therapytrack.android.ui.common.shortDate
 import com.therapytrack.android.ui.theme.TherapyColors
 import kotlinx.coroutines.launch
 
+/** The questionnaires, each a row with when it was last completed. Reached from Início, as on iOS. */
 @Composable
-fun AssessmentsScreen(state: ClientState, onStart: (Api.Instrument) -> Unit) {
+fun AssessmentsScreen(state: ClientState, onBack: () -> Unit, onStart: (Api.Instrument) -> Unit) {
     val container = LocalContainer.current
     var latest by remember { mutableStateOf<Map<Api.Instrument, ApiAssessmentResult?>>(emptyMap()) }
 
@@ -56,20 +58,24 @@ fun AssessmentsScreen(state: ClientState, onStart: (Api.Instrument) -> Unit) {
         latest = Api.Instrument.entries.associateWith { runCatching { container.api.assessmentResults(it, id).maxByOrNull { r -> r.id } }.getOrNull() }
     }
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(stringResource(R.string.assessments_title), style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy)
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        com.therapytrack.android.ui.common.BackRow(onBack, stringResource(R.string.questionnaires))
         Muted(stringResource(R.string.assessments_intro))
-        Instruments.all.forEach { instrument ->
-            val subtitle = when (instrument.api) { Api.Instrument.PHQ9 -> R.string.phq9_subtitle; Api.Instrument.GAD7 -> R.string.gad7_subtitle; Api.Instrument.WAISR -> R.string.waisr_subtitle }
-            Card(modifier = Modifier.clickable { onStart(instrument.api) }) {
-                Text(stringResource(instrument.title), style = MaterialTheme.typography.titleMedium)
-                Muted(stringResource(subtitle))
+        com.therapytrack.android.ui.common.CompactCard {
+            Instruments.all.forEachIndexed { i, instrument ->
+                val subtitle = when (instrument.api) { Api.Instrument.PHQ9 -> R.string.phq9_subtitle; Api.Instrument.GAD7 -> R.string.gad7_subtitle; Api.Instrument.WAISR -> R.string.waisr_subtitle }
                 val last = latest[instrument.api]
-                Muted(if (last == null) stringResource(R.string.no_results_yet)
-                      else stringResource(R.string.last_result, scoreText(instrument, last.score), ApiTimestamp.parse(last.assessmentDate)?.shortDate() ?: last.assessmentDate),
-                    Modifier.padding(top = 6.dp))
-                Spacer(Modifier.height(10.dp))
-                PrimaryButton(stringResource(R.string.start)) { onStart(instrument.api) }
+                Row(Modifier.fillMaxWidth().clickable { onStart(instrument.api) }.padding(horizontal = 14.dp, vertical = 12.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(instrument.title), style = com.therapytrack.android.ui.theme.TherapyType.emphasis, color = TherapyColors.ink)
+                        Text(stringResource(subtitle), style = com.therapytrack.android.ui.theme.TherapyType.caption, color = TherapyColors.muted)
+                        Text(if (last == null) stringResource(R.string.not_completed_yet)
+                             else stringResource(R.string.last_completed, ApiTimestamp.parse(last.assessmentDate)?.shortDate() ?: last.assessmentDate),
+                            style = com.therapytrack.android.ui.theme.TherapyType.caption, color = TherapyColors.neutral)
+                    }
+                    androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = TherapyColors.neutral)
+                }
+                if (i < Instruments.all.lastIndex) com.therapytrack.android.ui.common.RowDivider()
             }
         }
     }
@@ -147,15 +153,21 @@ fun QuestionnaireScreen(state: ClientState, which: Api.Instrument, onDone: () ->
                 Modifier.fillMaxWidth().padding(vertical = 5.dp).clip(MaterialTheme.shapes.medium)
                     .background(if (picked) TherapyColors.navy else TherapyColors.pearl)
                     .border(1.dp, if (picked) TherapyColors.navy else TherapyColors.hairline, MaterialTheme.shapes.medium)
-                    .clickable { answers = answers.toMutableList().also { it[index] = value } }
+                    .clickable {
+                        answers = answers.toMutableList().also { it[index] = value }
+                        // Move on after a beat, so the choice is seen.
+                        if (index < instrument.items.size - 1) { val from = index; scope.launch { kotlinx.coroutines.delay(250); if (index == from) index++ } }
+                    }
                     .padding(16.dp)
             ) { Text(stringResource(label), color = if (picked) androidx.compose.ui.graphics.Color.White else TherapyColors.ink, style = MaterialTheme.typography.bodyLarge) }
         }
         Spacer(Modifier.height(20.dp))
+        val last = index == instrument.items.size - 1
+        val missing = answers.indexOfFirst { it == null }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            if (index > 0) TextButton({ index-- }, Modifier.weight(1f)) { Text(stringResource(R.string.back)) }
-            val last = index == instrument.items.size - 1
-            PrimaryButton(stringResource(if (last) R.string.submit else R.string.next), Modifier.weight(2f), enabled = answers[index] != null, loading = busy) {
+            if (index > 0) TextButton({ index-- }, Modifier.weight(1f)) { Text(stringResource(R.string.previous)) }
+            PrimaryButton(stringResource(if (last) R.string.finish_questionnaire else R.string.next_question), Modifier.weight(2f),
+                enabled = if (last) missing < 0 else answers[index] != null, loading = busy) {
                 if (!last) { index++; return@PrimaryButton }
                 val patientId = state.patient?.id ?: return@PrimaryButton
                 busy = true
@@ -165,5 +177,10 @@ fun QuestionnaireScreen(state: ClientState, which: Api.Instrument, onDone: () ->
                 }
             }
         }
+        if (last && missing >= 0) TextButton({ index = missing }) {
+            Text(stringResource(R.string.question_unanswered, missing + 1), style = com.therapytrack.android.ui.theme.TherapyType.caption, color = TherapyColors.muted)
+        }
+        // What happens on finishing, said before it happens.
+        if (last) Muted(stringResource(R.string.answers_go_to_record), Modifier.padding(top = 8.dp))
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.material.icons.outlined.Support
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.therapytrack.android.ui.theme.TherapyColors
@@ -263,5 +265,82 @@ fun BellButton(onClick: () -> Unit) {
         Icon(androidx.compose.material.icons.Icons.Outlined.Notifications, null, tint = TherapyColors.navy, modifier = Modifier.size(22.dp))
         if (inbox.unreadTotal > 0) Text(if (inbox.unreadTotal > 99) "99+" else "${inbox.unreadTotal}", style = TherapyType.label, color = Color.White,
             modifier = Modifier.align(Alignment.TopEnd).padding(2.dp).background(TherapyColors.critical, CircleShape).padding(horizontal = 5.dp, vertical = 1.dp))
+    }
+}
+
+// The iOS client pages' parts (DesignSystem/Components/PageParts.swift) --------
+
+/** The page title: navy serif, as on every main iOS page. [trailing] sits on the right. */
+@Composable
+fun PageTitle(text: String, modifier: Modifier = Modifier, trailing: (@Composable () -> Unit)? = null) {
+    Row(modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(text, style = TherapyType.display, color = TherapyColors.navy, modifier = Modifier.weight(1f))
+        trailing?.invoke()
+    }
+}
+
+/** The quiet uppercase label above a group of rows. */
+@Composable
+fun SectionLabel(text: String, modifier: Modifier = Modifier) = Overline(text, modifier = modifier)
+
+/**
+ * Rows in one white card, hairline-divided: the list shape the iOS pages now
+ * use instead of a card per row. Flat, with a hairline edge, no shadow.
+ */
+@Composable
+fun CompactCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    val shape = RoundedCornerShape(14.dp)
+    Column(modifier.fillMaxWidth().clip(shape).background(Color.White).border(0.5.dp, TherapyColors.hairline, shape), content = content)
+}
+
+/** The hairline between rows of a [CompactCard], inset like the iOS one. */
+@Composable
+fun RowDivider(inset: androidx.compose.ui.unit.Dp = 14.dp) {
+    Box(Modifier.fillMaxWidth().padding(start = inset).height(0.5.dp).background(TherapyColors.hairline))
+}
+
+/** A row that opens somewhere: icon, title, a line under it, a chevron. */
+@Composable
+fun CompactLinkRow(icon: ImageVector, title: String, subtitle: String? = null, tint: Color = TherapyColors.navy, onClick: () -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 14.dp, vertical = 10.dp).heightIn(min = 32.dp),
+        verticalAlignment = Alignment.CenterVertically) {
+        Icon(icon, null, tint = tint, modifier = Modifier.size(20.dp))
+        Spacer(Modifier.width(14.dp))
+        Column(Modifier.weight(1f)) {
+            Text(title, style = TherapyType.emphasis, color = TherapyColors.ink)
+            subtitle?.let { Text(it, style = TherapyType.caption, color = TherapyColors.muted) }
+        }
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = TherapyColors.neutral, modifier = Modifier.size(20.dp))
+    }
+}
+
+/** A small navy capsule button, as "Iniciar" beside the check-in. */
+@Composable
+fun CapsuleButton(text: String, enabled: Boolean = true, onClick: () -> Unit) {
+    Text(text, style = TherapyType.emphasis, color = Color.White,
+        modifier = Modifier.clip(CircleShape).background(if (enabled) TherapyColors.navy else TherapyColors.neutral)
+            .clickable(enabled = enabled, onClick = onClick).padding(horizontal = 18.dp, vertical = 9.dp))
+}
+
+/**
+ * The way to urgent help, quietly: always one tap away on the client's pages,
+ * but not a red alarm framing every screen. Red is kept for inside, where the
+ * urgent options are.
+ */
+@Composable
+fun SupportButton(onClick: () -> Unit) {
+    Box(Modifier.size(44.dp).clip(CircleShape).clickable(onClick = onClick), contentAlignment = Alignment.Center) {
+        Icon(androidx.compose.material.icons.Icons.Outlined.Support, androidx.compose.ui.res.stringResource(com.therapytrack.android.R.string.get_crisis_help_now),
+            tint = TherapyColors.muted, modifier = Modifier.size(22.dp))
+    }
+}
+
+/** "‹ Voltar" at the top of a page opened from another, as the iOS back button. */
+@Composable
+fun BackRow(onBack: () -> Unit, title: String? = null) {
+    Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text("‹ " + androidx.compose.ui.res.stringResource(com.therapytrack.android.R.string.back), style = TherapyType.bodyLarge, color = TherapyColors.navy,
+            modifier = Modifier.clip(CircleShape).clickable(onClick = onBack).padding(vertical = 10.dp, horizontal = 2.dp))
+        title?.let { Text(it, style = TherapyType.emphasis, color = TherapyColors.ink, modifier = Modifier.weight(1f).padding(end = 48.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center) }
     }
 }

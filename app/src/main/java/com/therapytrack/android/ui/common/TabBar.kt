@@ -34,7 +34,8 @@ fun TherapyTabBar(tabs: List<TabSpec>, current: String?, onSelect: (String) -> U
         Row(Modifier.fillMaxWidth().navigationBarsPadding().padding(top = 8.dp, bottom = 6.dp)) {
             tabs.forEach { tab ->
                 val on = tab.route == current
-                val color = if (on) TherapyColors.navy else TherapyColors.neutral
+                // Unselected in the secondary text colour, as iOS: lighter than navy, darker than the old grey.
+                val color = if (on) TherapyColors.navy else TherapyColors.muted
                 Column(
                     Modifier.weight(1f).clickable(remember { MutableInteractionSource() }, null) { onSelect(tab.route) }.padding(vertical = 4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally

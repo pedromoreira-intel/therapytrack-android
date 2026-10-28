@@ -55,6 +55,7 @@ private val steps = listOf(
 fun CheckInScreen(state: ClientState, onDone: () -> Unit) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
+    val context = androidx.compose.ui.platform.LocalContext.current
     var step by rememberSaveable { mutableStateOf(0) }
     val values = rememberSaveable { mutableListOf(0, 0, 0) }
     var current by rememberSaveable { mutableStateOf(0) }
@@ -114,8 +115,14 @@ fun CheckInScreen(state: ClientState, onDone: () -> Unit) {
                 val patientId = state.patient?.id ?: return@PrimaryButton
                 busy = true
                 scope.launch {
-                    outcome = container.checkIns.submit(patientId, values[0], values[1], values[2], notes.takeIf { it.isNotBlank() })
+                    val result = container.checkIns.submit(patientId, values[0], values[1], values[2], notes.takeIf { it.isNotBlank() })
                     busy = false
+                    // Sent: a quiet notice and back to Início, which shows when it was saved.
+                    // Queued or not stored still say so plainly on this screen.
+                    if (result == SaveOutcome.SENT) {
+                        android.widget.Toast.makeText(context, context.getString(R.string.check_in_saved), android.widget.Toast.LENGTH_SHORT).show()
+                        onDone()
+                    } else outcome = result
                 }
             }
         }

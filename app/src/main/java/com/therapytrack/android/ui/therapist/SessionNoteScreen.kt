@@ -1,5 +1,6 @@
 package com.therapytrack.android.ui.therapist
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,10 +42,17 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
-fun ScheduleSessionScreen(patientId: Int, onDone: () -> Unit) {
+fun ScheduleSessionScreen(patientId: Int?, onDone: () -> Unit, day: String? = null) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
-    var date by rememberSaveable { mutableStateOf(LocalDate.now().plusDays(7).toString()) }
+    // From the Agenda's "+" the client is chosen here, on the day being looked at.
+    var chosen by rememberSaveable { mutableStateOf(patientId) }
+    var clients by remember { mutableStateOf<List<com.therapytrack.android.core.ApiPatient>>(emptyList()) }
+    var picking by remember { mutableStateOf(false) }
+    if (patientId == null) androidx.compose.runtime.LaunchedEffect(Unit) {
+        runCatching { clients = container.api.patients().sortedBy { it.name.lowercase() } }
+    }
+    var date by rememberSaveable { mutableStateOf(day ?: LocalDate.now().plusDays(7).toString()) }
     var time by rememberSaveable { mutableStateOf("10:00") }
     var minutes by rememberSaveable { mutableStateOf("60") }
     var notes by rememberSaveable { mutableStateOf("") }
@@ -52,11 +60,20 @@ fun ScheduleSessionScreen(patientId: Int, onDone: () -> Unit) {
     var error by remember { mutableStateOf<Throwable?>(null) }
     var done by remember { mutableStateOf(false) }
 
-    val valid = runCatching { java.time.LocalDateTime.parse("${date}T$time:00") }.isSuccess && minutes.toIntOrNull() != null
+    val valid = runCatching { java.time.LocalDateTime.parse("${date}T$time:00") }.isSuccess && minutes.toIntOrNull() != null && chosen != null
 
     Column(Modifier.fillMaxSize().imePadding().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(stringResource(R.string.schedule_session), style = MaterialTheme.typography.headlineMedium, color = TherapyColors.navy)
         if (done) { Card(tint = TherapyColors.success.copy(alpha = 0.15f)) { Text(stringResource(R.string.session_scheduled), color = TherapyColors.success) }; PrimaryButton(stringResource(R.string.done), onClick = onDone); return@Column }
+        if (patientId == null) androidx.compose.foundation.layout.Box {
+            OutlinedTextField(clients.firstOrNull { it.id == chosen }?.name ?: "", {}, readOnly = true, label = { Text(stringResource(R.string.choose_client)) },
+                singleLine = true, modifier = Modifier.fillMaxWidth())
+            // The read-only field takes no taps of its own; this layer opens the list.
+            androidx.compose.foundation.layout.Box(Modifier.matchParentSize().clickable { picking = true })
+            androidx.compose.material3.DropdownMenu(picking, { picking = false }) {
+                clients.forEach { c -> androidx.compose.material3.DropdownMenuItem(text = { Text(c.name) }, onClick = { chosen = c.id; picking = false }) }
+            }
+        }
         OutlinedTextField(date, { date = it }, label = { Text(stringResource(R.string.date_yyyy_mm_dd)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
         OutlinedTextField(time, { time = it }, label = { Text(stringResource(R.string.time_hh_mm)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
         OutlinedTextField(minutes, { minutes = it }, label = { Text(stringResource(R.string.duration_minutes)) }, singleLine = true,
@@ -71,7 +88,7 @@ fun ScheduleSessionScreen(patientId: Int, onDone: () -> Unit) {
                     try {
                         // Sent as local wall-clock time in ISO form; the server stores it as given.
                         val local = java.time.LocalDateTime.parse("${date}T$time:00").atZone(java.time.ZoneId.systemDefault()).toInstant()
-                        container.api.createSession(patientId, com.therapytrack.android.core.ApiTimestamp.iso8601(local), minutes.toInt(), notes)
+                        container.api.createSession(chosen!!, com.therapytrack.android.core.ApiTimestamp.iso8601(local), minutes.toInt(), notes)
                         done = true
                     } catch (e: Exception) { error = e } finally { busy = false }
                 }

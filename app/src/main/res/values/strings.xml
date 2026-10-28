@@ -956,4 +956,14 @@
     <string name="ne_not_stored">Não foi possível arquivar nem guardar esta nota para envio. O rascunho continua guardado neste telemóvel — tente de novo daqui a pouco.</string>
     <string name="sf_for_next_session">Para a próxima sessão</string>
     <string name="sf_questionnaires">Questionários</string>
+    <string name="agenda_title">Agenda</string>
+    <string name="new_session">Nova sessão</string>
+    <string name="mode_day">Dia</string>
+    <string name="mode_week">Semana</string>
+    <string name="mode_month">Mês</string>
+    <string name="agenda_failed">Não foi possível carregar a agenda.</string>
+    <string name="no_sessions_day">Sem sessões neste dia.</string>
+    <string name="slot_until">Horário em curso · até às %1$s</string>
+    <string name="note_done">Nota feita</string>
+    <string name="choose_client">Cliente</string>
 </resources>

@@ -63,7 +63,7 @@ import java.time.ZoneId
 
 /** The iOS "Hoje": date overline, serif greeting, three tiles, quick actions, upcoming, clients — alerts first when there are any. */
 @Composable
-fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onSession: (ApiSession) -> Unit = { onPatient(it.patientId) }, onClients: () -> Unit = {}, onNewClient: () -> Unit = {},
+fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onSession: (ApiSession) -> Unit = { onPatient(it.patientId) }, onAgenda: () -> Unit = {}, onClients: () -> Unit = {}, onNewClient: () -> Unit = {},
                 onMessages: () -> Unit = {}) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
@@ -135,13 +135,13 @@ fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onSession
 
         SectionTitle(stringResource(R.string.quick_actions))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            QuickAction(Icons.Filled.EditCalendar, stringResource(R.string.qa_schedule)) { onClients() }
+            QuickAction(Icons.Filled.EditCalendar, stringResource(R.string.qa_schedule)) { onAgenda() }
             QuickAction(Icons.Filled.PersonAdd, stringResource(R.string.new_client)) { onNewClient() }
             QuickAction(Icons.Filled.NoteAdd, stringResource(R.string.qa_notes)) { onClients() }
             QuickAction(Icons.Filled.BarChart, stringResource(R.string.qa_reports)) { onClients() }
         }
 
-        SectionTitle(stringResource(R.string.upcoming), link = stringResource(R.string.agenda_link), onLink = onClients)
+        SectionTitle(stringResource(R.string.upcoming), link = stringResource(R.string.agenda_link), onLink = onAgenda)
         if (upcoming.isEmpty()) Muted(stringResource(R.string.no_upcoming_sessions))
         else ListCard {
             upcoming.forEachIndexed { i, s ->

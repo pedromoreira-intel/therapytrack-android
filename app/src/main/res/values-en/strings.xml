@@ -924,4 +924,14 @@
     <string name="ne_not_stored">This note couldn\'t be filed or stored for sending. Your draft is still saved on this phone — try again in a moment.</string>
     <string name="sf_for_next_session">For the next session</string>
     <string name="sf_questionnaires">Questionnaires</string>
+    <string name="agenda_title">Schedule</string>
+    <string name="new_session">New session</string>
+    <string name="mode_day">Day</string>
+    <string name="mode_week">Week</string>
+    <string name="mode_month">Month</string>
+    <string name="agenda_failed">Couldn\'t load the schedule.</string>
+    <string name="no_sessions_day">No sessions on this day.</string>
+    <string name="slot_until">Slot in progress · until %1$s</string>
+    <string name="note_done">Note done</string>
+    <string name="choose_client">Client</string>
 </resources>

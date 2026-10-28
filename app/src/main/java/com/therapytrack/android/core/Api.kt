@@ -182,6 +182,16 @@ class Api(val client: ApiClient) {
         return json.decodeFromString(ListSerializer(ApiSession.serializer()), client.request("GET", path).body)
     }
 
+    /**
+     * Sessions in [from, to): the therapist's local day as instants. A server
+     * without the range ignores it and returns everything, which callers
+     * filter again, so this degrades to the old behaviour rather than failing.
+     */
+    suspend fun sessions(from: java.time.Instant, to: java.time.Instant): List<ApiSession> {
+        val path = "/sessions?from=${ApiTimestamp.iso8601(from)}&to=${ApiTimestamp.iso8601(to)}"
+        return json.decodeFromString(ListSerializer(ApiSession.serializer()), client.request("GET", path).body)
+    }
+
     suspend fun createSession(patientId: Int, sessionDate: String, durationMinutes: Int, notes: String?) {
         client.request("POST", "/sessions", buildJsonObject {
             put("patient_id", patientId); put("session_date", sessionDate); put("duration_minutes", durationMinutes)

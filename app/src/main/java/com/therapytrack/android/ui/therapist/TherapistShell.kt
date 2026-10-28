@@ -79,7 +79,7 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                         is com.therapytrack.android.ui.common.Open.Supervision -> nav.navigate(if (open.asSupervisor) "supervision/offer" else "supervision/find")
                     }
                 } }
-                composable("today") { TodayScreen(onActivity = { nav.navigate("activity") }, onPatient = { nav.navigate("patient/$it") }, onSession = { nav.navigate(sessionRoute(it)) }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }, onMessages = { nav.navigate("threads") }) }
+                composable("today") { TodayScreen(onActivity = { nav.navigate("activity") }, onPatient = { nav.navigate("patient/$it") }, onSession = { nav.navigate(sessionRoute(it, it.hasEnded())) }, onAgenda = { nav.navigate("agenda") }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }, onMessages = { nav.navigate("threads") }) }
                 composable("clients?new={new}") { entry -> PatientsScreen(onPatient = { nav.navigate("patient/$it") }, startCreating = entry.arguments?.getString("new") == "1") }
                 composable("patient/{id}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
@@ -102,6 +102,13 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                     SessionScreen(id, a.getString("name") ?: "", a.getString("at")?.toLongOrNull()?.let { java.time.Instant.ofEpochMilli(it) },
                         a.getString("dur")?.toIntOrNull(), a.getString("sid")?.toIntOrNull(), startOnNote = a.getString("note") == "1",
                         onBack = { nav.popBackStack() }, onHistory = { nav.navigate("patient/$id") }, onSeePlan = { nav.navigate("practice") })
+                }
+                composable("agenda") {
+                    AgendaScreen(onBack = { nav.popBackStack() }, onSession = { s, ended -> nav.navigate(sessionRoute(s, ended)) },
+                        onNew = { day -> nav.navigate("schedule-new?day=$day") })
+                }
+                composable("schedule-new?day={day}") { entry ->
+                    ScheduleSessionScreen(null, onDone = { nav.popBackStack() }, day = entry.arguments?.getString("day"))
                 }
                 composable("schedule/{id}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
@@ -161,3 +168,7 @@ fun sessionRoute(s: com.therapytrack.android.core.ApiSession, note: Boolean = fa
     val at = com.therapytrack.android.core.ApiTimestamp.parse(s.sessionDate)?.toEpochMilli() ?: ""
     return "session/${s.patientId}?name=${android.net.Uri.encode(s.patientName ?: "")}&at=$at&dur=${s.durationMinutes ?: ""}&sid=${s.id}&note=${if (note) "1" else ""}"
 }
+
+/** Ended sessions open on their note, as from Hoje on iOS. */
+fun com.therapytrack.android.core.ApiSession.hasEnded(): Boolean =
+    com.therapytrack.android.core.ApiTimestamp.parse(sessionDate)?.plusSeconds(60L * (durationMinutes ?: 50))?.isBefore(java.time.Instant.now()) == true

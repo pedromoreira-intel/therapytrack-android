@@ -128,6 +128,8 @@ data class PendingSessionNote(
     val homework: String?,
     val riskLevel: String,
     val nextSessionPlan: String?,
+    /** The scheduled session it is for. Defaulted, so notes queued by an older build still read. */
+    val sessionId: Int? = null,
     override val createdAtMillis: Long = System.currentTimeMillis(),
     override val attempts: Int = 0,
     override val lastError: String? = null
@@ -138,16 +140,16 @@ class SessionNoteOutbox(queue: DurableQueue<PendingSessionNote>, private val api
     Outbox<PendingSessionNote>(queue, { api.client.currentUserId }, StuckItem.Kind.SESSION_NOTE, maxAttempts = 50) {
 
     suspend fun save(patientId: Int, patientName: String, sessionDate: String, focus: String?, interventions: String,
-                     progressNotes: String, homework: String?, riskLevel: String, nextSessionPlan: String?): SaveOutcome {
+                     progressNotes: String, homework: String?, riskLevel: String, nextSessionPlan: String?, sessionId: Int? = null): SaveOutcome {
         val owner = api.client.currentUserId ?: return SaveOutcome.NOT_STORED
         return submit(PendingSessionNote(ownerUserId = owner, patientId = patientId, patientName = patientName, sessionDate = sessionDate,
             focus = focus, interventions = interventions, progressNotes = progressNotes, homework = homework,
-            riskLevel = riskLevel, nextSessionPlan = nextSessionPlan))
+            riskLevel = riskLevel, nextSessionPlan = nextSessionPlan, sessionId = sessionId))
     }
     suspend fun pending(patientId: Int): List<PendingSessionNote> = mine().filter { it.patientId == patientId }
     override suspend fun send(item: PendingSessionNote) { api.createSessionNote(
         item.patientId, item.sessionDate, item.focus, item.interventions, item.progressNotes, item.homework,
-        item.riskLevel, item.nextSessionPlan, item.clientId, item.ownerUserId) }
+        item.riskLevel, item.nextSessionPlan, item.clientId, item.ownerUserId, item.sessionId) }
     override fun summary(item: PendingSessionNote) = "${item.patientName} · ${item.sessionDate}"
     override fun recordAttempt(item: PendingSessionNote, error: Throwable) = item.copy(attempts = item.attempts + 1, lastError = error.message)
 }

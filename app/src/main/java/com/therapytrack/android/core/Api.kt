@@ -199,8 +199,10 @@ class Api(val client: ApiClient) {
     /** The server numbers the session from the patient's existing notes. */
     suspend fun createSessionNote(
         patientId: Int, sessionDate: String, focus: String?, interventions: String, progressNotes: String,
-        homework: String?, riskLevel: String, nextSessionPlan: String?, clientId: String, asUser: Int
+        homework: String?, riskLevel: String, nextSessionPlan: String?, clientId: String, asUser: Int, sessionId: Int? = null
     ): ApiSessionNoteCreated = decode(client.request("POST", "/session-notes", buildJsonObject {
+        // Only sent when known; a backend without the link ignores it.
+        sessionId?.let { put("session_id", it) }
         put("patient_id", patientId); put("session_date", sessionDate)
         put("interventions", interventions); put("progress_notes", progressNotes); put("risk_level", riskLevel)
         focus?.let { put("focus", it) }; homework?.let { put("homework", it) }; nextSessionPlan?.let { put("next_session_plan", it) }

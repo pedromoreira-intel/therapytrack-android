@@ -137,8 +137,18 @@ data class ApiSessionNote(
     @SerialName("progress_notes") val progressNotes: String = "",
     val homework: String? = null,
     @SerialName("risk_level") val riskLevel: String? = null,
-    @SerialName("next_session_plan") val nextSessionPlan: String? = null
+    @SerialName("next_session_plan") val nextSessionPlan: String? = null,
+    /** The scheduled session this note is for; null for notes filed before the link existed. */
+    @SerialName("session_id") val sessionId: Int? = null
 )
+
+/**
+ * This session's note: by its id, or, for notes filed before the link
+ * existed, the unlinked note on the same day. So two sessions with one client
+ * on one day each have their own note.
+ */
+fun List<ApiSessionNote>.noteFor(sessionId: Int?, day: String): ApiSessionNote? =
+    sessionId?.let { id -> firstOrNull { it.sessionId == id } } ?: firstOrNull { it.sessionId == null && it.sessionDate.take(10) == day }
 
 /** `POST /session-notes` replies with the id and assigned number only. */
 @Serializable
@@ -157,6 +167,8 @@ data class ApiClinicalAlert(
     val severity: String,
     val source: String = "",
     val detail: String = "",
+    /** One line for the brief, e.g. "Item 9: vários dias. PHQ-9 14." */
+    val summary: String? = null,
     @SerialName("created_at") val createdAt: String,
     @SerialName("acknowledged_at") val acknowledgedAt: String? = null
 ) {

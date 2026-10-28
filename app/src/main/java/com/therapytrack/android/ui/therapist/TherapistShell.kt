@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import com.therapytrack.android.LocalContainer
@@ -34,10 +35,10 @@ import com.therapytrack.android.ui.client.ConversationScreen
 import com.therapytrack.android.ui.theme.TherapyColors
 
 private val tabs = listOf(
-    TabSpec("today", "", Icons.Outlined.Home, Icons.Filled.Home),
-    TabSpec("clients", "", Icons.Outlined.Group, Icons.Filled.Group),
-    TabSpec("practice", "", Icons.Outlined.School, Icons.Filled.School),
-    TabSpec("profile", "", Icons.Outlined.AccountCircle, Icons.Filled.AccountCircle)
+    TabSpec("today", "", Icons.Outlined.Home),
+    TabSpec("clients", "", Icons.Outlined.Group),
+    TabSpec("practice", "", Icons.Outlined.School),
+    TabSpec("profile", "", Icons.Outlined.AccountCircle)
 )
 private val tabLabels = listOf(R.string.tab_today, R.string.tab_clients, R.string.tab_practice, R.string.tab_profile)
 
@@ -55,11 +56,12 @@ fun TherapistShell(onSignedOut: () -> Unit) {
     Scaffold(
         containerColor = TherapyColors.canvas,
         bottomBar = {
+            // Badges only for what asks for a reply, as on iOS: messages on Hoje,
+            // and requests on Prática. New client records show as a dot on the
+            // client's row instead of a count on the tab.
             val badges = mapOf(
-                "today" to inbox.count("alert"),
-                "clients" to inbox.count("message", "client_record"),
-                "practice" to inbox.count("referral", "referral_response", "join_request", "join_response",
-                    "supervision_request", "supervision_response", "supervision_cancelled", "supervision_changed")
+                "today" to inbox.count("message"),
+                "practice" to inbox.count("referral", "join_request", "supervision_request")
             )
             if (showBar) TherapyTabBar(tabs.mapIndexed { i, t -> t.copy(label = stringResource(tabLabels[i]), badge = badges[t.route] ?: 0) }, route) {
                 nav.navigate(it) { popUpTo("today") { saveState = true }; launchSingleTop = true; restoreState = true }
@@ -77,7 +79,7 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                         is com.therapytrack.android.ui.common.Open.Supervision -> nav.navigate(if (open.asSupervisor) "supervision/offer" else "supervision/find")
                     }
                 } }
-                composable("today") { TodayScreen(onActivity = { nav.navigate("activity") }, onPatient = { nav.navigate("patient/$it") }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }, onMessages = { nav.navigate("threads") }) }
+                composable("today") { TodayScreen(onActivity = { nav.navigate("activity") }, onPatient = { nav.navigate("patient/$it") }, onSession = { nav.navigate(sessionRoute(it)) }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }, onMessages = { nav.navigate("threads") }) }
                 composable("clients?new={new}") { entry -> PatientsScreen(onPatient = { nav.navigate("patient/$it") }, startCreating = entry.arguments?.getString("new") == "1") }
                 composable("patient/{id}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
@@ -88,9 +90,18 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                         onMessage = { userId, name -> nav.navigate("conversation/$userId/${android.net.Uri.encode(name)}") },
                         onAiTools = { name -> nav.navigate("ai/$id/${android.net.Uri.encode(name)}") })
                 }
+                // A note written from the record, outside a scheduled session: today, now.
                 composable("note/{id}/{name}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
-                    SessionNoteScreen(id, entry.arguments?.getString("name") ?: "", onDone = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") })
+                    val at = remember { java.time.Instant.now() }
+                    NoteEditorScreen(id, entry.arguments?.getString("name") ?: "", at, null, onClose = { nav.popBackStack() }, onSeePlan = { nav.navigate("practice") })
+                }
+                composable("session/{id}?name={name}&at={at}&dur={dur}&sid={sid}&note={note}") { entry ->
+                    val a = entry.arguments
+                    val id = a?.getString("id")?.toIntOrNull() ?: return@composable
+                    SessionScreen(id, a.getString("name") ?: "", a.getString("at")?.toLongOrNull()?.let { java.time.Instant.ofEpochMilli(it) },
+                        a.getString("dur")?.toIntOrNull(), a.getString("sid")?.toIntOrNull(), startOnNote = a.getString("note") == "1",
+                        onBack = { nav.popBackStack() }, onHistory = { nav.navigate("patient/$id") }, onSeePlan = { nav.navigate("practice") })
                 }
                 composable("schedule/{id}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
@@ -143,4 +154,10 @@ fun TherapistShell(onSignedOut: () -> Unit) {
             }
         }
     }
+}
+
+/** The session screen for a scheduled session: its client, time, length and id. */
+fun sessionRoute(s: com.therapytrack.android.core.ApiSession, note: Boolean = false): String {
+    val at = com.therapytrack.android.core.ApiTimestamp.parse(s.sessionDate)?.toEpochMilli() ?: ""
+    return "session/${s.patientId}?name=${android.net.Uri.encode(s.patientName ?: "")}&at=$at&dur=${s.durationMinutes ?: ""}&sid=${s.id}&note=${if (note) "1" else ""}"
 }

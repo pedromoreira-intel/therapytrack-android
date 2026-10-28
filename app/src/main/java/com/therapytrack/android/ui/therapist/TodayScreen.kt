@@ -63,7 +63,7 @@ import java.time.ZoneId
 
 /** The iOS "Hoje": date overline, serif greeting, three tiles, quick actions, upcoming, clients — alerts first when there are any. */
 @Composable
-fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onClients: () -> Unit = {}, onNewClient: () -> Unit = {},
+fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onSession: (ApiSession) -> Unit = { onPatient(it.patientId) }, onClients: () -> Unit = {}, onNewClient: () -> Unit = {},
                 onMessages: () -> Unit = {}) {
     val container = LocalContainer.current
     val scope = rememberCoroutineScope()
@@ -147,7 +147,7 @@ fun TodayScreen(onActivity: () -> Unit = {}, onPatient: (Int) -> Unit, onClients
             upcoming.forEachIndexed { i, s ->
                 val name = s.patientName ?: "#${s.patientId}"
                 ListRow(name, subtitle = ApiTimestamp.parse(s.sessionDate)?.shortDateTime() ?: s.sessionDate, trailing = "${s.durationMinutes ?: 50} min",
-                    leading = { Avatar(name) }, divider = i < upcoming.lastIndex, onClick = { onPatient(s.patientId) })
+                    leading = { Avatar(name) }, divider = i < upcoming.lastIndex, onClick = { onSession(s) })
             }
         }
 

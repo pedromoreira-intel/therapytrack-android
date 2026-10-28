@@ -37,6 +37,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.outlined.Support
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.therapytrack.android.ui.theme.TherapyColors
@@ -343,4 +345,46 @@ fun BackRow(onBack: () -> Unit, title: String? = null) {
             modifier = Modifier.clip(CircleShape).clickable(onClick = onBack).padding(vertical = 10.dp, horizontal = 2.dp))
         title?.let { Text(it, style = TherapyType.emphasis, color = TherapyColors.ink, modifier = Modifier.weight(1f).padding(end = 48.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center) }
     }
+}
+
+/** A search field above a list, in the app's own colours. */
+@Composable
+fun ListSearchField(value: String, onChange: (String) -> Unit, prompt: String) {
+    val shape = RoundedCornerShape(12.dp)
+    Row(Modifier.fillMaxWidth().heightIn(min = 40.dp).clip(shape).background(Color.White).border(0.5.dp, TherapyColors.hairline, shape).padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically) {
+        Icon(androidx.compose.material.icons.Icons.Filled.Search, null, tint = TherapyColors.neutral, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(8.dp))
+        Box(Modifier.weight(1f).padding(vertical = 10.dp)) {
+            if (value.isEmpty()) Text(prompt, style = TherapyType.body, color = TherapyColors.neutral)
+            androidx.compose.foundation.text.BasicTextField(value, onChange, singleLine = true, textStyle = TherapyType.body.copy(color = TherapyColors.ink),
+                cursorBrush = androidx.compose.ui.graphics.SolidColor(TherapyColors.navy), modifier = Modifier.fillMaxWidth())
+        }
+        if (value.isNotEmpty()) Icon(androidx.compose.material.icons.Icons.Filled.Cancel, androidx.compose.ui.res.stringResource(com.therapytrack.android.R.string.clear),
+            tint = TherapyColors.neutral, modifier = Modifier.size(18.dp).clickable { onChange("") })
+    }
+}
+
+/** The round 44dp button beside a page title: "+" on Clientes and Agenda. */
+@Composable
+fun PageIconButton(icon: ImageVector, label: String, onClick: () -> Unit) {
+    Box(Modifier.size(44.dp).shadow(4.dp, CircleShape, ambientColor = TherapyColors.shadowInk.copy(alpha = 0.08f), spotColor = TherapyColors.shadowInk.copy(alpha = 0.08f))
+        .clip(CircleShape).background(TherapyColors.pearl).clickable(onClick = onClick), contentAlignment = Alignment.Center) {
+        Icon(icon, label, tint = TherapyColors.navy, modifier = Modifier.size(22.dp))
+    }
+}
+
+/**
+ * When a client's next session is, in one short line. A session already under
+ * way is "Horário em curso", never "Sem sessão marcada" (REA-37).
+ */
+@Composable
+fun nextSessionLine(at: Instant?): String {
+    if (at == null) return androidx.compose.ui.res.stringResource(com.therapytrack.android.R.string.no_session_scheduled)
+    if (!at.isAfter(Instant.now())) return androidx.compose.ui.res.stringResource(com.therapytrack.android.R.string.slot_in_progress)
+    val local = at.atZone(ZoneId.systemDefault())
+    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
+    val time = local.format(DateTimeFormatter.ofPattern("HH:mm"))
+    return if (local.toLocalDate() == java.time.LocalDate.now()) androidx.compose.ui.res.stringResource(com.therapytrack.android.R.string.today_at, time)
+    else androidx.compose.ui.res.stringResource(com.therapytrack.android.R.string.next_at, local.format(DateTimeFormatter.ofPattern("EEE, d MMM", locale)), time)
 }

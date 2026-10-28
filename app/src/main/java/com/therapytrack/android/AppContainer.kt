@@ -43,6 +43,7 @@ class AppContainer(private val app: Context) {
     val journal = JournalOutbox(queue("pending-journal-entries.json", PendingJournalEntry.serializer()), api)
     val messages = MessageOutbox(queue("pending-messages.json", PendingMessage.serializer()), api)
     val sessionNotes = SessionNoteOutbox(queue("pending-session-notes.json", PendingSessionNote.serializer()), api)
+    val noteDrafts = com.therapytrack.android.offline.NoteDrafts(app)
 
     val supervision = SupervisionOutbox(queue("pending-supervision.json", PendingSupervision.serializer()), api)
 

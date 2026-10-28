@@ -1,5 +1,22 @@
 package com.therapytrack.android.ui.therapist
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import com.therapytrack.android.ui.common.CompactCard
+import com.therapytrack.android.ui.common.ListSearchField
+import com.therapytrack.android.ui.common.PageIconButton
+import com.therapytrack.android.ui.common.PageTitle
+import com.therapytrack.android.ui.common.RowDivider
+import com.therapytrack.android.ui.common.nextSessionLine
+
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -73,47 +90,70 @@ fun riskLabel(level: String?): String = stringResource(when (level?.uppercase())
     else -> R.string.risk_low
 })
 
-/** The caseload, as iOS lays it out: sans h1 title, "+ New client" top-right, one card per person. */
+/**
+ * The caseload, as iOS lays it out now: the serif page title with "+", a
+ * search field, and one list of compact rows in alphabetical order, each with
+ * when the next session is and a dot when there is something new. Was a card
+ * per client with a risk pill; the clinical detail lives inside the record.
+ */
 @Composable
 fun PatientsScreen(onPatient: (Int) -> Unit, startCreating: Boolean = false) {
     val container = LocalContainer.current
-    var patients by remember { mutableStateOf<List<ApiPatient>>(emptyList()) }
+    var patients by remember { mutableStateOf<List<ApiPatient>?>(null) }
+    var news by remember { mutableStateOf(setOf<Int>()) }
     var creating by rememberSaveable { mutableStateOf(startCreating) }
+    var query by rememberSaveable { mutableStateOf("") }
     var reload by remember { mutableStateOf(0) }
     var loadFailed by remember { mutableStateOf(false) }
 
-    LaunchedEffect(reload) { loadFailed = runCatching { patients = container.api.patients() }.isFailure }
+    LaunchedEffect(reload) {
+        loadFailed = runCatching { patients = container.api.patients() }.isFailure
+        // News: an alert not yet reviewed, or a record the client made that is still unread.
+        val alerts = runCatching { container.api.alerts().filter { it.acknowledgedAt == null }.map { it.patientId } }.getOrDefault(emptyList())
+        val records = runCatching { container.api.notifications(unreadOnly = true).filter { it.kind == "client_record" }.mapNotNull { it.refId } }.getOrDefault(emptyList())
+        news = (alerts + records).toSet()
+    }
     if (creating) { NewPatientScreen(onDone = { creating = false; reload++ }); return }
 
-    LazyColumn(Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item {
-            Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-                TextButton({ creating = true }) {
-                    Icon(Icons.Filled.AddCircle, null, tint = TherapyColors.navy); Spacer(Modifier.width(6.dp))
-                    Text(stringResource(R.string.new_client), style = TherapyType.emphasisLarge, color = TherapyColors.navy)
-                }
-            }
-            Text(stringResource(R.string.clients_title), style = TherapyType.h1, color = TherapyColors.ink, modifier = Modifier.padding(bottom = 8.dp))
-        }
+    val collator = remember { java.text.Collator.getInstance().apply { strength = java.text.Collator.PRIMARY } }
+    val shown = patients.orEmpty().sortedWith { a, b -> collator.compare(a.name, b.name) }.filter {
+        val q = query.trim()
+        q.isEmpty() || collator.let { c -> it.name.split(' ').any { w -> w.length >= q.length && c.compare(w.substring(0, q.length), q) == 0 } || it.name.contains(q, true) }
+    }
+
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        PageTitle(stringResource(R.string.clients_title)) { PageIconButton(Icons.Filled.Add, stringResource(R.string.new_client)) { creating = true } }
         // An empty caseload and a failed load are different things to say.
-        if (loadFailed) item { Row { Muted(stringResource(R.string.could_not_load)); TextButton({ reload++ }) { Text(stringResource(R.string.refresh)) } } }
-        else if (patients.isEmpty()) item { Muted(stringResource(R.string.no_clients)) }
-        items(patients, key = { it.id }) { p ->
-            Card(modifier = Modifier.clickable { onPatient(p.id) }) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Avatar(p.name, 44.dp); Spacer(Modifier.width(14.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text(p.name, style = TherapyType.emphasisLarge, color = TherapyColors.ink)
-                        p.diagnosis?.takeIf { it.isNotBlank() && it != "—" }?.let { Text(it, style = TherapyType.body, color = TherapyColors.muted, maxLines = 1, overflow = TextOverflow.Ellipsis) }
-                        p.nextSession?.let { Text(stringResource(R.string.next_session, ApiTimestamp.parse(it)?.shortDateTime() ?: it), style = TherapyType.caption, color = TherapyColors.muted) }
-                            ?: p.lastEma?.let { Text(stringResource(R.string.last_check_in) + ": " + (ApiTimestamp.parse(it)?.shortDate() ?: it), style = TherapyType.caption, color = TherapyColors.muted) }
+        when {
+            loadFailed -> Row(verticalAlignment = Alignment.CenterVertically) { Muted(stringResource(R.string.could_not_load)); TextButton({ reload++ }) { Text(stringResource(R.string.refresh)) } }
+            patients == null -> Unit
+            patients.orEmpty().isEmpty() -> Muted(stringResource(R.string.no_clients))
+            else -> {
+                ListSearchField(query, { query = it }, stringResource(R.string.search_clients))
+                if (shown.isEmpty()) Muted(stringResource(R.string.no_client_matches))
+                else CompactCard {
+                    shown.forEachIndexed { i, p ->
+                        Row(Modifier.fillMaxWidth().clickable { onPatient(p.id) }.padding(horizontal = 14.dp, vertical = 10.dp).heightIn(min = 36.dp),
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Avatar(p.name, 32.dp)
+                            Spacer(Modifier.width(12.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(p.name, style = TherapyType.emphasis, color = TherapyColors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Text(nextSessionLine(p.nextSession?.let { ApiTimestamp.parse(it) }), style = TherapyType.caption, color = TherapyColors.muted)
+                            }
+                            if (p.id in news) {
+                                val label = stringResource(R.string.new_records)
+                                Box(Modifier.size(7.dp).clip(CircleShape).background(TherapyColors.navy).semantics { contentDescription = label })
+                                Spacer(Modifier.width(8.dp))
+                            }
+                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = TherapyColors.neutral, modifier = Modifier.size(20.dp))
+                        }
+                        if (i < shown.lastIndex) RowDivider(inset = 58.dp)
                     }
-                    Spacer(Modifier.width(8.dp))
-                    Pill(riskLabel(p.riskLevel), riskColor(p.riskLevel))
                 }
             }
         }
-        item { Spacer(Modifier.height(24.dp)) }
+        Spacer(Modifier.height(24.dp))
     }
 }
 

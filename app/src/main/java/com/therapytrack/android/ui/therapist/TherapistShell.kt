@@ -81,14 +81,18 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                 } }
                 composable("today") { TodayScreen(onActivity = { nav.navigate("activity") }, onPatient = { nav.navigate("patient/$it") }, onSession = { nav.navigate(sessionRoute(it, it.hasEnded())) }, onAgenda = { nav.navigate("agenda") }, onClients = { nav.navigate("clients") }, onNewClient = { nav.navigate("clients?new=1") }, onMessages = { nav.navigate("threads") }) }
                 composable("clients?new={new}") { entry -> PatientsScreen(onPatient = { nav.navigate("patient/$it") }, startCreating = entry.arguments?.getString("new") == "1") }
-                composable("patient/{id}") { entry ->
+                composable("patient/{id}?history={history}") { entry ->
                     val id = entry.arguments?.getString("id")?.toIntOrNull() ?: return@composable
                     PatientDetailScreen(id,
                         onBack = { nav.popBackStack() },
+                        onSession = { s, ended -> nav.navigate(sessionRoute(s, ended)) },
+                        // Answers to review, with no session to prepare: the brief alone.
+                        onReview = { name -> nav.navigate("session/$id?name=${android.net.Uri.encode(name)}&at=&dur=&sid=&note=") },
                         onNewNote = { name -> nav.navigate("note/$id/${android.net.Uri.encode(name)}") },
                         onSchedule = { nav.navigate("schedule/$id") },
                         onMessage = { userId, name -> nav.navigate("conversation/$userId/${android.net.Uri.encode(name)}") },
-                        onAiTools = { name -> nav.navigate("ai/$id/${android.net.Uri.encode(name)}") })
+                        onAiTools = { name -> nav.navigate("ai/$id/${android.net.Uri.encode(name)}") },
+                        startOnHistory = entry.arguments?.getString("history") == "1")
                 }
                 // A note written from the record, outside a scheduled session: today, now.
                 composable("note/{id}/{name}") { entry ->
@@ -101,7 +105,7 @@ fun TherapistShell(onSignedOut: () -> Unit) {
                     val id = a?.getString("id")?.toIntOrNull() ?: return@composable
                     SessionScreen(id, a.getString("name") ?: "", a.getString("at")?.toLongOrNull()?.let { java.time.Instant.ofEpochMilli(it) },
                         a.getString("dur")?.toIntOrNull(), a.getString("sid")?.toIntOrNull(), startOnNote = a.getString("note") == "1",
-                        onBack = { nav.popBackStack() }, onHistory = { nav.navigate("patient/$id") }, onSeePlan = { nav.navigate("practice") })
+                        onBack = { nav.popBackStack() }, onHistory = { nav.navigate("patient/$id?history=1") }, onSeePlan = { nav.navigate("practice") })
                 }
                 composable("agenda") {
                     AgendaScreen(onBack = { nav.popBackStack() }, onSession = { s, ended -> nav.navigate(sessionRoute(s, ended)) },

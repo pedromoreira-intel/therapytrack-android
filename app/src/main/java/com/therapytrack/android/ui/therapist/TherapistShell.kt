@@ -131,6 +131,11 @@ fun TherapistShell(onSignedOut: () -> Unit) {
 
                 // Practice: plan, records, and the network features.
                 composable("practice") { PracticeScreen(onOpen = { nav.navigate(it) }) }
+                composable("library") { LibraryScreen(onBack = { nav.popBackStack() }) }
+                composable("research") { ResearchScreen(onBack = { nav.popBackStack() }) }
+                composable("conferences") { ConferencesScreen(onBack = { nav.popBackStack() }) }
+                composable("phq9-scoring") { Phq9ScoringScreen(onBack = { nav.popBackStack() }) }
+                composable("crisis-lines") { CrisisLinesScreen(onBack = { nav.popBackStack() }) }
                 composable("credentials") { CredentialsScreen(onBack = { nav.popBackStack() }) }
                 composable("training") { TrainingScreen(onBack = { nav.popBackStack() }) }
                 composable("supervision") { SupervisionScreen(onBack = { nav.popBackStack() },

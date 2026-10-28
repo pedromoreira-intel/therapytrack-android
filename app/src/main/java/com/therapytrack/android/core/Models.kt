@@ -599,3 +599,19 @@ data class ApiSessionTopic(
 
 @Serializable
 data class ApiSessionTopics(val open: List<ApiSessionTopic> = emptyList(), val discussed: List<ApiSessionTopic> = emptyList())
+
+// Resources (Prática → Recursos) ---------------------------------------------
+
+/** A reference a clinician would cite: guidelines, manuals, instruments. */
+@Serializable
+data class ApiResource(val id: Int, val title: String, val category: String, val author: String? = null,
+                       val description: String? = null, val url: String? = null)
+
+@Serializable
+data class ApiResearchArticle(val id: String, val title: String? = null, val source: String? = null, val date: String? = null,
+                              val summary: String? = null, val category: String? = null, val url: String? = null)
+
+@Serializable
+data class ApiConference(val id: Int, val name: String, val location: String, val date: String, val deadline: String? = null,
+                         val category: String = "", val url: String? = null)
+

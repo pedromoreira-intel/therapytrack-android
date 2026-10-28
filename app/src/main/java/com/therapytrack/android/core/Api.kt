@@ -309,6 +309,10 @@ class Api(val client: ApiClient) {
     // Intervision -------------------------------------------------------------
 
     suspend fun intervisionGroups(): List<ApiIntervisionGroup> = list(ApiIntervisionGroup.serializer(), "/intervision/groups")
+    suspend fun library(): List<ApiResource> = list(ApiResource.serializer(), "/resources/library")
+    suspend fun research(): List<ApiResearchArticle> = list(ApiResearchArticle.serializer(), "/resources/research")
+    suspend fun conferences(): List<ApiConference> = list(ApiConference.serializer(), "/resources/conferences")
+
     suspend fun myIntervisionGroups(): List<ApiIntervisionGroup> = list(ApiIntervisionGroup.serializer(), "/intervision/my-groups")
     suspend fun intervisionGroup(id: Int): ApiGroupDetail = decode(client.request("GET", "/intervision/groups/$id").body)
     suspend fun createIntervisionGroup(name: String, description: String?, focusArea: String?, schedule: String?, isOnline: Boolean, maxMembers: Int, link: String?): ApiCreated =

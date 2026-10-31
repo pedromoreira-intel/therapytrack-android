@@ -317,7 +317,9 @@ data class ApiProfessionalSummary(
     val year: Int,
     @SerialName("supervision_hours") val supervisionHours: ApiHours = ApiHours(),
     @SerialName("training_hours") val trainingHours: ApiHours = ApiHours(),
-    val credentials: ApiCredentialSummary = ApiCredentialSummary()
+    val credentials: ApiCredentialSummary = ApiCredentialSummary(),
+    /** Intervision, counted apart from supervision. Absent from servers that still counted it as supervision. */
+    @SerialName("intervision_hours") val intervisionHours: ApiHours? = null
 )
 
 @Serializable

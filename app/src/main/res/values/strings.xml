@@ -971,6 +971,7 @@
     <string name="cpd_short">Formação e supervisão, registadas.</string>
     <string name="cpd_what">O que é a DPC?</string>
     <string name="cpd_year_line">%1$s de supervisão · %2$s de formação</string>
+    <string name="cpd_year_line_intervision">%1$s de supervisão · %2$s de intervisão · %3$s de formação</string>
     <string name="cpd_nothing">Ainda nada registado.</string>
     <string name="cpd_record_activity">Registar atividade</string>
     <string name="cpd_activity">Atividade</string>

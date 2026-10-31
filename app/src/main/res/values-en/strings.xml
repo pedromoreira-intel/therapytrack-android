@@ -939,6 +939,7 @@
     <string name="cpd_short">Training and supervision, recorded.</string>
     <string name="cpd_what">What is CPD?</string>
     <string name="cpd_year_line">%1$s supervision · %2$s training</string>
+    <string name="cpd_year_line_intervision">%1$s supervision · %2$s intervision · %3$s training</string>
     <string name="cpd_nothing">Nothing recorded yet.</string>
     <string name="cpd_record_activity">Record activity</string>
     <string name="cpd_activity">Activity</string>

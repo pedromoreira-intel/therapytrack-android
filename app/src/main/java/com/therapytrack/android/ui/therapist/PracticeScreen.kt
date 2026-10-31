@@ -140,8 +140,10 @@ private fun CpdPanel(summary: ApiProfessionalSummary?, training: List<ApiTrainin
     var choosing by remember { mutableStateOf(false) }
     val trainingWord = stringResource(R.string.training_short)
     val supervisionWord = stringResource(R.string.supervision_section)
+    val intervisionWord = stringResource(R.string.intervision_title)
     val activities = (training.map { Activity("t-${it.id}", ApiTimestamp.parse(it.completedOn), it.title, listOfNotNull(trainingWord, it.institution?.takeIf { s -> s.isNotBlank() }).joinToString(" · "), it.hours) } +
-        supervision.map { Activity("s-${it.id}", ApiTimestamp.parse(it.sessionDate), it.supervisorName, supervisionWord, it.hours) })
+        supervision.map { Activity("s-${it.id}", ApiTimestamp.parse(it.sessionDate), it.supervisorName,
+            if (it.supervisionType == "peer") intervisionWord else supervisionWord, it.hours) })
         .sortedByDescending { it.date ?: java.time.Instant.EPOCH }
 
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -160,7 +162,9 @@ private fun CpdPanel(summary: ApiProfessionalSummary?, training: List<ApiTrainin
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("${s.year}", style = TherapyType.emphasis, color = TherapyColors.ink)
                 Text("  ·  ", color = TherapyColors.neutral)
-                Text(stringResource(R.string.cpd_year_line, hoursText(s.supervisionHours.total), hoursText(s.trainingHours.total)), style = TherapyType.body, color = TherapyColors.muted)
+                val line = s.intervisionHours?.let { stringResource(R.string.cpd_year_line_intervision, hoursText(s.supervisionHours.total), hoursText(it.total), hoursText(s.trainingHours.total)) }
+                    ?: stringResource(R.string.cpd_year_line, hoursText(s.supervisionHours.total), hoursText(s.trainingHours.total))
+                Text(line, style = TherapyType.body, color = TherapyColors.muted)
             }
         }
 

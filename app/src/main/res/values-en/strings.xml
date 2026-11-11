@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="consent_title">Before you begin</string>
-    <string name="consent_body">TherapyTrack keeps information about your mental health so it can be shared with your psychologist. It is stored on your practice\'s server and only the person treating you can see it.</string>
+    <string name="consent_body">Our Session keeps information about your mental health so it can be shared with your psychologist. It is stored on your practice\'s server and only the person treating you can see it.</string>
     <string name="consent_terms">I have read and agree to the Terms of Service</string>
     <string name="consent_privacy">I have read and agree to the Privacy Policy</string>
     <string name="continue_">Continue</string>
@@ -11,7 +11,7 @@
     <string name="password">Password</string>
     <string name="name">Name</string>
     <string name="have_invite">I have an invitation code</string>
-    <string name="im_a_therapist">I\'m a therapist and want an account</string>
+    <string name="im_a_therapist">I\'m a psychologist and want an account</string>
     <string name="accept_invite_title">Activate your account</string>
     <string name="invite_code">Invitation code</string>
     <string name="check_code">Check code</string>
@@ -24,7 +24,7 @@
     <string name="sign_out">Sign out</string>
     <string name="login_failed">Could not sign in. Check your email and password.</string>
     <string name="wrong_app_client">This is a client account. To sign in, choose Client.</string>
-    <string name="wrong_app_therapist">This is a therapist account. To sign in, choose Therapist.</string>
+    <string name="wrong_app_therapist">This is a psychologist account. To sign in, choose Psychologist.</string>
     <string name="offline_login">No connection. You need a network to sign in.</string>
     <string name="session_expired">Your session has ended. Please sign in again.</string>
 
@@ -41,7 +41,7 @@
     <string name="daily_check_in">Daily check-in</string>
     <string name="check_in_done_today">Today\'s check-in is done</string>
     <string name="start_check_in">Check in</string>
-    <string name="your_therapist">Your therapist</string>
+    <string name="your_therapist">Your psychologist</string>
     <string name="recent_check_ins">Recent check-ins</string>
     <string name="no_check_ins_yet">You haven\'t checked in yet.</string>
     <string name="need_help_now">Need help now?</string>
@@ -190,7 +190,7 @@
     <string name="not_granted">Not given</string>
     <string name="outdated_consent">Given for an earlier version of the text</string>
     <string name="export_data">Export my data</string>
-    <string name="export_detail">A copy of everything TherapyTrack holds about you, as JSON.</string>
+    <string name="export_detail">A copy of everything Our Session holds about you, as JSON.</string>
     <string name="export_ready">Export ready</string>
     <string name="share_export">Share file</string>
     <string name="erase_account">Erase my account</string>
@@ -309,7 +309,7 @@
     <string name="plan_status_cancelled">Cancelled</string>
     <string name="plan_renews">Renews on %1$s</string>
     <string name="plan_free_limit">Up to %1$d clients on the free plan</string>
-    <string name="plan_arranged">Plans are arranged directly with TherapyTrack.</string>
+    <string name="plan_arranged">Plans are arranged directly with Our Session.</string>
     <string name="not_in_plan_title">Not included in your plan</string>
     <string name="see_plan">See plan</string>
     <string name="credentials_section">Credentials</string>
@@ -529,7 +529,7 @@
     <string name="reply">Reply</string>
     <string name="community_confidentiality">Do not identify clients. Describe the case, not the person.</string>
 
-    <string name="consent_welcome">Welcome to TherapyTrack</string>
+    <string name="consent_welcome">Welcome to Our Session</string>
     <string name="how_it_works">How it works</string>
     <string name="terms_title">Terms of Service</string>
     <string name="privacy_title">Privacy Policy</string>
@@ -537,7 +537,7 @@
     <string name="consent_disclaimer">This app was built to support your mental-health journey, but it does not replace professional medical care. If you are experiencing a mental-health emergency, call %1$s, or go to the nearest emergency department immediately.</string>
     <string name="login_tagline">Professional mental health platform</string>
     <string name="signing_in_as">Signing in as</string>
-    <string name="role_therapist">Therapist</string>
+    <string name="role_therapist">Psychologist</string>
     <string name="role_patient">Client</string>
     <string name="tab_wellbeing">Wellbeing</string>
 
@@ -627,7 +627,7 @@
     <string name="sm_none_title">No sessions posted yet</string>
     <string name="sm_none_body">When supervisors post group or individual sessions, they appear here and you can ask for a place.</string>
     <string name="sm_session">Session</string>
-    <string name="sm_fee_note">The fee and any arrangement are agreed directly with the supervisor. TherapyTrack does not take payment.</string>
+    <string name="sm_fee_note">The fee and any arrangement are agreed directly with the supervisor. Our Session does not take payment.</string>
     <string name="sm_added_to_log">It will be added to your supervision log after the session.</string>
     <string name="sm_give_up">Give up my place</string>
     <string name="sm_withdraw_request">Withdraw my request</string>
@@ -638,7 +638,7 @@
     <string name="sm_withdraw">Withdraw</string>
     <string name="sm_v_licence">Licence checked on the OPP register</string>
     <string name="sm_v_supervisor">Verified as a supervisor</string>
-    <string name="sm_v_self">Self-declared — not verified by TherapyTrack</string>
+    <string name="sm_v_self">Self-declared — not verified by Our Session</string>
     <string name="sm_p_accepted">Place confirmed</string>
     <string name="sm_p_declined">Not accepted</string>
     <string name="sm_p_withdrawn">Withdrawn</string>
@@ -655,10 +655,10 @@
     <string name="sm_add_headline">Add a headline to your professional profile so colleagues know what you supervise.</string>
     <string name="sm_accepting">Taking on new supervisees</string>
     <string name="sm_withdraw_listing">Withdraw my listing</string>
-    <string name="sm_publish_intro">Publish a listing to post group or individual sessions that other therapists can ask to join. You decide who takes a place.</string>
+    <string name="sm_publish_intro">Publish a listing to post group or individual sessions that other psychologists can ask to join. You decide who takes a place.</string>
     <string name="sm_publish_listing">Publish my listing</string>
     <string name="sm_publish_q">Publish your supervisor listing?</string>
-    <string name="sm_publish_consent">Other therapists on TherapyTrack will see your name, your professional headline and city, and the sessions you post. You can withdraw at any time, and your sessions stop being listed at once.</string>
+    <string name="sm_publish_consent">Other psychologists on Our Session will see your name, your professional headline and city, and the sessions you post. You can withdraw at any time, and your sessions stop being listed at once.</string>
     <string name="sm_publish">Publish</string>
     <string name="sm_withdraw_listing_q">Withdraw your listing?</string>
     <string name="sm_withdraw_listing_body">Your sessions stop being listed. Places you have already confirmed stand.</string>
@@ -680,7 +680,7 @@
     <string name="sm_title_field">Title, e.g. Group supervision — trauma cases</string>
     <string name="sm_description">Description (optional)</string>
     <string name="sm_topics">Topics, separated by commas</string>
-    <string name="sm_shown_note">This is shown to other therapists. Do not include anything about clients.</string>
+    <string name="sm_shown_note">This is shown to other psychologists. Do not include anything about clients.</string>
     <string name="sm_date">Date (YYYY-MM-DD)</string>
     <string name="sm_time">Time (HH:MM)</string>
     <string name="sm_in_future">Choose a date and time in the future.</string>
@@ -689,7 +689,7 @@
     <string name="sm_city">City or district</string>
     <string name="sm_places">Places: %1$d</string>
     <string name="sm_price">Price per person in euros (optional)</string>
-    <string name="sm_price_note">Leave empty to agree the fee directly. TherapyTrack does not take payment.</string>
+    <string name="sm_price_note">Leave empty to agree the fee directly. Our Session does not take payment.</string>
     <string name="sm_change_note">Changing the date, time, duration, format, place or price tells everyone who has a place or asked for one.</string>
     <string name="sm_close">Close</string>
     <string name="n_supervision_request">Asked for a place in your session</string>
@@ -711,7 +711,7 @@
     <string name="topics_empty_hint">Note what you want to bring to your next session, whenever it comes to mind.</string>
     <string name="topics_more">and %1$d more</string>
     <string name="topics_prompt">What would you like to talk about?</string>
-    <string name="topics_footer">Your therapist sees this list before your session.</string>
+    <string name="topics_footer">Your psychologist sees this list before your session.</string>
     <string name="topics_none">Nothing yet.</string>
     <string name="topics_open">To talk about</string>
     <string name="topics_discussed">Talked about</string>
@@ -731,7 +731,7 @@
     <string name="about_two_minutes_no_sound">About two minutes · no sound</string>
     <string name="my_check_ins">My check-ins</string>
     <string name="questionnaires">Questionnaires</string>
-    <string name="how_it_works_records">Your check-ins, questionnaires and the topics you add are available to your therapist to prepare your sessions. They are not followed in real time.</string>
+    <string name="how_it_works_records">Your check-ins, questionnaires and the topics you add are available to your psychologist to prepare your sessions. They are not followed in real time.</string>
     <string name="how_it_works_journal">Journal entries are shared only when you choose to share them.</string>
     <string name="how_it_works_help">If you need help now, use the support button at the top of Home.</string>
     <string name="how_are_you_feeling_today">How are you feeling today?</string>
@@ -751,9 +751,9 @@
     <string name="journal_suggestion">I\'d like a suggestion</string>
     <string name="journal_another_suggestion">Another suggestion</string>
     <string name="journal_write_freely">Write freely</string>
-    <string name="share_with_therapist">Share with my therapist</string>
+    <string name="share_with_therapist">Share with my psychologist</string>
     <string name="only_for_me">Only for me</string>
-    <string name="entry_will_be_shared">This entry will be shared with your therapist.</string>
+    <string name="entry_will_be_shared">This entry will be shared with your psychologist.</string>
     <string name="entry_only_you">Only you will see this entry.</string>
     <string name="journal_not_saved">Couldn\'t save this anywhere yet — your writing is still here. Try again in a moment.</string>
     <string name="save_entry">Save entry</string>
@@ -826,7 +826,7 @@
     <string name="next_question">Next</string>
     <string name="finish_questionnaire">Finish questionnaire</string>
     <string name="question_unanswered">Question %1$d has no answer yet</string>
-    <string name="answers_go_to_record">Your answers are saved to your record and your therapist can see them when preparing your sessions.</string>
+    <string name="answers_go_to_record">Your answers are saved to your record and your psychologist can see them when preparing your sessions.</string>
     <string name="last_completed">Last completed %1$s</string>
     <string name="not_completed_yet">Not completed yet</string>
     <string name="no_session_scheduled">No session scheduled</string>
@@ -1015,7 +1015,7 @@
     <string name="rec_journal_entry">Journal entry</string>
     <string name="rec_wants_to_talk">Wants to talk about</string>
     <string name="rec_by_client">Client</string>
-    <string name="rec_by_therapist">Therapist</string>
+    <string name="rec_by_therapist">Psychologist</string>
     <string name="rec_latest_checkin">Latest check-in: %1$s</string>
     <string name="rec_1_entry_30">1 entry in 30 days</string>
     <string name="rec_n_entries_30">%1$d entries in 30 days</string>

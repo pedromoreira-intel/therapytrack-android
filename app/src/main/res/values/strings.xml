@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TherapyTrack</string>
+    <string name="app_name">Our Session</string>
 
     <!-- Consent -->
     <string name="consent_title">Antes de começar</string>
-    <string name="consent_body">O TherapyTrack guarda informação sobre a sua saúde mental para a partilhar com o seu psicólogo. Fica registada no servidor da sua prática clínica e só quem o acompanha a pode ver.</string>
+    <string name="consent_body">O Our Session guarda informação sobre a sua saúde mental para a partilhar com o seu psicólogo. Fica registada no servidor da sua prática clínica e só quem o acompanha a pode ver.</string>
     <string name="consent_terms">Li e concordo com os Termos de Serviço</string>
     <string name="consent_privacy">Li e concordo com a Política de Privacidade</string>
     <string name="continue_">Continuar</string>
@@ -16,21 +16,21 @@
     <string name="name">Nome</string>
     <string name="have_invite">Tenho um código de convite</string>
     <string name="im_a_therapist">Sou psicólogo/a e quero criar conta</string>
-    <string name="accept_invite_title">Ativar a sua conta</string>
+    <string name="accept_invite_title">Ativar a conta</string>
     <string name="invite_code">Código de convite</string>
     <string name="check_code">Verificar código</string>
     <string name="invite_for">Convite para %1$s</string>
-    <string name="choose_password">Escolha uma palavra-passe</string>
+    <string name="choose_password">Escolher uma palavra-passe</string>
     <string name="activate">Ativar e entrar</string>
     <string name="register_title">Criar conta profissional</string>
     <string name="create_account">Criar conta</string>
     <string name="back">Voltar</string>
     <string name="sign_out">Terminar sessão</string>
-    <string name="login_failed">Não foi possível iniciar sessão. Verifique o email e a palavra-passe.</string>
-    <string name="wrong_app_client">Esta conta é de cliente. Para entrar, escolha Cliente.</string>
-    <string name="wrong_app_therapist">Esta conta é de psicólogo/a. Para entrar, escolha Psicólogo/a.</string>
-    <string name="offline_login">Sem ligação. Precisa de rede para iniciar sessão.</string>
-    <string name="session_expired">A sua sessão terminou. Inicie sessão novamente.</string>
+    <string name="login_failed">Não foi possível iniciar sessão. Convém verificar o email e a palavra-passe.</string>
+    <string name="wrong_app_client">Esta conta é de cliente. Para entrar, é preciso escolher Cliente.</string>
+    <string name="wrong_app_therapist">Esta conta é de psicólogo/a. Para entrar, é preciso escolher Psicólogo/a.</string>
+    <string name="offline_login">Sem ligação. É preciso rede para iniciar sessão.</string>
+    <string name="session_expired">A sessão terminou. É preciso iniciar sessão novamente.</string>
 
     <!-- Tabs -->
     <string name="tab_home">Início</string>
@@ -43,30 +43,30 @@
     <string name="greeting_morning">Bom dia, %1$s</string>
     <string name="greeting_afternoon">Boa tarde, %1$s</string>
     <string name="greeting_evening">Boa noite, %1$s</string>
-    <string name="how_are_you_today">Como está hoje?</string>
+    <string name="how_are_you_today">Como estás hoje?</string>
     <string name="daily_check_in">Check-in diário</string>
     <string name="check_in_done_today">Check-in de hoje feito</string>
     <string name="start_check_in">Fazer check-in</string>
-    <string name="your_therapist">O seu psicólogo</string>
+    <string name="your_therapist">O teu psicólogo</string>
     <string name="recent_check_ins">Check-ins recentes</string>
-    <string name="no_check_ins_yet">Ainda não fez nenhum check-in.</string>
+    <string name="no_check_ins_yet">Ainda não fizeste nenhum check-in.</string>
     <string name="need_help_now">Precisa de ajuda agora?</string>
     <string name="crisis_support">Apoio em crise</string>
     <string name="new_message">Nova mensagem</string>
     <string name="loading">A carregar…</string>
-    <string name="could_not_load">Não foi possível carregar. Puxe para atualizar.</string>
+    <string name="could_not_load">Não foi possível carregar. Puxar para atualizar.</string>
     <string name="refresh">Atualizar</string>
     <string name="offline_showing_saved">Sem ligação — a mostrar o que está guardado.</string>
 
     <!-- Check-in -->
-    <string name="mood_question">Como está o seu humor?</string>
-    <string name="mood_hint">O seu estado emocional geral hoje</string>
+    <string name="mood_question">Como está o teu humor?</string>
+    <string name="mood_hint">O teu estado emocional geral hoje</string>
     <string name="anxiety_question">Nível de ansiedade?</string>
-    <string name="anxiety_hint">Quão tenso/a ou preocupado/a se sente</string>
+    <string name="anxiety_hint">Quão tenso/a ou preocupado/a te sentes</string>
     <string name="sleep_question">Como dormiu?</string>
-    <string name="sleep_hint">A qualidade do seu descanso esta noite</string>
-    <string name="notes_question">Quer acrescentar alguma coisa?</string>
-    <string name="notes_hint">Opcional. O seu psicólogo vai ler isto.</string>
+    <string name="sleep_hint">A qualidade do teu descanso esta noite</string>
+    <string name="notes_question">Há mais alguma coisa a acrescentar?</string>
+    <string name="notes_hint">Opcional. O teu psicólogo vai ler isto.</string>
     <string name="very_low">Muito em baixo</string>
     <string name="excellent">Excelente</string>
     <string name="very_calm">Muito calmo/a</string>
@@ -77,24 +77,24 @@
     <string name="finish">Concluir</string>
     <string name="step_of">Passo %1$d de %2$d</string>
     <string name="check_in_sent">Check-in registado</string>
-    <string name="check_in_sent_detail">O seu psicólogo já o pode ver.</string>
+    <string name="check_in_sent_detail">O teu psicólogo já o pode ver.</string>
     <string name="check_in_queued">Guardado neste dispositivo</string>
-    <string name="check_in_queued_detail">Sem ligação. Será enviado assim que houver rede — ainda não chegou ao seu psicólogo.</string>
+    <string name="check_in_queued_detail">Sem ligação. Será enviado assim que houver rede — ainda não chegou ao teu psicólogo.</string>
     <string name="not_stored">Não foi guardado</string>
-    <string name="not_stored_detail">Não foi possível enviar nem guardar neste dispositivo. Tente novamente daqui a pouco.</string>
+    <string name="not_stored_detail">Não foi possível enviar nem guardar neste dispositivo. Tenta novamente daqui a pouco.</string>
     <string name="done">Feito</string>
 
     <!-- Journal -->
     <string name="journal_title">Diário</string>
     <string name="new_entry">Nova entrada</string>
     <string name="entry_title_hint">Título (opcional)</string>
-    <string name="entry_content_hint">Escreva o que quiser…</string>
+    <string name="entry_content_hint">Escreve o que quiseres…</string>
     <string name="private_entry">Só para mim</string>
-    <string name="private_entry_detail">Fica só neste registo. O seu psicólogo não vê.</string>
-    <string name="shared_entry_detail">O seu psicólogo pode ler esta entrada.</string>
+    <string name="private_entry_detail">Fica só neste registo. O teu psicólogo não vê.</string>
+    <string name="shared_entry_detail">O teu psicólogo pode ler esta entrada.</string>
     <string name="save">Guardar</string>
     <string name="cancel">Cancelar</string>
-    <string name="no_entries">Ainda não escreveu nada. Escrever entre sessões ajuda a perceber padrões.</string>
+    <string name="no_entries">Ainda não escreveste nada. Escrever entre sessões ajuda a perceber padrões.</string>
     <string name="waiting_to_send">Por enviar</string>
     <string name="entry_not_saved">A entrada não foi guardada. O texto ficou aqui para tentar de novo.</string>
     <string name="private_label">Privado</string>
@@ -105,7 +105,7 @@
 
     <!-- Assessments -->
     <string name="assessments_title">Avaliações</string>
-    <string name="assessments_intro">Questionários breves que ajudam a acompanhar como está ao longo do tempo. Os resultados ficam com o seu psicólogo.</string>
+    <string name="assessments_intro">Questionários breves que ajudam a acompanhar como estás ao longo do tempo. Os resultados ficam com o teu psicólogo.</string>
     <string name="phq9_title">PHQ-9</string>
     <string name="phq9_subtitle">Sintomas depressivos · 9 perguntas</string>
     <string name="gad7_title">GAD-7</string>
@@ -116,13 +116,13 @@
     <string name="no_results_yet">Ainda sem resultados</string>
     <string name="start">Começar</string>
     <string name="two_weeks_intro">Nas últimas 2 semanas, com que frequência foi incomodado/a por cada um dos seguintes problemas?</string>
-    <string name="waisr_intro">Pense na sua relação com o seu psicólogo. Para cada frase, indique com que frequência se aplica.</string>
+    <string name="waisr_intro">Pensa na tua relação com o teu psicólogo. Para cada frase, indica com que frequência se aplica.</string>
     <string name="question_of">Pergunta %1$d de %2$d</string>
     <string name="submit">Enviar</string>
-    <string name="your_score">A sua pontuação</string>
-    <string name="result_sent">Enviado ao seu psicólogo</string>
+    <string name="your_score">A tua pontuação</string>
+    <string name="result_sent">Enviado ao teu psicólogo</string>
     <string name="result_queued">Guardado neste dispositivo — será enviado quando houver rede</string>
-    <string name="result_not_stored">Não foi possível enviar nem guardar. As suas respostas ficaram aqui; tente de novo.</string>
+    <string name="result_not_stored">Não foi possível enviar nem guardar. As tuas respostas ficaram aqui; tenta de novo.</string>
     <string name="result_disclaimer">Este resultado não é um diagnóstico. É uma medida de como se sentiu nas últimas duas semanas, para conversar com o seu psicólogo.</string>
     <string name="item9_notice">Respondeu que teve pensamentos de que estaria melhor morto/a ou de se magoar. O seu psicólogo será informado. Se estiver em perigo agora, ligue:</string>
 
@@ -187,9 +187,9 @@
 
     <!-- Messages -->
     <string name="messages_title">Mensagens</string>
-    <string name="message_hint">Escreva uma mensagem…</string>
+    <string name="message_hint">Escreve uma mensagem…</string>
     <string name="send">Enviar</string>
-    <string name="no_messages">Ainda não há mensagens. Pode escrever ao seu psicólogo entre sessões.</string>
+    <string name="no_messages">Ainda não há mensagens.</string>
     <string name="message_pending">Por enviar</string>
     <string name="message_failed">Não foi guardada</string>
     <string name="messages_not_realtime">As mensagens não são lidas em tempo real. Em emergência, ligue 112.</string>
@@ -205,7 +205,7 @@
     <string name="not_granted">Não dado</string>
     <string name="outdated_consent">Dado para uma versão anterior do texto</string>
     <string name="export_data">Exportar os meus dados</string>
-    <string name="export_detail">Uma cópia de tudo o que o TherapyTrack guarda sobre si, em JSON.</string>
+    <string name="export_detail">Uma cópia de tudo o que o Our Session guarda sobre si, em JSON.</string>
     <string name="export_ready">Exportação pronta</string>
     <string name="share_export">Partilhar ficheiro</string>
     <string name="erase_account">Eliminar a minha conta</string>
@@ -220,8 +220,8 @@
     <string name="version">Versão %1$s</string>
 
     <!-- Stuck work -->
-    <string name="stuck_headline_client">Há coisas que não chegaram ao seu psicólogo</string>
-    <string name="stuck_body">Depois de várias tentativas, isto ainda não foi enviado. Pode tentar de novo ou descartar.</string>
+    <string name="stuck_headline_client">Há coisas que não chegaram ao teu psicólogo</string>
+    <string name="stuck_body">Depois de várias tentativas, isto ainda não foi enviado. Podes tentar de novo ou descartar.</string>
     <string name="retry">Tentar de novo</string>
     <string name="discard">Descartar</string>
     <string name="discard_irreplaceable_title">Descartar? Não existe noutro sítio.</string>
@@ -238,7 +238,7 @@
     <string name="today">Hoje</string>
     <string name="yesterday">Ontem</string>
     <string name="ok">OK</string>
-    <string name="error_generic">Algo correu mal. Tente novamente.</string>
+    <string name="error_generic">Algo correu mal. Convém tentar novamente.</string>
 
     <!-- Therapist -->
     <string name="tab_today">Hoje</string>
@@ -328,7 +328,7 @@
     <string name="plan_status_cancelled">Cancelado</string>
     <string name="plan_renews">Renova a %1$s</string>
     <string name="plan_free_limit">Até %1$d clientes no plano gratuito</string>
-    <string name="plan_arranged">Os planos são combinados diretamente com o TherapyTrack.</string>
+    <string name="plan_arranged">Os planos são combinados diretamente com o Our Session.</string>
     <string name="not_in_plan_title">Não incluído no seu plano</string>
     <string name="see_plan">Ver plano</string>
     <string name="credentials_section">Credenciais</string>
@@ -555,7 +555,7 @@
     <string name="community_confidentiality">Não identifique clientes. Descreva o caso, não a pessoa.</string>
 
     <!-- Auth (visual parity) -->
-    <string name="consent_welcome">Bem-vindo ao TherapyTrack</string>
+    <string name="consent_welcome">Boas-vindas ao Our Session</string>
     <string name="how_it_works">Como funciona</string>
     <string name="terms_title">Termos de Serviço</string>
     <string name="privacy_title">Política de Privacidade</string>
@@ -569,8 +569,8 @@
 
     <!-- Home (visual parity) -->
     <string name="get_help">Obter ajuda</string>
-    <string name="welcome_back">Bem-vindo de volta,</string>
-    <string name="how_it_works_client">O seu psicólogo poderá rever os seus registos ao preparar a próxima sessão — embora seja importante responder com regularidade, não se espera que acompanhe as suas respostas em tempo real.</string>
+    <string name="welcome_back">Que bom ver-te de novo,</string>
+    <string name="how_it_works_client">O teu psicólogo poderá rever os teus registos ao preparar a próxima sessão — embora seja importante responder com regularidade, não se espera que acompanhes as tuas respostas em tempo real.</string>
     <string name="last_check_in">Último registo</string>
     <string name="homework_title">Tarefas</string>
 
@@ -614,14 +614,14 @@
 
     <!-- Profile (visual parity) -->
     <string name="personal_info">Informação pessoal</string>
-    <string name="your_care">Os seus cuidados</string>
+    <string name="your_care">Os teus cuidados</string>
     <string name="diagnosis_label">Diagnóstico</string>
     <string name="app_settings">Definições da aplicação</string>
     <string name="language_setting">Idioma</string>
     <string name="data_privacy">Dados e privacidade</string>
     <string name="app_info">Informação da aplicação</string>
     <string name="version_label">Versão</string>
-    <string name="sign_out_confirm">Tem a certeza de que quer terminar sessão?</string>
+    <string name="sign_out_confirm">Terminar a sessão?</string>
 
     <!-- Activity / inbox -->
     <string name="activity_title">Atividade</string>
@@ -659,7 +659,7 @@
     <string name="sm_none_title">Ainda não há sessões publicadas</string>
     <string name="sm_none_body">Quando os supervisores publicarem sessões de grupo ou individuais, aparecem aqui e pode pedir um lugar.</string>
     <string name="sm_session">Sessão</string>
-    <string name="sm_fee_note">O valor e os restantes termos são combinados diretamente com o supervisor. O TherapyTrack não processa pagamentos.</string>
+    <string name="sm_fee_note">O valor e os restantes termos são combinados diretamente com o supervisor. O Our Session não processa pagamentos.</string>
     <string name="sm_added_to_log">Será acrescentada ao seu registo de supervisão depois da sessão.</string>
     <string name="sm_give_up">Desistir do meu lugar</string>
     <string name="sm_withdraw_request">Retirar o meu pedido</string>
@@ -670,7 +670,7 @@
     <string name="sm_withdraw">Retirar</string>
     <string name="sm_v_licence">Cédula verificada no registo da OPP</string>
     <string name="sm_v_supervisor">Verificado como supervisor</string>
-    <string name="sm_v_self">Autodeclarado — não verificado pelo TherapyTrack</string>
+    <string name="sm_v_self">Autodeclarado — não verificado pelo Our Session</string>
     <string name="sm_p_accepted">Lugar confirmado</string>
     <string name="sm_p_declined">Não aceite</string>
     <string name="sm_p_withdrawn">Retirada</string>
@@ -687,10 +687,10 @@
     <string name="sm_add_headline">Acrescente um título ao seu perfil profissional para que os colegas saibam o que supervisiona.</string>
     <string name="sm_accepting">A aceitar novos supervisionados</string>
     <string name="sm_withdraw_listing">Retirar o meu perfil de supervisor</string>
-    <string name="sm_publish_intro">Publique o seu perfil de supervisor para publicar sessões de grupo ou individuais a que outros terapeutas podem pedir para assistir. É você quem decide quem fica com lugar.</string>
+    <string name="sm_publish_intro">Publique o seu perfil de supervisor para publicar sessões de grupo ou individuais a que outros psicólogos podem pedir para assistir. É você quem decide quem fica com lugar.</string>
     <string name="sm_publish_listing">Publicar o meu perfil de supervisor</string>
     <string name="sm_publish_q">Publicar o seu perfil de supervisor?</string>
-    <string name="sm_publish_consent">Outros terapeutas no TherapyTrack vão ver o seu nome, o título e a cidade do seu perfil profissional e as sessões que publicar. Pode retirar a publicação a qualquer momento, e as suas sessões deixam de aparecer de imediato.</string>
+    <string name="sm_publish_consent">Outros psicólogos no Our Session vão ver o seu nome, o título e a cidade do seu perfil profissional e as sessões que publicar. Pode retirar a publicação a qualquer momento, e as suas sessões deixam de aparecer de imediato.</string>
     <string name="sm_publish">Publicar</string>
     <string name="sm_withdraw_listing_q">Retirar o seu perfil de supervisor?</string>
     <string name="sm_withdraw_listing_body">As suas sessões deixam de aparecer. Os lugares que já confirmou mantêm-se.</string>
@@ -712,7 +712,7 @@
     <string name="sm_title_field">Título, p. ex. Supervisão de grupo — casos de trauma</string>
     <string name="sm_description">Descrição (opcional)</string>
     <string name="sm_topics">Temas, separados por vírgulas</string>
-    <string name="sm_shown_note">Isto é visível para outros terapeutas. Não inclua nada sobre clientes.</string>
+    <string name="sm_shown_note">Isto é visível para outros psicólogos. Não inclua nada sobre clientes.</string>
     <string name="sm_date">Data (AAAA-MM-DD)</string>
     <string name="sm_time">Hora (HH:MM)</string>
     <string name="sm_in_future">Escolha uma data e hora no futuro.</string>
@@ -721,7 +721,7 @@
     <string name="sm_city">Cidade ou distrito</string>
     <string name="sm_places">Lugares: %1$d</string>
     <string name="sm_price">Preço por pessoa em euros (opcional)</string>
-    <string name="sm_price_note">Deixe em branco para combinar o valor diretamente. O TherapyTrack não processa pagamentos.</string>
+    <string name="sm_price_note">Deixe em branco para combinar o valor diretamente. O Our Session não processa pagamentos.</string>
     <string name="sm_change_note">Alterar a data, a hora, a duração, o formato, o local ou o preço avisa quem tem lugar ou o pediu.</string>
     <string name="sm_close">Fechar</string>
     <string name="n_supervision_request">Pediu um lugar na sua sessão</string>
@@ -740,10 +740,10 @@
 
     <!-- Para a próxima sessão (REA-22) -->
     <string name="topics_title">Para a próxima sessão</string>
-    <string name="topics_empty_hint">Anote o que quer levar à próxima sessão, quando lhe ocorrer.</string>
+    <string name="topics_empty_hint">Anota o que queres levar à próxima sessão, quando te ocorrer.</string>
     <string name="topics_more">e mais %1$d</string>
-    <string name="topics_prompt">Sobre o que gostaria de falar?</string>
-    <string name="topics_footer">O seu terapeuta vê esta lista antes da sessão.</string>
+    <string name="topics_prompt">Sobre o que gostarias de falar?</string>
+    <string name="topics_footer">O teu psicólogo vê esta lista antes da sessão.</string>
     <string name="topics_none">Ainda nada.</string>
     <string name="topics_open">Por falar</string>
     <string name="topics_discussed">Já falámos</string>
@@ -763,35 +763,35 @@
     <string name="about_two_minutes_no_sound">Cerca de dois minutos · sem som</string>
     <string name="my_check_ins">Os meus registos</string>
     <string name="questionnaires">Questionários</string>
-    <string name="how_it_works_records">Os seus check-ins, questionários e os assuntos que adicionar ficam disponíveis para o seu terapeuta preparar as sessões. Não são acompanhados em tempo real.</string>
-    <string name="how_it_works_journal">As entradas do diário só são partilhadas quando escolhe partilhá-las.</string>
+    <string name="how_it_works_records">Os teus check-ins, questionários e os assuntos que adicionares ficam disponíveis para o teu psicólogo preparar as sessões. Não são acompanhados em tempo real.</string>
+    <string name="how_it_works_journal">As entradas do diário só são partilhadas quando escolheres partilhá-las.</string>
     <string name="how_it_works_help">Se precisar de ajuda agora, use o botão de apoio no topo do Início.</string>
-    <string name="how_are_you_feeling_today">Como se sente hoje?</string>
+    <string name="how_are_you_feeling_today">Como te sentes hoje?</string>
     <string name="entry_saved_at">Registo guardado às %1$s</string>
     <string name="check_in_again">Fazer outro registo</string>
-    <string name="record_how_you_feel">Registar como se sente</string>
+    <string name="record_how_you_feel">Registar como te sentes</string>
     <string name="three_questions_under_a_minute">Três perguntas, menos de um minuto.</string>
     <string name="mood_of_7">humor %1$d/7</string>
     <string name="anxiety_of_7">ansiedade %1$d/7</string>
     <string name="sleep_of_7">sono %1$d/7</string>
     <string name="next_session_at">Próxima sessão: %1$s, %2$s</string>
     <string name="no_check_ins_yet_plain">Ainda sem check-ins.</string>
-    <string name="journal_question">O que gostaria de registar?</string>
-    <string name="journal_prompt_1">Pelo que se sente grato hoje?</string>
-    <string name="journal_prompt_2">Descreva uma dificuldade que ultrapassou esta semana.</string>
-    <string name="journal_prompt_3">O que espera com vontade nos próximos dias?</string>
+    <string name="journal_question">O que gostarias de registar?</string>
+    <string name="journal_prompt_1">Pelo que tens gratidão hoje?</string>
+    <string name="journal_prompt_2">Descreve uma dificuldade que ultrapassaste esta semana.</string>
+    <string name="journal_prompt_3">O que esperas com vontade nos próximos dias?</string>
     <string name="journal_suggestion">Preciso de uma sugestão</string>
     <string name="journal_another_suggestion">Outra sugestão</string>
     <string name="journal_write_freely">Escrever livremente</string>
-    <string name="share_with_therapist">Partilhar com o terapeuta</string>
+    <string name="share_with_therapist">Partilhar com o psicólogo</string>
     <string name="only_for_me">Só para mim</string>
-    <string name="entry_will_be_shared">Esta entrada será partilhada com o seu terapeuta.</string>
-    <string name="entry_only_you">Só você verá esta entrada.</string>
-    <string name="journal_not_saved">Ainda não foi possível guardar isto em lado nenhum — o seu texto continua aqui. Tente novamente daqui a pouco.</string>
+    <string name="entry_will_be_shared">Esta entrada será partilhada com o teu psicólogo.</string>
+    <string name="entry_only_you">Só tu verás esta entrada.</string>
+    <string name="journal_not_saved">Ainda não foi possível guardar isto em lado nenhum — o teu texto continua aqui. Tenta novamente daqui a pouco.</string>
     <string name="save_entry">Guardar entrada</string>
     <string name="your_entries">As suas entradas</string>
     <string name="journal_saved_at">Guardada às %1$s</string>
-    <string name="journal_saved_on_phone">Guardada neste telemóvel às %1$s; será enviada quando estiver ligado</string>
+    <string name="journal_saved_on_phone">Guardada neste telemóvel às %1$s; será enviada quando houver ligação</string>
     <string name="journal_entry_label">Entrada de diário</string>
     <string name="check_in_saved">Check-in guardado.</string>
     <string name="wellness_intro">Exercícios curtos, para usar sempre que ajudem.</string>
@@ -803,62 +803,62 @@
     <string name="grounding_row">Dois exercícios guiados, curtos · sem som</string>
     <string name="need_support_now">Precisa de apoio agora?</string>
     <string name="crisis_lines_and_what_to_do">Linhas de apoio e o que fazer</string>
-    <string name="breathe_in">Inspire</string>
-    <string name="hold">Sustenha</string>
-    <string name="breathe_out">Expire</string>
-    <string name="get_comfortable">Fique confortável</string>
+    <string name="breathe_in">Inspira</string>
+    <string name="hold">Segura</string>
+    <string name="breathe_out">Expira</string>
+    <string name="get_comfortable">Fica confortável</string>
     <string name="rhythm_box">Em caixa</string>
-    <string name="rhythm_summary_calm">Inspire durante 4, sustenha 4, expire durante 6.</string>
-    <string name="rhythm_summary_box">Inspire durante 4, sustenha 4, expire durante 4, sustenha 4.</string>
-    <string name="rhythm_summary_relax">Inspire durante 4, sustenha 7, expire durante 8.</string>
+    <string name="rhythm_summary_calm">Inspira durante 4, segura 4, expira durante 6.</string>
+    <string name="rhythm_summary_box">Inspira durante 4, segura 4, expira durante 4, segura 4.</string>
+    <string name="rhythm_summary_relax">Inspira durante 4, segura 7, expira durante 8.</string>
     <string name="about_2_minutes_no_sound">Cerca de 2 minutos · sem som</string>
     <string name="just_over_a_minute_no_sound">Pouco mais de 1 minuto · sem som</string>
     <string name="time_left">%1$s restantes</string>
     <string name="exercise_complete">Exercício concluído</string>
-    <string name="take_a_moment">Fique um momento antes de continuar.</string>
+    <string name="take_a_moment">Fica um momento antes de continuar.</string>
     <string name="begin">Começar</string>
     <string name="again">Repetir</string>
     <string name="pause">Pausa</string>
     <string name="resume">Retomar</string>
     <string name="light_vibration">Uma vibração leve em cada mudança</string>
     <string name="rhythm">Ritmo</string>
-    <string name="ready_when_you_are">Quando estiver pronto</string>
+    <string name="ready_when_you_are">Quando quiseres</string>
     <string name="times_up">Terminou</string>
-    <string name="breathe_naturally">Respire naturalmente</string>
+    <string name="breathe_naturally">Respira naturalmente</string>
     <string name="stop">Parar</string>
-    <string name="meditation_note">Não toca nenhum som. O ecrã fica como está; pode fechar os olhos.</string>
-    <string name="grounding_intro">Formas de trazer a atenção de volta ao presente. Use a que ajudar.</string>
+    <string name="meditation_note">Não toca nenhum som. O ecrã fica como está; podes fechar os olhos.</string>
+    <string name="grounding_intro">Formas de trazer a atenção de volta ao presente. Usa a que ajudar.</string>
     <string name="five_senses_row">Os cinco sentidos, um de cada vez</string>
     <string name="body_scan">Varrimento corporal</string>
     <string name="body_scan_row">Atenção ao corpo, da cabeça aos pés</string>
     <string name="finish_exercise">Concluir</string>
-    <string name="sense_see">Repare em cinco coisas que consegue ver.</string>
+    <string name="sense_see">Repara em cinco coisas que consegues ver.</string>
     <string name="sense_see_help">Pequenas coisas também contam: uma cor, uma sombra, uma forma.</string>
-    <string name="sense_hear">Repare em quatro coisas que consegue ouvir.</string>
+    <string name="sense_hear">Repara em quatro coisas que consegues ouvir.</string>
     <string name="sense_hear_help">Sons perto e longe, mesmo os mais leves.</string>
-    <string name="sense_feel">Repare em três coisas que consegue sentir.</string>
+    <string name="sense_feel">Repara em três coisas que consegues sentir.</string>
     <string name="sense_feel_help">A roupa na pele, os pés no chão, o ar no rosto.</string>
-    <string name="sense_smell">Repare em duas coisas que consegue cheirar.</string>
-    <string name="sense_smell_help">Se nada lhe ocorrer, pense em dois cheiros de que gosta.</string>
-    <string name="sense_taste">Repare numa coisa que consegue saborear.</string>
+    <string name="sense_smell">Repara em duas coisas que consegues cheirar.</string>
+    <string name="sense_smell_help">Se nada te ocorrer, pensa em dois cheiros de que gostes.</string>
+    <string name="sense_taste">Repara numa coisa que consegues saborear.</string>
     <string name="sense_taste_help">O sabor que tem na boca agora, ou um gole de água.</string>
     <string name="body_head">A cabeça e o rosto</string>
-    <string name="body_head_help">Repare na testa, nos olhos, no maxilar. Deixe-os suavizar.</string>
+    <string name="body_head_help">Repara na testa, nos olhos, no maxilar. Deixa-os suavizar.</string>
     <string name="body_shoulders">O pescoço e os ombros</string>
-    <string name="body_shoulders_help">Repare se há tensão. Deixe os ombros descer um pouco.</string>
+    <string name="body_shoulders_help">Repara se há tensão. Deixa os ombros descer um pouco.</string>
     <string name="body_arms">Os braços e as mãos</string>
-    <string name="body_arms_help">Repare no peso deles. Deixe as mãos repousar, abertas.</string>
+    <string name="body_arms_help">Repara no peso deles. Deixa as mãos repousar, abertas.</string>
     <string name="body_torso">O peito e a barriga</string>
-    <string name="body_torso_help">Repare na respiração a subir e a descer. Não precisa de a mudar.</string>
+    <string name="body_torso_help">Repara na respiração a subir e a descer. Não precisas de a mudar.</string>
     <string name="body_legs">As pernas</string>
-    <string name="body_legs_help">Repare onde tocam a cadeira ou o chão.</string>
+    <string name="body_legs_help">Repara onde tocam a cadeira ou o chão.</string>
     <string name="body_feet">Os pés</string>
-    <string name="body_feet_help">Sinta o peso deles no chão.</string>
+    <string name="body_feet_help">Sente o peso deles no chão.</string>
     <string name="previous">Anterior</string>
     <string name="next_question">Seguinte</string>
     <string name="finish_questionnaire">Concluir questionário</string>
     <string name="question_unanswered">A pergunta %1$d ainda não tem resposta</string>
-    <string name="answers_go_to_record">As suas respostas ficam guardadas no seu registo e o seu terapeuta pode vê-las ao preparar as sessões.</string>
+    <string name="answers_go_to_record">As tuas respostas ficam guardadas no teu registo e o teu psicólogo pode vê-las ao preparar as sessões.</string>
     <string name="last_completed">Último preenchimento a %1$s</string>
     <string name="not_completed_yet">Ainda não preenchido</string>
     <string name="no_session_scheduled">Sem sessão marcada</string>
@@ -1047,7 +1047,7 @@
     <string name="rec_journal_entry">Entrada de diário</string>
     <string name="rec_wants_to_talk">Quer falar sobre</string>
     <string name="rec_by_client">Cliente</string>
-    <string name="rec_by_therapist">Terapeuta</string>
+    <string name="rec_by_therapist">Psicólogo</string>
     <string name="rec_latest_checkin">Último check-in: %1$s</string>
     <string name="rec_1_entry_30">1 registo em 30 dias</string>
     <string name="rec_n_entries_30">%1$d registos em 30 dias</string>

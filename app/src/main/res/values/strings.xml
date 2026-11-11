@@ -26,7 +26,7 @@
     <string name="create_account">Criar conta</string>
     <string name="back">Voltar</string>
     <string name="sign_out">Terminar sessão</string>
-    <string name="login_failed">Não foi possível iniciar sessão. Convém verificar o email e a palavra-passe.</string>
+    <string name="login_failed">Não foi possível iniciar sessão. Confirme o email e a palavra-passe.</string>
     <string name="wrong_app_client">Esta conta é de cliente. Para entrar, é preciso escolher Cliente.</string>
     <string name="wrong_app_therapist">Esta conta é de psicólogo/a. Para entrar, é preciso escolher Psicólogo/a.</string>
     <string name="offline_login">Sem ligação. É preciso rede para iniciar sessão.</string>
@@ -777,7 +777,7 @@
     <string name="next_session_at">Próxima sessão: %1$s, %2$s</string>
     <string name="no_check_ins_yet_plain">Ainda sem check-ins.</string>
     <string name="journal_question">O que gostarias de registar?</string>
-    <string name="journal_prompt_1">Pelo que tens gratidão hoje?</string>
+    <string name="journal_prompt_1">Pelo que sentes gratidão hoje?</string>
     <string name="journal_prompt_2">Descreve uma dificuldade que ultrapassaste esta semana.</string>
     <string name="journal_prompt_3">O que esperas com vontade nos próximos dias?</string>
     <string name="journal_suggestion">Preciso de uma sugestão</string>
